@@ -1,0 +1,46 @@
+<h1 class="my-5 mx-20">Books</h1>
+<div class="d-flex flex-wrap gap-10 mx-20">
+  <div class="mb-4" *ngFor="let book of books">
+    <div class="card h-100">
+      <img [src]="'data:image/png;base64,' + book.image" class="card-img-top" alt="Book Image" />
+      <div class="card-body">
+        <h5 class="card-title">{{ book.bookName }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Grade: {{ book.grade }}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Academic Year: {{ book.academicYear }}</h6>
+        <p class="card-text">{{ book.description }}</p>
+      </div>
+      <div class="d-flex justify-content-between align-items-center border-top p-3">
+        <div>Price: ${{ book.price }}</div>
+        <button class="btn btn-secondary" (click)="addToCart(book)">add to Cart</button>
+      </div>
+    </div>
+  </div>
+</div>
+<h1 class="my-5 mx-20">Bundles</h1>
+<div class="d-flex flex-wrap gap-10 mx-20">
+  <div class="mb-4" *ngFor="let bundle of bundles">
+    <div class="card h-100">
+      <img [src]="'data:image/png;base64,' + bundle.image" class="card-img-top" alt="Book Image" />
+      <div class="card-body">
+        <h5 class="card-title">{{ bundle.bundleName }}</h5>
+        <h6 class="card-subtitle text-decoration-underline text-primary cursor-pointer fw-bolder fs-6"
+          (click)="openShowBook(modalBookShow, bundle?.books)">Books: {{ bundle.books.length }}</h6>
+      </div>
+      <div class="d-flex justify-content-between align-items-center border-top p-3">
+        <div>Price: ${{ getTotalPrice(bundle.books) }}</div>
+        <button class="btn btn-secondary" (click)="addCart(bundle)">add to Cart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #modalBookShow let-modalShow>
+  <div class="modal-header">
+    <h5 class="modal-title"> Books </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalShow.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <app-books-list [books]='showBooks'></app-books-list>
+  </div>
+</ng-template>

@@ -1,0 +1,187 @@
+<!-- begin::Header -->
+
+<div class="card-header border-0 pt-5 d-flex justify-content-between align-content-center align-items-center">
+  <h3 class="card-title">
+    <span class="card-label fw-bolder fs-3 mb-1">Bundle List</span>
+  </h3>
+  <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
+    title="Click to add a user">
+    <button type="button" class="btn btn-primary" (click)="open(modalContent)">
+      Add Bundle
+    </button>
+  </div>
+
+</div>
+<!-- end::Header -->
+<!-- begin::Body -->
+<div class="card-body py-3">
+  <!-- begin::Table container -->
+  <div class="table-responsive">
+    <!-- begin::Table -->
+    <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+      <!-- begin::Table head -->
+      <thead>
+        <tr class="fw-bolder text-muted">
+          <th class="w-25px">
+            <div class="
+                form-check form-check-sm form-check-custom form-check-solid
+              ">
+              <input class="form-check-input" type="checkbox" value="1" data-kt-check="true"
+                data-kt-check-target=".widget-9-check" />
+            </div>
+          </th>
+          <th class="min-w-150px">Name</th>
+          <th class="min-w-150px">Price</th>
+          <th class="min-w-240px">Books</th>
+          <th class="min-w-100px text-end">Actions</th>
+        </tr>
+      </thead>
+      <!-- end::Table head -->
+      <!-- begin::Table body -->
+      <tbody *ngIf="bundles && bundles.length > 0; else noBooks">
+        <tr *ngFor="let bundle of bundles">
+          <td>
+            <div class="form-check form-check-sm form-check-custom form-check-solid">
+              <input class="form-check-input widget-9-check" type="checkbox" value="1" />
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                  {{ bundle?.bundleName }}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                ${{ getTotalPrice(bundle?.books) }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="text-decoration-underline text-primary cursor-pointer fw-bolder fs-6"
+                (click)="openShowBook(modalBookShow, bundle?.books)">
+                {{ bundle?.books?.length }}
+              </span>
+
+            </div>
+          </td>
+
+          <td>
+            <div class="d-flex justify-content-end flex-shrink-0">
+              <button class="btn btn-icon btn-bg-light btn-sm me-1" (click)="editBundle(modalContent, bundle)">
+                <app-keenicon name="pencil" class="fs-3"></app-keenicon>
+              </button>
+              <button class="btn btn-icon btn-bg-light btn-sm" (click)="deleteBundle(bundle?.id)">
+                <app-keenicon name="trash" class="fs-3"></app-keenicon>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <ng-template #noBooks>
+        <tr>
+          <td colspan="6" class="text-center">No Bundles found.</td>
+        </tr>
+      </ng-template>
+
+      <!-- end::Table body -->
+    </table>
+
+    <!-- end::Table -->
+  </div>
+  <!-- end::Table container -->
+</div>
+<!-- begin::Body -->
+
+
+<ng-template #modalContent let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">{{ currentBundleId ? 'Update Bundle' : 'Add New Bundle' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="bundleForm">
+
+
+      <div class="mb-6 d-flex justify-content-center">
+        <input type="file" #fileInput (change)="onFileChange($event)" hidden />
+
+        <div class="img-wrapper" (click)="fileInput.click()">
+          <img [src]="currentBundleId ? 'data:image/png;base64,' + bundleForm.get('image')?.value : dummyImg" />
+        </div>
+
+      </div>
+
+      <div class="row mb-6">
+        <label class="col-lg-2 col-form-label fw-bold fs-6"><span>Bundle Name</span></label>
+        <div class="col-lg-10 d-flex gap-3">
+          <input type="text" class="form-control form-control-lg form-control-solid" formControlName="bundleName"
+            placeholder="Enter Bundle Name" />
+          <button class="btn btn-primary w-50" (click)="openSelectBooks(modalBook)">Add Books in Bundle</button>
+        </div>
+      </div>
+
+      <div class="row mb-6"*ngIf="selectedBooks.length > 0">
+        <h1 class="fw-bold fs-3">Books List</h1>
+      </div>
+
+      <div class="row mb-6"  *ngFor="let bookGroup of booksFormArray.controls;  let i = index">
+        <label class="col-lg-2 col-form-label fw-bold fs-6">
+          <span>{{ bookGroup.get('bookName')?.value }}</span>
+        </label>
+        <div class="col-lg-10 d-flex gap-5">
+          <input
+            type="number"
+            class="form-control form-control-lg form-control-solid"
+            [formControl]="getBookControl(i, 'price')"
+          />
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger w-25"
+            (click)="onRemoveBook(i)"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
+
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary" [disabled]="bundleForm.invalid" (click)="submitBundle(modal)">
+          {{ currentBundleId ? 'Update' : 'Add' }} Bundle
+        </button>
+      </div>
+
+
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #modalBookShow let-modalShow>
+  <div class="modal-header">
+    <h5 class="modal-title"> Books </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalShow.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <app-books-list [books]='showBooks'></app-books-list>
+  </div>
+</ng-template>
+
+
+<ng-template #modalBook let-modalB>
+  <div class="modal-header">
+    <h5 class="modal-title"> Books </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalB.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <app-books-list [books]="books" [isSelect]="true" (selectedBooksEmit)="handleSelectedBooks($event, modalB)">
+    </app-books-list>
+  </div>
+</ng-template>
+<swal #noticeSwal [swalOptions]="swalOptions">
+</swal>

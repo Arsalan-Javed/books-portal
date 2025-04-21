@@ -1,0 +1,219 @@
+<!-- begin::Header -->
+
+<div class="card-header border-0 pt-5 d-flex justify-content-between align-content-center align-items-center">
+  <h3 class="card-title">
+    <span class="card-label fw-bolder fs-3 mb-1">Books List</span>
+  </h3>
+  <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
+    title="Click to add a user">
+    <button type="button" class="btn btn-primary" (click)="open(modalContent)">
+      Add Book
+    </button>
+  </div>
+
+</div>
+<!-- end::Header -->
+<!-- begin::Body -->
+<div class="card-body py-3">
+  <!-- begin::Table container -->
+  <div class="table-responsive">
+    <!-- begin::Table -->
+    <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+      <!-- begin::Table head -->
+      <thead>
+        <tr class="fw-bolder text-muted">
+          <th class="w-25px">
+            <div class="
+                form-check form-check-sm form-check-custom form-check-solid
+              ">
+              <input class="form-check-input" type="checkbox" value="1" data-kt-check="true"
+                data-kt-check-target=".widget-9-check" />
+            </div>
+          </th>
+          <th class="min-w-150px">Name</th>
+          <th class="min-w-140px">Description</th>
+          <th class="min-w-120px">Grade</th>
+          <th class="min-w-120px">Academic Year</th>
+          <th class="min-w-120px">Quantity</th>
+          <th class="min-w-120px">Price </th>
+          <th class="min-w-100px text-end">Actions</th>
+        </tr>
+      </thead>
+      <!-- end::Table head -->
+      <!-- begin::Table body -->
+      <tbody *ngIf="books && books.length > 0; else noBooks">
+        <tr *ngFor="let book of books">
+          <td>
+            <div class="form-check form-check-sm form-check-custom form-check-solid">
+              <input class="form-check-input widget-9-check" type="checkbox" value="1" />
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="symbol symbol-45px me-5">
+                <img [src]="'data:image/png;base64,' + book?.image" alt="book image" />
+              </div>
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                  {{ book?.bookName }}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="text-gray-900 fw-bolder fs-6">{{ book?.description }}</span>
+          </td>
+          <td>
+            <span class="text-gray-900 fw-bolder fs-6">{{ getGrade(book.grade) }}</span>
+          </td>
+          <td>
+            <span class="text-gray-900 fw-bolder fs-6">{{ book?.academicYear }}</span>
+          </td>
+          <td>
+            <span class="text-gray-900 fw-bolder fs-6">{{ book?.quantity }}</span>
+          </td>
+          <td>
+            <span class="text-gray-900 fw-bolder fs-6">${{ book?.price }}</span>
+          </td>
+          <td>
+            <div class="d-flex justify-content-end flex-shrink-0">
+              <button class="btn btn-icon btn-bg-light btn-sm me-1" (click)="editBook(modalContent, book)">
+                <app-keenicon name="pencil" class="fs-3"></app-keenicon>
+              </button>
+              <button class="btn btn-icon btn-bg-light btn-sm" (click)="deleteBook(book?.id)">
+                <app-keenicon name="trash" class="fs-3"></app-keenicon>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <ng-template #noBooks>
+        <tr>
+          <td colspan="6" class="text-center">No books found.</td>
+        </tr>
+      </ng-template>
+
+      <!-- end::Table body -->
+    </table>
+
+    <!-- end::Table -->
+  </div>
+  <!-- end::Table container -->
+</div>
+<!-- begin::Body -->
+
+
+<ng-template #modalContent let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">{{ currentBookId ? 'Update Book' : 'Add New Book' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="bookForm" >
+
+      <div class="mb-3 d-flex justify-content-center">
+        <input type="file" #fileInput (change)="onFileChange($event)" hidden />
+
+        <div class="img-wrapper" (click)="fileInput.click()">
+          <img [src]="currentBookId ? 'data:image/png;base64,' + bookForm.get('image')?.value : dummyImg" />
+        </div>
+
+      </div>
+
+      <div class="row mb-6">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Book Name</span></label>
+        <div class="col-lg-9 fv-row">
+          <input type="text" class="form-control form-control-lg form-control-solid" formControlName="bookName"
+            placeholder="Enter Book Name" />
+        </div>
+      </div>
+
+      <div class="row mb-6">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Description</span></label>
+        <div class="col-lg-9 fv-row">
+          <input type="text" class="form-control form-control-lg form-control-solid" formControlName="description"
+            placeholder="Enter Description" />
+        </div>
+      </div>
+
+      <div class="row mb-6">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Quantity</span></label>
+        <div class="col-lg-9 fv-row">
+          <input type="number" class="form-control form-control-lg form-control-solid" formControlName="quantity"
+            placeholder="Enter Quantity" />
+        </div>
+      </div>
+
+      <div class="row mb-6">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Price</span></label>
+        <div class="col-lg-9 fv-row">
+          <input type="number" class="form-control form-control-lg form-control-solid" formControlName="price"
+            placeholder="Enter Price" />
+        </div>
+      </div>
+
+      <div class="row mb-6">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Grade</span></label>
+        <div class="col-lg-9 d-flex gap-5">
+          <select class="form-select form-select-solid form-select-lg"formControlName="grade">
+            <option value="null" selected>Select a Grade...</option>
+            @for (grade of grades; track $index) {
+            <option [value]="grade.id">{{ grade.name }} </option>
+            }
+          </select>
+          <button class="btn btn-primary w-25" (click)="openGrade(modalGrade)">add Grade</button>
+        </div>
+      </div>
+
+      <div class="row mb-6">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Academic Year</span></label>
+        <div class="col-lg-9 fv-row">
+          <input type="number" class="form-control form-control-lg form-control-solid" formControlName="academicYear"
+            placeholder="Enter Academic Year" />
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary" [disabled]="bookForm.invalid" (click)="submitBook(modal)">
+          {{ currentBookId ? 'Update' : 'Add' }} Book</button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #modalGrade let-modalG>
+  <div class="modal-header">
+    <h4 class="modal-title">Add Grade</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalG.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+    <form (ngSubmit)="submit(modalG)" #gradeForm="ngForm">
+      <div class="mb-3">
+        <label for="name" class="form-label">Grade Name</label>
+        <div class="d-flex gap-5">
+          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="grade.name" required />
+          <button type="button" class="btn btn-primary" [disabled]="!grade.name" (click)="submit(modalG)">Save</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div *ngIf="grades.length > 0" class="m-3">
+    <h5>Grade List</h5>
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let g of grades">
+        {{ g.name }}
+        <div>
+          <!-- <button class="btn btn-sm btn-outline-primary me-2" (click)="editGrade(g)">
+            <i class="bi bi-pencil"></i>
+          </button> -->
+          <button class="btn btn-sm btn-outline-danger" (click)="deleteGrade(g.id)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</ng-template>
+<swal #noticeSwal [swalOptions]="swalOptions">
+</swal>
