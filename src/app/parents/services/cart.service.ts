@@ -12,29 +12,10 @@ import {
 } from 'firebase/firestore';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
-import { Book, db } from 'src/app/pages/books/book.service';
-import { Bundle } from 'src/app/pages/bundle/bundle.service';
+import {  db } from 'src/app/pages/books/book.service';
+import { Book, Bundle, CartItem, Order, PopulatedCartItem } from './modal';
 
-export interface CartItem {
-  id?: string;
-  userId: string;
-  bookId?: string;
-  bundleId?: string;
-  quantity: number;
-}
 
-export interface PopulatedCartItem extends CartItem {
-  book?: Book;
-  bundle?: Bundle;
-}
-
-export interface Order {
-  id?: string;
-  userId: string;
-  items: CartItem[];
-  totalAmount: number;
-  createdAt: Date;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -84,8 +65,6 @@ export class CartService {
     );
   }
 
-
-
   getCartByUser(userId: string): Observable<CartItem[]> {
     const q = query(this.cartCollection, where('userId', '==', userId));
     return from(
@@ -130,8 +109,13 @@ export class CartService {
       })
     );
   }
+  updateCartItem(id: string, data: Partial<CartItem>): Observable<void> {
+    const itemRef = doc(this.cartCollection, id);
+    return from(updateDoc(itemRef, data));
+  }
 
   removeCartItem(id: string): Observable<void> {
+    this.cartChangedSubject.next();
     return from(deleteDoc(doc(db, 'cart', id)));
   }
 
@@ -173,19 +157,34 @@ export class CartService {
     return from(
       totalAmountPromise.then(async (prices) => {
         const totalAmount = prices.reduce((sum, price) => sum + price, 0);
+
+        // Sanitize items to remove undefined fields
+        const sanitizedItems = items.map((item) => {
+          const sanitizedItem: any = {};
+          Object.keys(item).forEach((key) => {
+            const value = (item as any)[key];
+            if (value !== undefined) {
+              sanitizedItem[key] = value;
+            }
+          });
+          return sanitizedItem;
+        });
+
         const order: Order = {
           userId,
-          items,
+          items: sanitizedItems,
           totalAmount,
           createdAt: new Date(),
         };
 
         const orderRef = await addDoc(this.ordersCollection, order);
-        await this.clearCart(userId).toPromise(); // clear cart after placing order
+        await this.clearCart(userId).toPromise();
+        this.cartChangedSubject.next();
         return orderRef.id;
       })
     );
   }
+
 
   getOrders(userId: string): Observable<Order[]> {
     const ordersQuery = query(this.ordersCollection, where('userId', '==', userId));

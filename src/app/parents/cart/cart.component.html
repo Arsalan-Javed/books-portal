@@ -1,1 +1,143 @@
-<p>cart works!</p>
+<div class="card-body py-3">
+  <!-- begin::Table container -->
+  <div class="table-responsive">
+    <!-- begin::Table -->
+    <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+      <!-- begin::Table head -->
+      <thead>
+        <tr class="fw-bolder text-muted">
+          <th class="min-w-150px">Product Details</th>
+          <th class="min-w-140px">Quantity</th>
+          <th class="min-w-120px">Price </th>
+          <th class="min-w-120px">Total </th>
+          <th class="min-w-100px text-end">Actions</th>
+        </tr>
+      </thead>
+      <!-- end::Table head -->
+      <!-- begin::Table body -->
+      <tbody *ngIf="cart && cart.length > 0; else noItem">
+        <tr *ngFor="let item of cart">
+          <!-- Show if item has a Book -->
+          <ng-container *ngIf="item.book">
+
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="symbol symbol-45px me-5">
+                  <img *ngIf="item.book.image" [src]="'data:image/png;base64,' + item.book.image" alt="Book Image" />
+                </div>
+                <div class="d-flex flex-column">
+                  <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                    {{ item.book.bookName }}
+                  </span>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <app-keenicon name="minus-circle" class="fs-3 me-5 cursor-pointer"
+                (click)="decreaseQuantity(item)"></app-keenicon>
+              {{ item.quantity }}
+              <app-keenicon name="plus-circle" class="fs-3 ms-5 cursor-pointer"
+                (click)="increaseQuantity(item)"></app-keenicon>
+            </td>
+
+            <td><span class="text-gray-900 fw-bolder fs-6">${{ item.book.price.toFixed(2) }}</span></td>
+
+            <td>
+              <span class="text-gray-900 fw-bolder fs-6">
+                ${{ (item.quantity * item.book.price).toFixed(2) }}
+              </span>
+            </td>
+
+            <td>
+              <div class="d-flex justify-content-end">
+                <button class="btn btn-icon btn-bg-light btn-sm" (click)="remove(item.id)">
+                  <app-keenicon name="trash" class="fs-3"></app-keenicon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Show if item has a Bundle -->
+          <ng-container *ngIf="item.bundle">
+
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="symbol symbol-45px me-5">
+                  <img *ngIf="item.bundle.image" [src]="'data:image/png;base64,' + item.bundle.image"
+                    alt="Bundle Image" />
+                </div>
+                <div class="d-flex flex-column">
+                  <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                    {{ item.bundle.bundleName }}
+                  </span>
+                  <small class="text-muted">Books:
+                    <span *ngFor="let b of item.bundle.books; let last = last">
+                      {{ b.bookName }}<span *ngIf="!last">, </span>
+                    </span>
+                  </small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <app-keenicon name="minus-circle" class="fs-3 me-5 cursor-pointer"
+                (click)="decreaseQuantity(item)"></app-keenicon>
+              {{ item.quantity }}
+              <app-keenicon name="plus-circle" class="fs-3 ms-5 cursor-pointer"
+                (click)="increaseQuantity(item)"></app-keenicon>
+            </td>
+
+            <td> <span class="text-gray-900 fw-bolder fs-6">
+                ${{ getBundlePrice(item).toFixed(2) }}
+              </span></td>
+
+            <td><span class="text-gray-900 fw-bolder fs-6">${{ (getBundlePrice(item) * item.quantity).toFixed(2)
+                }}</span></td>
+
+            <td>
+              <div class="d-flex justify-content-end">
+                <button class="btn btn-icon btn-bg-light btn-sm" (click)="remove(item.id)">
+                  <app-keenicon name="trash" class="fs-3"></app-keenicon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+        </tr>
+        <tr>
+          <td colspan="5">
+            <div class="text-end">
+              <span class="text-gray-900 fw-bolder fs-6">Total Price: $ {{ getGrandTotalPrice().toFixed(2) }}</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="5">
+            <div class="d-flex justify-content-end gap-5">
+              <div class="
+                form-check form-check-custom form-check-solid form-check-success form-switch
+                  ">
+                  <label class="form-check-label text-gray-700 fw-bold">Cash</label>
+                  <input class="form-check-input mx-3" type="checkbox"
+                    [(ngModel)]="method" />
+                  <label class="form-check-label text-gray-700 fw-bold">Online Pay</label>
+                </div>
+              <button class="btn btn-primary" (click)="checkout()">Check Out</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+
+      <ng-template #noItem>
+        <tr>
+          <td colspan="6" class="text-center">No Cart Item found.</td>
+        </tr>
+      </ng-template>
+
+      <!-- end::Table body -->
+    </table>
+    <!-- end::Table -->
+  </div>
+
+  <!-- end::Table container -->
+</div>
+<!-- begin::Body -->

@@ -7,33 +7,52 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  query,
+  where,
 } from 'firebase/firestore';
 import { from, Observable } from 'rxjs';
 import { initializeApp } from 'firebase/app';
 import { environment } from 'src/environments/environment';
 import { getFirestore } from 'firebase/firestore';
+import { Bundle, School } from 'src/app/parents/services/modal';
 
 const firebaseApp = initializeApp(environment.firebaseConfig);
 export const db = getFirestore(firebaseApp);
-export interface BundleBook {
-  id: string;
-  bookName: string;
-  price: number;
-}
 
-export interface Bundle {
-  id?: string;
-  bundleName: string;
-  image:string;
-  books: BundleBook[];
-}
 @Injectable({
   providedIn: 'root',
 })
 export class BundleService {
   private bundleCollection = collection(db, 'bundles');
-
+  private schoolCollection = collection(db, 'school');
   constructor() {}
+
+  addSchool(school: School): Observable<string> {
+    const gradeQuery = query(this.schoolCollection, where('name', '==', school.name));
+    return from(
+      getDocs(gradeQuery).then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          return Promise.reject(new Error('School with this name already exists'));
+        } else {
+          return addDoc(this.schoolCollection, school).then((docRef) => docRef.id);
+        }
+      })
+    );
+  }
+  getSchool(): Observable<School[]> {
+    return from(
+      getDocs(this.schoolCollection).then((querySnapshot) =>
+        querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as School[]
+      )
+    );
+  }
+  deleteSchool(id: string): Observable<void> {
+    const docRef = doc(db, 'school', id);
+    return from(deleteDoc(docRef));
+  }
 
   addBundle(bundle: Bundle): Observable<string> {
     return from(

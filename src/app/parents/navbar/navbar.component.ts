@@ -33,16 +33,16 @@ export class ParentNavbarComponent implements OnInit, AfterViewInit {
     this.cartService.cartChanged$.subscribe(() => {
       this.getCart(userId);
     });
-    this.cartService.getCart(userId).subscribe((cart=>{console.log(cart);
-    }))
+    this.cartService.getCart(userId).subscribe()
   }
   getCart(userId:any){
     this.cartService.getCartByUser(userId).subscribe((cart:any)=>{
       this.cart = cart
       this.cdr.detectChanges();
-      console.log(cart);
-
     })
+  }
+  logOut(){
+    this.authService.logout()
   }
 
 }

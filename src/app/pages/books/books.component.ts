@@ -1,10 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Book, BookService, Grade } from './book.service';
+import { BookService } from './book.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SweetAlertOptions } from 'sweetalert2';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import Swal from 'sweetalert2';
+import { Book, Grade, Type } from 'src/app/parents/services/modal';
 
 
 @Component({
@@ -17,7 +18,9 @@ export class BooksComponent implements OnInit {
   bookForm: FormGroup;
   currentBookId!: any;
   grade: Grade = { name: '' };
+  type: Type = { name: '' };
   grades: Grade[] = []
+  types: Type[] = []
   dummyImg: string = './assets/images/book.jpg'
   constructor(
     private modalService: NgbModal,
@@ -40,6 +43,7 @@ export class BooksComponent implements OnInit {
       bookName: ['', Validators.required],
       image: ['', Validators.required],
       grade: [null, Validators.required],
+      type: [null, Validators.required],
       academicYear: ['', Validators.required],
       description: ['', Validators.required],
       quantity: [0, [Validators.required, Validators.min(1)]],
@@ -54,6 +58,7 @@ export class BooksComponent implements OnInit {
       bookName: '',
       image: '',
       grade:null,
+      type:null,
       description: '',
       quantity: 0,
       price: 0
@@ -131,9 +136,15 @@ export class BooksComponent implements OnInit {
   getGrades() {
     this.bookService.getGrades().subscribe((grades) => {
       this.grades = grades;
+      this.getTypes()
       this.loadBooks();
     }, () => {
       this.loadBooks();
+    })
+  }
+  getTypes() {
+    this.bookService.getTypes().subscribe((types) => {
+      this.types = types;
     })
   }
   deleteBook(id: any) {
@@ -220,10 +231,61 @@ export class BooksComponent implements OnInit {
       }
     });
   }
-
   getGrade(id: any): string {
     const grade = this.grades.find(g => g.id === id);
     return grade ? grade.name : 'Unknown Grade';
+  }
+
+  openType(content: any) {
+    this.type = { name: '' }
+    this.modalService.open(content, { size: 'md', centered: true });
+  }
+  submitType(modal: any) {
+    this.bookService.addType(this.type).subscribe({
+      next: (id) => {
+        this.showAlert(this.successAlert);
+        this.bookForm.patchValue({type:id});
+        modal.close();
+        this.getTypes()
+      },
+      error: (err) => {
+        console.error('Error adding grade:', err.message);
+        this.errorAlert = {
+          icon: 'error',
+          title: 'Error!',
+          text: err.message,
+        };
+        this.showAlert(this.errorAlert)
+      }
+    });
+  }
+  deleteType(id: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this Type?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.bookService.deleteType(id).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'The Type has been deleted.', 'success');
+            this.getTypes();
+          },
+          error: (error) => {
+            Swal.fire('Error!', 'There was a problem deleting the Type.', 'error');
+            console.error(error);
+          }
+        });
+      }
+    });
+  }
+
+  getType(id: any): string {
+    const type = this.types.find(t => t.id === id);
+    return type ? type.name : 'Unknown Type';
   }
 
   showAlert(swalOptions: SweetAlertOptions) {

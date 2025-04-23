@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { BookService, Grade } from '../books/book.service';
-import { Bundle, BundleBook, BundleService } from './bundle.service';
-import { Book } from '../books/book.service';
+import { BookService } from '../books/book.service';
+import {  BundleService } from './bundle.service';
 import { SweetAlertOptions } from 'sweetalert2';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import Swal from 'sweetalert2';
+import { Book, Bundle, BundleBook, Grade, School, Type } from 'src/app/parents/services/modal';
 
 @Component({
   selector: 'app-bundle',
@@ -21,6 +21,10 @@ export class BundleComponent implements OnInit {
   bundles: Bundle[] = [];
   showBooks: Book[] = []
   grades: Grade[] = []
+  grade: Grade = { name: '' };
+  school: School = { name: '' };
+  types: Type[] = []
+  schools: School[] = []
   dummyImg: string = './assets/images/books.jpg'
   constructor(
     private modalService: NgbModal,
@@ -52,6 +56,8 @@ export class BundleComponent implements OnInit {
     this.bundleForm = this.fb.group({
       bundleName: ['', Validators.required],
       image: ['', Validators.required],
+      grade: ['', Validators.required],
+      school: ['', Validators.required],
       books: this.fb.array([]),
     });
     this.addBooksToForm();
@@ -82,6 +88,8 @@ export class BundleComponent implements OnInit {
     this.bundleForm.reset({
       bundleName: '',
       image: '',
+      grade: null,
+      school: null,
       books: [],
     });
     this.selectedBooks = [];
@@ -153,7 +161,8 @@ export class BundleComponent implements OnInit {
       this.books = books;
       this.books = books.map(book => ({
         ...book,
-        grade: this.getGrade(book.grade)
+        grade: this.getGrade(book.grade),
+        type:this.getType(book.type)
       }));
       this.cdr.detectChanges();
       this.getBundles()
@@ -162,14 +171,30 @@ export class BundleComponent implements OnInit {
   getGrades() {
     this.bookService.getGrades().subscribe((grades) => {
       this.grades = grades;
+      this.getTypes()
       this.loadBooks();
     }, () => {
       this.loadBooks();
     })
   }
+  getTypes() {
+    this.bookService.getTypes().subscribe((types) => {
+      this.types = types;
+      this.getSchool()
+    })
+  }
+  getSchool() {
+    this.bundleService.getSchool().subscribe((schools) => {
+      this.schools = schools;
+    })
+  }
   getGrade(id: any): string {
     const grade = this.grades.find(g => g.id === id);
     return grade ? grade.name : 'Unknown Grade';
+  }
+  getType(id: any): string {
+    const type = this.types.find(g => g.id === id);
+    return type ? type.name : 'Unknown Type';
   }
   getBundles() {
     this.bundleService.getBundles().subscribe((bundle) => {
@@ -201,8 +226,6 @@ export class BundleComponent implements OnInit {
       }
     });
   }
-
-
 
   onRemoveBook(bookId: number) {
     this.booksFormArray.removeAt(bookId);
@@ -267,6 +290,99 @@ export class BundleComponent implements OnInit {
     this.cdr.detectChanges();
     this.noticeSwal.fire();
   }
+  openGrade(content: any) {
+    this.grade = { name: '' }
+    this.modalService.open(content, { size: 'md', centered: true });
+  }
+  submit(modal: any) {
+    this.bookService.addGrade(this.grade).subscribe({
+      next: (gradeId) => {
+        console.log('Grade added with ID:', gradeId);
+        this.showAlert(this.successAlert);
+        this.bundleForm.patchValue({grade:gradeId});
+        modal.close();
+        this.getGrades()
+      },
+      error: (err) => {
+        console.error('Error adding grade:', err.message);
+        this.errorAlert = {
+          icon: 'error',
+          title: 'Error!',
+          text: err.message,
+        };
+        this.showAlert(this.errorAlert)
+      }
+    });
+  }
+  deleteGrade(id: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this grade?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.bookService.deleteGrade(id).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'The grade has been deleted.', 'success');
+            this.getGrades();
+          },
+          error: (error) => {
+            Swal.fire('Error!', 'There was a problem deleting the grade.', 'error');
+            console.error(error);
+          }
+        });
+      }
+    });
+  }
 
+  openSchool(content: any) {
+    this.school = { name: '' }
+    this.modalService.open(content, { size: 'md', centered: true });
+  }
+  submitSchool(modal: any) {
+    this.bundleService.addSchool(this.school).subscribe({
+      next: (id) => {
+        this.showAlert(this.successAlert);
+        this.bundleForm.patchValue({school:id});
+        modal.close();
+        this.getSchool()
+      },
+      error: (err) => {
+        console.error('Error adding School:', err.message);
+        this.errorAlert = {
+          icon: 'error',
+          title: 'Error!',
+          text: err.message,
+        };
+        this.showAlert(this.errorAlert)
+      }
+    });
+  }
+  deleteSchool(id: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this school?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.bundleService.deleteSchool(id).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'The school has been deleted.', 'success');
+            this.getGrades();
+          },
+          error: (error) => {
+            Swal.fire('Error!', 'There was a problem deleting the school.', 'error');
+            console.error(error);
+          }
+        });
+      }
+    });
+  }
 
 }

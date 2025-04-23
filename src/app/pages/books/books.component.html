@@ -33,6 +33,7 @@
           <th class="min-w-150px">Name</th>
           <th class="min-w-140px">Description</th>
           <th class="min-w-120px">Grade</th>
+          <th class="min-w-120px">Type</th>
           <th class="min-w-120px">Academic Year</th>
           <th class="min-w-120px">Quantity</th>
           <th class="min-w-120px">Price </th>
@@ -60,11 +61,14 @@
               </div>
             </div>
           </td>
-          <td>
+          <td class="w-25">
             <span class="text-gray-900 fw-bolder fs-6">{{ book?.description }}</span>
           </td>
           <td>
             <span class="text-gray-900 fw-bolder fs-6">{{ getGrade(book.grade) }}</span>
+          </td>
+          <td>
+            <span class="text-gray-900 fw-bolder fs-6">{{ getType(book.type) }}</span>
           </td>
           <td>
             <span class="text-gray-900 fw-bolder fs-6">{{ book?.academicYear }}</span>
@@ -153,6 +157,19 @@
       </div>
 
       <div class="row mb-6">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Type</span></label>
+        <div class="col-lg-9 d-flex gap-5">
+          <select class="form-select form-select-solid form-select-lg"formControlName="type">
+            <option value="null" selected>Select a Type...</option>
+            @for (type of types; track $index) {
+            <option [value]="type.id">{{ type.name }} </option>
+            }
+          </select>
+          <button class="btn btn-primary w-25" (click)="openType(modalType)">Add Type</button>
+        </div>
+      </div>
+
+      <div class="row mb-6">
         <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Grade</span></label>
         <div class="col-lg-9 d-flex gap-5">
           <select class="form-select form-select-solid form-select-lg"formControlName="grade">
@@ -161,7 +178,7 @@
             <option [value]="grade.id">{{ grade.name }} </option>
             }
           </select>
-          <button class="btn btn-primary w-25" (click)="openGrade(modalGrade)">add Grade</button>
+          <button class="btn btn-primary w-25" (click)="openGrade(modalGrade)">Add Grade</button>
         </div>
       </div>
 
@@ -180,13 +197,14 @@
     </form>
   </div>
 </ng-template>
+
 <ng-template #modalGrade let-modalG>
   <div class="modal-header">
     <h4 class="modal-title">Add Grade</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalG.dismiss()"></button>
   </div>
 
-  <div class="modal-body">
+  <div class="modal-body p-3">
     <form (ngSubmit)="submit(modalG)" #gradeForm="ngForm">
       <div class="mb-3">
         <label for="name" class="form-label">Grade Name</label>
@@ -203,9 +221,6 @@
       <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let g of grades">
         {{ g.name }}
         <div>
-          <!-- <button class="btn btn-sm btn-outline-primary me-2" (click)="editGrade(g)">
-            <i class="bi bi-pencil"></i>
-          </button> -->
           <button class="btn btn-sm btn-outline-danger" (click)="deleteGrade(g.id)">
             <i class="bi bi-trash"></i>
           </button>
@@ -215,5 +230,39 @@
   </div>
 
 </ng-template>
+
+<ng-template #modalType let-modalT>
+  <div class="modal-header">
+    <h4 class="modal-title">Add Type</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalT.dismiss()"></button>
+  </div>
+
+  <div class="modal-body p-3">
+    <form >
+      <div class="mb-3">
+        <label for="name" class="form-label">Type Name</label>
+        <div class="d-flex gap-5">
+          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="type.name" required />
+          <button type="button" class="btn btn-primary" [disabled]="!type.name" (click)="submitType(modalT)">Save</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div *ngIf="types.length > 0" class="m-3">
+    <h5>Type List</h5>
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let t of types">
+        {{ t.name }}
+        <div>
+          <button class="btn btn-sm btn-outline-danger" (click)="deleteType(t.id)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</ng-template>
+
 <swal #noticeSwal [swalOptions]="swalOptions">
 </swal>

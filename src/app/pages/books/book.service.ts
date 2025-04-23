@@ -15,21 +15,8 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-export interface Grade {
-  id?: string;
-  name: string;
-}
+import { Book, Grade,Type } from 'src/app/parents/services/modal';
 
-export interface Book {
-  id?: string;
-  bookName: string;
-  image: string;
-  description: string;
-  quantity: number;
-  price: number;
-  grade: string;
-  academicYear: number
-}
 
 const firebaseApp = initializeApp(environment.firebaseConfig);
 export const db = getFirestore(firebaseApp);
@@ -40,6 +27,7 @@ export const db = getFirestore(firebaseApp);
 export class BookService {
   private booksCollection = collection(db, 'books');
   private gradesCollection = collection(db, 'grade');
+  private typesCollection = collection(db, 'type');
 
   constructor() { }
 
@@ -55,7 +43,6 @@ export class BookService {
       })
     );
   }
-
   getGrades(): Observable<Grade[]> {
     return from(
       getDocs(this.gradesCollection).then((querySnapshot) =>
@@ -66,24 +53,34 @@ export class BookService {
       )
     );
   }
-
-  getGradeById(id: string): Observable<Grade | undefined> {
+  deleteGrade(id: string): Observable<void> {
     const docRef = doc(db, 'grade', id);
+    return from(deleteDoc(docRef));
+  }
+  addType(type: Type): Observable<string> {
+    const gradeQuery = query(this.typesCollection, where('name', '==', type.name));
     return from(
-      getDoc(docRef).then((docSnap) =>
-        docSnap.exists()
-          ? ({ id: docSnap.id, ...docSnap.data() } as Grade)
-          : undefined
+      getDocs(gradeQuery).then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          return Promise.reject(new Error('Type with this name already exists'));
+        } else {
+          return addDoc(this.typesCollection, type).then((docRef) => docRef.id);
+        }
+      })
+    );
+  }
+  getTypes(): Observable<Type[]> {
+    return from(
+      getDocs(this.typesCollection).then((querySnapshot) =>
+        querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Type[]
       )
     );
   }
-
-  updateGrade(id: string, grade: Partial<Grade>): Observable<void> {
-    const docRef = doc(db, 'grade', id);
-    return from(updateDoc(docRef, grade));
-  }
-  deleteGrade(id: string): Observable<void> {
-    const docRef = doc(db, 'grade', id);
+  deleteType(id: string): Observable<void> {
+    const docRef = doc(db, 'type', id);
     return from(deleteDoc(docRef));
   }
 

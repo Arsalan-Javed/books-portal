@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/_metronic/shared/shared.module';
-import { Book, BookService, Grade } from 'src/app/pages/books/book.service';
-import { Bundle, BundleBook, BundleService } from 'src/app/pages/bundle/bundle.service';
+import {  BookService } from 'src/app/pages/books/book.service';
+import {  BundleService } from 'src/app/pages/bundle/bundle.service';
 import { CartService } from '../services/cart.service';
 import Swal from 'sweetalert2'
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
+import { Book, Bundle, BundleBook, Grade, School, Type } from '../services/modal';
 
 @Component({
   selector: 'app-home',
@@ -18,8 +19,10 @@ import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase
 export class HomeComponent {
   books: Book[] = [];
   grades: Grade[] = []
+  types: Type[] = []
   bundles: Bundle[] = [];
-  showBooks: Book[] = []
+  showBooks: Book[] = [];
+  schools: School[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -35,10 +38,10 @@ export class HomeComponent {
   }
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
-      this.books = books;
       this.books = books.map(book => ({
         ...book,
-        grade: this.getGrade(book.grade)
+        grade: this.getGrade(book.grade),
+        type: this.getType(book.type),
       }));
       this.getBundles()
     });
@@ -46,18 +49,42 @@ export class HomeComponent {
   getGrades() {
     this.bookService.getGrades().subscribe((grades) => {
       this.grades = grades;
+      this.getTypes()
+      this.getSchools()
       this.loadBooks();
     }, () => {
       this.loadBooks();
+    })
+  }
+  getTypes(){
+    this.bookService.getTypes().subscribe((types)=>{
+      this.types = types
+    })
+  }
+  getSchools(){
+    this.bundleService.getSchool().subscribe((schools)=>{
+      this.schools = schools
     })
   }
   getGrade(id: any): string {
     const grade = this.grades.find(g => g.id === id);
     return grade ? grade.name : 'Unknown Grade';
   }
+  getType(id: any): string {
+    const type = this.types.find(g => g.id === id);
+    return type ? type.name : 'Unknown Type';
+  }
+  getSchool(id: any): string {
+    const school = this.schools.find(g => g.id === id);
+    return school ? school.name : 'Unknown School';
+  }
   getBundles() {
     this.bundleService.getBundles().subscribe((bundle) => {
-      this.bundles = bundle;
+      this.bundles = bundle.map(bundle => ({
+        ...bundle,
+        grade: this.getGrade(bundle.grade),
+        school: this.getSchool(bundle.school),
+      }));
       this.cdr.detectChanges();
     });
   }

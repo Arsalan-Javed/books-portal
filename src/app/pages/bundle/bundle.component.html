@@ -118,38 +118,59 @@
       </div>
 
       <div class="row mb-6">
-        <label class="col-lg-2 col-form-label fw-bold fs-6"><span>Bundle Name</span></label>
-        <div class="col-lg-10 d-flex gap-3">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span>Bundle Name</span></label>
+        <div class="col-lg-9 ">
           <input type="text" class="form-control form-control-lg form-control-solid" formControlName="bundleName"
             placeholder="Enter Bundle Name" />
-          <button class="btn btn-primary w-50" (click)="openSelectBooks(modalBook)">Add Books in Bundle</button>
         </div>
       </div>
 
-      <div class="row mb-6"*ngIf="selectedBooks.length > 0">
+      <div class="row mb-6">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Grade</span></label>
+        <div class="col-lg-9 d-flex gap-5">
+          <select class="form-select form-select-solid form-select-lg"formControlName="grade">
+            <option value="null" selected>Select a Grade...</option>
+            @for (grade of grades; track $index) {
+            <option [value]="grade.id">{{ grade.name }} </option>
+            }
+          </select>
+          <button class="btn btn-primary w-25 p-0" (click)="openGrade(modalGrade)">Add Grade</button>
+        </div>
+      </div>
+
+      <div class="row mb-6">
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">School</span></label>
+        <div class="col-lg-9 d-flex gap-5">
+          <select class="form-select form-select-solid form-select-lg"formControlName="school">
+            <option value="null" selected>Select a School...</option>
+            @for (school of schools; track $index) {
+            <option [value]="school.id">{{ school.name }} </option>
+            }
+          </select>
+          <button class="btn btn-primary w-25 p-0" (click)="openSchool(modalSchool)">Add School</button>
+        </div>
+      </div>
+
+      <div class="mb-6 text-center">
+        <button class="btn btn-primary w-25" (click)="openSelectBooks(modalBook)">Add Books in Bundle</button>
+      </div>
+
+      <div class="row mb-6" *ngIf="selectedBooks.length > 0">
         <h1 class="fw-bold fs-3">Books List</h1>
       </div>
 
-      <div class="row mb-6"  *ngFor="let bookGroup of booksFormArray.controls;  let i = index">
+      <div class="row mb-6" *ngFor="let bookGroup of booksFormArray.controls;  let i = index">
         <label class="col-lg-2 col-form-label fw-bold fs-6">
           <span>{{ bookGroup.get('bookName')?.value }}</span>
         </label>
         <div class="col-lg-10 d-flex gap-5">
-          <input
-            type="number"
-            class="form-control form-control-lg form-control-solid"
-            [formControl]="getBookControl(i, 'price')"
-          />
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-danger w-25"
-            (click)="onRemoveBook(i)"
-          >
+          <input type="number" class="form-control form-control-lg form-control-solid"
+            [formControl]="getBookControl(i, 'price')" />
+          <button type="button" class="btn btn-sm btn-outline-danger w-25" (click)="onRemoveBook(i)">
             <i class="bi bi-trash"></i>
           </button>
         </div>
       </div>
-
 
       <div class="text-center">
         <button type="submit" class="btn btn-primary" [disabled]="bundleForm.invalid" (click)="submitBundle(modal)">
@@ -183,5 +204,72 @@
     </app-books-list>
   </div>
 </ng-template>
+
+<ng-template #modalGrade let-modalG>
+  <div class="modal-header">
+    <h4 class="modal-title">Add Grade</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalG.dismiss()"></button>
+  </div>
+
+  <div class="modal-body p-3">
+    <form (ngSubmit)="submit(modalG)" #gradeForm="ngForm">
+      <div class="mb-3">
+        <label for="name" class="form-label">Grade Name</label>
+        <div class="d-flex gap-5">
+          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="grade.name" required />
+          <button type="button" class="btn btn-primary" [disabled]="!grade.name" (click)="submit(modalG)">Save</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div *ngIf="grades.length > 0" class="m-3">
+    <h5>Grade List</h5>
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let g of grades">
+        {{ g.name }}
+        <div>
+          <button class="btn btn-sm btn-outline-danger" (click)="deleteGrade(g.id)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</ng-template>
+
+<ng-template #modalSchool let-modalS>
+  <div class="modal-header">
+    <h4 class="modal-title">Add School</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalS.dismiss()"></button>
+  </div>
+
+  <div class="modal-body p-3">
+    <form (ngSubmit)="submitSchool(modalS)" >
+      <div class="mb-3">
+        <label for="name" class="form-label">School Name</label>
+        <div class="d-flex gap-5">
+          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="school.name" required />
+          <button type="button" class="btn btn-primary" [disabled]="!school.name" (click)="submitSchool(modalS)">Save</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div *ngIf="schools.length > 0" class="m-3">
+    <h5>Schools List</h5>
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let g of schools">
+        {{ g.name }}
+        <div>
+          <button class="btn btn-sm btn-outline-danger" (click)="deleteSchool(g.id)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</ng-template>
+
 <swal #noticeSwal [swalOptions]="swalOptions">
 </swal>
