@@ -172,6 +172,8 @@ export class CartService {
 
         const order: Order = {
           userId,
+          status:'placed',
+          paymentStatus:'unpaid',
           items: sanitizedItems,
           totalAmount,
           createdAt: new Date(),

@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SweetAlertOptions } from 'sweetalert2';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import Swal from 'sweetalert2';
-import { Book, Grade, Type } from 'src/app/parents/services/modal';
+import { Book, Grade, Category } from 'src/app/parents/services/modal';
 
 
 @Component({
@@ -18,9 +18,9 @@ export class BooksComponent implements OnInit {
   bookForm: FormGroup;
   currentBookId!: any;
   grade: Grade = { name: '' };
-  type: Type = { name: '' };
+  category: Category = { name: '' };
   grades: Grade[] = []
-  types: Type[] = []
+  categories: Category[] = []
   dummyImg: string = './assets/images/book.jpg'
   constructor(
     private modalService: NgbModal,
@@ -43,7 +43,7 @@ export class BooksComponent implements OnInit {
       bookName: ['', Validators.required],
       image: ['', Validators.required],
       grade: [null, Validators.required],
-      type: [null, Validators.required],
+      category: [null, Validators.required],
       academicYear: ['', Validators.required],
       description: ['', Validators.required],
       quantity: [0, [Validators.required, Validators.min(1)]],
@@ -58,7 +58,7 @@ export class BooksComponent implements OnInit {
       bookName: '',
       image: '',
       grade:null,
-      type:null,
+      category:null,
       description: '',
       quantity: 0,
       price: 0
@@ -143,8 +143,8 @@ export class BooksComponent implements OnInit {
     })
   }
   getTypes() {
-    this.bookService.getTypes().subscribe((types) => {
-      this.types = types;
+    this.bookService.getCategories().subscribe((cat) => {
+      this.categories = cat;
     })
   }
   deleteBook(id: any) {
@@ -236,20 +236,20 @@ export class BooksComponent implements OnInit {
     return grade ? grade.name : 'Unknown Grade';
   }
 
-  openType(content: any) {
-    this.type = { name: '' }
+  openCat(content: any) {
+    this.category = { name: '' }
     this.modalService.open(content, { size: 'md', centered: true });
   }
   submitType(modal: any) {
-    this.bookService.addType(this.type).subscribe({
+    this.bookService.addType(this.category).subscribe({
       next: (id) => {
         this.showAlert(this.successAlert);
-        this.bookForm.patchValue({type:id});
+        this.bookForm.patchValue({category:id});
         modal.close();
         this.getTypes()
       },
       error: (err) => {
-        console.error('Error adding grade:', err.message);
+        console.error('Error adding Category:', err.message);
         this.errorAlert = {
           icon: 'error',
           title: 'Error!',
@@ -269,7 +269,7 @@ export class BooksComponent implements OnInit {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bookService.deleteType(id).subscribe({
+        this.bookService.deleteCategory(id).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The Type has been deleted.', 'success');
             this.getTypes();
@@ -284,7 +284,7 @@ export class BooksComponent implements OnInit {
   }
 
   getType(id: any): string {
-    const type = this.types.find(t => t.id === id);
+    const type = this.categories.find(t => t.id === id);
     return type ? type.name : 'Unknown Type';
   }
 

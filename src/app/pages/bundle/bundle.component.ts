@@ -6,7 +6,7 @@ import {  BundleService } from './bundle.service';
 import { SweetAlertOptions } from 'sweetalert2';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import Swal from 'sweetalert2';
-import { Book, Bundle, BundleBook, Grade, School, Type } from 'src/app/parents/services/modal';
+import { Book, Bundle, BundleBook, Grade, School, Category } from 'src/app/parents/services/modal';
 
 @Component({
   selector: 'app-bundle',
@@ -17,13 +17,13 @@ export class BundleComponent implements OnInit {
   books: Book[] = [];
   bundleForm!: FormGroup;
   currentBundleId: string = '';
-  selectedBooks: { id: string; bookName: string; price: number }[] = [];
+  selectedBooks: { id: string; bookName: string; price: number ,quantity:number}[] = [];
   bundles: Bundle[] = [];
   showBooks: Book[] = []
   grades: Grade[] = []
   grade: Grade = { name: '' };
-  school: School = { name: '' };
-  types: Type[] = []
+  school: School = { name: '' ,representative:'',phoneNumber:'' };
+  types: Category[] = []
   schools: School[] = []
   dummyImg: string = './assets/images/books.jpg'
   constructor(
@@ -58,22 +58,27 @@ export class BundleComponent implements OnInit {
       image: ['', Validators.required],
       grade: ['', Validators.required],
       school: ['', Validators.required],
+      price: [0, Validators.required],
       books: this.fb.array([]),
     });
-    this.addBooksToForm();
+    this.booksFormArray.valueChanges.subscribe(() => {
+      const totalPrice = this.getTotalBundlePrice();
+      this.bundleForm.get('price')?.setValue(totalPrice, { emitEvent: false });
+    });
+
   }
   get booksFormArray(): FormArray {
     return this.bundleForm.get('books') as FormArray;
   }
   addBooksToForm() {
     this.booksFormArray.clear();
-    const booksFormArray = this.bundleForm.get('books') as FormArray;
     this.selectedBooks.forEach((book) => {
-      booksFormArray.push(
+      this.booksFormArray.push(
         this.fb.group({
           id: [book.id],
           bookName: [book.bookName],
           price: [book.price],
+          quantity:[book.quantity ]
         })
       );
     });
@@ -154,6 +159,7 @@ export class BundleComponent implements OnInit {
     this.selectedBooks = bundle.books;
     this.addBooksToForm()
     this.modalService.open(modal, { size: 'lg', centered: true });
+    this.bundleForm.get('price')?.setValue(bundle.price, { emitEvent: false });
   }
 
   loadBooks() {
@@ -162,7 +168,7 @@ export class BundleComponent implements OnInit {
       this.books = books.map(book => ({
         ...book,
         grade: this.getGrade(book.grade),
-        type:this.getType(book.type)
+        category:this.getType(book.category)
       }));
       this.cdr.detectChanges();
       this.getBundles()
@@ -178,7 +184,7 @@ export class BundleComponent implements OnInit {
     })
   }
   getTypes() {
-    this.bookService.getTypes().subscribe((types) => {
+    this.bookService.getCategories().subscribe((types) => {
       this.types = types;
       this.getSchool()
     })
@@ -196,9 +202,18 @@ export class BundleComponent implements OnInit {
     const type = this.types.find(g => g.id === id);
     return type ? type.name : 'Unknown Type';
   }
+  getSchoolName(id: any): string {
+    const type = this.schools.find(g => g.id === id);
+    return type ? type.name : 'Unknown Type';
+  }
   getBundles() {
     this.bundleService.getBundles().subscribe((bundle) => {
       this.bundles = bundle;
+      this.bundles = bundle.map(bundle => ({
+        ...bundle,
+        grade: this.getGrade(bundle.grade),
+        school:this.getSchoolName(bundle.school)
+      }));
       this.cdr.detectChanges();
     });
   }
@@ -271,8 +286,28 @@ export class BundleComponent implements OnInit {
     }
   }
   handleSelectedBooks(selectedBooks: any[], modalRef: any) {
-    this.selectedBooks = selectedBooks
-    this.addBooksToForm();
+    selectedBooks.forEach((book) => {
+      const exists = this.selectedBooks.some((b) => b.id === book.id);
+      if (!exists) {
+        this.selectedBooks.push({
+          id: book.id,
+          bookName: book.bookName,
+          price: book.price,
+          quantity: 1
+        });
+      }
+    });
+    this.booksFormArray.clear();
+    this.selectedBooks.forEach((book) => {
+      this.booksFormArray.push(
+        this.fb.group({
+          id: [book.id],
+          bookName: [book.bookName],
+          price: [book.price],
+          quantity:[book.quantity]
+        })
+      );
+    });
     modalRef.close();
   }
   showAlert(swalOptions: SweetAlertOptions) {
@@ -339,7 +374,7 @@ export class BundleComponent implements OnInit {
   }
 
   openSchool(content: any) {
-    this.school = { name: '' }
+    this.school = { name: '' ,representative:'',phoneNumber:'' }
     this.modalService.open(content, { size: 'md', centered: true });
   }
   submitSchool(modal: any) {
@@ -383,6 +418,13 @@ export class BundleComponent implements OnInit {
         });
       }
     });
+  }
+  getTotalBundlePrice(): number {
+    return this.booksFormArray.controls.reduce((total, group) => {
+      const price = group.get('price')?.value || 0;
+      const quantity = group.get('quantity')?.value || 0;
+      return total + (price * quantity);
+    }, 0);
   }
 
 }

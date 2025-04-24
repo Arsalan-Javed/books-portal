@@ -32,6 +32,8 @@
           </th>
           <th class="min-w-150px">Name</th>
           <th class="min-w-150px">Price</th>
+          <th class="min-w-150px">School Name</th>
+          <th class="min-w-150px">Grade</th>
           <th class="min-w-240px">Books</th>
           <th class="min-w-100px text-end">Actions</th>
         </tr>
@@ -59,6 +61,24 @@
               <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
                 ${{ getTotalPrice(bundle?.books) }}
               </span>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                  {{ bundle?.school }}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                  {{ bundle?.grade }}
+                </span>
+              </div>
             </div>
           </td>
           <td>
@@ -128,7 +148,7 @@
       <div class="row mb-6">
         <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Grade</span></label>
         <div class="col-lg-9 d-flex gap-5">
-          <select class="form-select form-select-solid form-select-lg"formControlName="grade">
+          <select class="form-select form-select-solid form-select-lg" formControlName="grade">
             <option value="null" selected>Select a Grade...</option>
             @for (grade of grades; track $index) {
             <option [value]="grade.id">{{ grade.name }} </option>
@@ -141,7 +161,7 @@
       <div class="row mb-6">
         <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">School</span></label>
         <div class="col-lg-9 d-flex gap-5">
-          <select class="form-select form-select-solid form-select-lg"formControlName="school">
+          <select class="form-select form-select-solid form-select-lg" formControlName="school">
             <option value="null" selected>Select a School...</option>
             @for (school of schools; track $index) {
             <option [value]="school.id">{{ school.name }} </option>
@@ -158,19 +178,48 @@
       <div class="row mb-6" *ngIf="selectedBooks.length > 0">
         <h1 class="fw-bold fs-3">Books List</h1>
       </div>
+      <div class="row fw-bold fs-4 border-bottom pb-2 mb-3 text-center">
+        <div class="col-3 text-start">Book Name</div>
+        <div class="col-3 text-start">Price</div>
+        <div class="col-3 text-start">Quantity</div>
+        <div class="col-2">Total</div>
+        <div class="col-1">Action</div>
+      </div>
 
-      <div class="row mb-6" *ngFor="let bookGroup of booksFormArray.controls;  let i = index">
-        <label class="col-lg-2 col-form-label fw-bold fs-6">
-          <span>{{ bookGroup.get('bookName')?.value }}</span>
-        </label>
-        <div class="col-lg-10 d-flex gap-5">
+      <div class="row mb-3 align-items-center" *ngFor="let bookGroup of booksFormArray.controls; let i = index">
+        <div class="col-3 text-start">
+          {{ bookGroup.get('bookName')?.value }}
+        </div>
+        <div class="col-3">
           <input type="number" class="form-control form-control-lg form-control-solid"
             [formControl]="getBookControl(i, 'price')" />
-          <button type="button" class="btn btn-sm btn-outline-danger w-25" (click)="onRemoveBook(i)">
+        </div>
+        <div class="col-3">
+          <input type="number" class="form-control form-control-lg form-control-solid"
+            [formControl]="getBookControl(i, 'quantity')" />
+        </div>
+        <div class="col-2 text-center fw-bold fs-5">
+          {{
+          (getBookControl(i, 'price').value || 0) *
+          (getBookControl(i, 'quantity').value || 0)
+          }}
+        </div>
+        <div class="col-1 text-center">
+          <button type="button" class="btn btn-outline-danger" (click)="onRemoveBook(i)">
             <i class="bi bi-trash"></i>
           </button>
         </div>
       </div>
+
+      <div class="w-100 d-flex align-items-center justify-content-end mb-3">
+        <div class="row w-50">
+          <label class="col-lg-5 text-end col-form-label fw-bold fs-6"><span>Bundle Price</span></label>
+          <div class="col-lg-6">
+            <input type="text" class="form-control form-control-lg form-control-solid" formControlName="price" />
+          </div>
+        </div>
+      </div>
+
 
       <div class="text-center">
         <button type="submit" class="btn btn-primary" [disabled]="bundleForm.invalid" (click)="submitBundle(modal)">
@@ -245,13 +294,23 @@
   </div>
 
   <div class="modal-body p-3">
-    <form (ngSubmit)="submitSchool(modalS)" >
+    <form (ngSubmit)="submitSchool(modalS)">
       <div class="mb-3">
         <label for="name" class="form-label">School Name</label>
-        <div class="d-flex gap-5">
-          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="school.name" required />
-          <button type="button" class="btn btn-primary" [disabled]="!school.name" (click)="submitSchool(modalS)">Save</button>
-        </div>
+        <input type="text" class="form-control" id="name" name="name" [(ngModel)]="school.name" required />
+      </div>
+      <div class="mb-3">
+        <label for="name" class="form-label">Representative</label>
+        <input type="text" class="form-control" id="name" name="name" [(ngModel)]="school.representative" required />
+      </div>
+      <div class="mb-3">
+        <label for="name" class="form-label">Phone Number</label>
+        <input type="number" class="form-control" id="name" name="name" [(ngModel)]="school.phoneNumber" required />
+      </div>
+      <div class="text-end">
+        <button type="button" class="btn btn-primary"
+          [disabled]="!school.name || !school.representative || !school.phoneNumber"
+          (click)="submitSchool(modalS)">Save</button>
       </div>
     </form>
   </div>

@@ -1,1 +1,100 @@
-<p>order works!</p>
+<div class="card-body py-3">
+  <!-- begin::Table container -->
+  <div class="table-responsive">
+    <!-- begin::Table -->
+    <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+      <!-- begin::Table head -->
+      <thead>
+        <tr class="fw-bolder text-muted">
+          <th class="min-w-150px">Order ID</th>
+          <th class="min-w-150px">Total Items </th>
+          <th class="min-w-150px">Total Amount </th>
+          <th class="min-w-150px">Date </th>
+          <th class="min-w-150px">Payment Status</th>
+          <th class="min-w-100px text-end">Status</th>
+        </tr>
+      </thead>
+      <!-- end::Table head -->
+      <!-- begin::Table body -->
+      <tbody *ngIf="orders && orders.length > 0; else noOrders">
+        <tr *ngFor="let order of orders">
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                  {{ order?.id }}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                  {{ order.items.length }}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                  {{ order.totalAmount | currency}}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
+                  {{ order.createdAt | date: 'medium' }}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6 text-capitalize">
+                  {{ order.paymentStatus }}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="text-end">
+              <div class="d-flex justify-content-start flex-column">
+                <span class="text-gray-900 fw-bolder text-hover-primary fs-6 text-capitalize">
+                  {{ order.status }}
+                </span>
+              </div>
+            </div>
+          </td>
+
+          <!-- <td>
+            <div class="d-flex justify-content-end flex-shrink-0">
+              <button class="btn btn-icon btn-bg-light btn-sm me-1" (click)="editBundle(modalContent, bundle)">
+                <app-keenicon name="pencil" class="fs-3"></app-keenicon>
+              </button>
+              <button class="btn btn-icon btn-bg-light btn-sm" (click)="deleteBundle(bundle?.id)">
+                <app-keenicon name="trash" class="fs-3"></app-keenicon>
+              </button>
+            </div>
+          </td> -->
+        </tr>
+      </tbody>
+      <ng-template #noOrders>
+        <tr>
+          <td colspan="6" class="text-center">No Orders found.</td>
+        </tr>
+      </ng-template>
+
+      <!-- end::Table body -->
+    </table>
+
+    <!-- end::Table -->
+  </div>
+  <!-- end::Table container -->
+</div>

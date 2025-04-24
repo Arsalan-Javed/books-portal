@@ -15,7 +15,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Book, Grade,Type } from 'src/app/parents/services/modal';
+import { Book, Grade,Category } from 'src/app/parents/services/modal';
 
 
 const firebaseApp = initializeApp(environment.firebaseConfig);
@@ -27,7 +27,7 @@ export const db = getFirestore(firebaseApp);
 export class BookService {
   private booksCollection = collection(db, 'books');
   private gradesCollection = collection(db, 'grade');
-  private typesCollection = collection(db, 'type');
+  private categoriesCollection = collection(db, 'category');
 
   constructor() { }
 
@@ -57,30 +57,30 @@ export class BookService {
     const docRef = doc(db, 'grade', id);
     return from(deleteDoc(docRef));
   }
-  addType(type: Type): Observable<string> {
-    const gradeQuery = query(this.typesCollection, where('name', '==', type.name));
+  addType(category: Category): Observable<string> {
+    const gradeQuery = query(this.categoriesCollection, where('name', '==', category.name));
     return from(
       getDocs(gradeQuery).then((querySnapshot) => {
         if (!querySnapshot.empty) {
-          return Promise.reject(new Error('Type with this name already exists'));
+          return Promise.reject(new Error('Category with this name already exists'));
         } else {
-          return addDoc(this.typesCollection, type).then((docRef) => docRef.id);
+          return addDoc(this.categoriesCollection, category).then((docRef) => docRef.id);
         }
       })
     );
   }
-  getTypes(): Observable<Type[]> {
+  getCategories(): Observable<Category[]> {
     return from(
-      getDocs(this.typesCollection).then((querySnapshot) =>
+      getDocs(this.categoriesCollection).then((querySnapshot) =>
         querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        })) as Type[]
+        })) as Category[]
       )
     );
   }
-  deleteType(id: string): Observable<void> {
-    const docRef = doc(db, 'type', id);
+  deleteCategory(id: string): Observable<void> {
+    const docRef = doc(db, 'category', id);
     return from(deleteDoc(docRef));
   }
 

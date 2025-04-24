@@ -33,7 +33,7 @@
           <th class="min-w-150px">Name</th>
           <th class="min-w-140px">Description</th>
           <th class="min-w-120px">Grade</th>
-          <th class="min-w-120px">Type</th>
+          <th class="min-w-120px">Category</th>
           <th class="min-w-120px">Academic Year</th>
           <th class="min-w-120px">Quantity</th>
           <th class="min-w-120px">Price </th>
@@ -68,7 +68,7 @@
             <span class="text-gray-900 fw-bolder fs-6">{{ getGrade(book.grade) }}</span>
           </td>
           <td>
-            <span class="text-gray-900 fw-bolder fs-6">{{ getType(book.type) }}</span>
+            <span class="text-gray-900 fw-bolder fs-6">{{ getType(book.category) }}</span>
           </td>
           <td>
             <span class="text-gray-900 fw-bolder fs-6">{{ book?.academicYear }}</span>
@@ -157,15 +157,15 @@
       </div>
 
       <div class="row mb-6">
-        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Type</span></label>
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Category</span></label>
         <div class="col-lg-9 d-flex gap-5">
-          <select class="form-select form-select-solid form-select-lg"formControlName="type">
-            <option value="null" selected>Select a Type...</option>
-            @for (type of types; track $index) {
+          <select class="form-select form-select-solid form-select-lg"formControlName="category">
+            <option value="null" selected>Select a Category...</option>
+            @for (type of categories; track $index) {
             <option [value]="type.id">{{ type.name }} </option>
             }
           </select>
-          <button class="btn btn-primary w-25" (click)="openType(modalType)">Add Type</button>
+          <button class="btn btn-primary w-25" (click)="openCat(modalCat)" style="font-size: .8vw;">Add Category</button>
         </div>
       </div>
 
@@ -178,7 +178,7 @@
             <option [value]="grade.id">{{ grade.name }} </option>
             }
           </select>
-          <button class="btn btn-primary w-25" (click)="openGrade(modalGrade)">Add Grade</button>
+          <button class="btn btn-primary w-25" (click)="openGrade(modalGrade)"style="font-size: .8vw;">Add Grade</button>
         </div>
       </div>
 
@@ -231,27 +231,27 @@
 
 </ng-template>
 
-<ng-template #modalType let-modalT>
+<ng-template #modalCat let-modalT>
   <div class="modal-header">
-    <h4 class="modal-title">Add Type</h4>
+    <h4 class="modal-title">Add Category</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalT.dismiss()"></button>
   </div>
 
   <div class="modal-body p-3">
     <form >
       <div class="mb-3">
-        <label for="name" class="form-label">Type Name</label>
+        <label for="name" class="form-label">Category Name</label>
         <div class="d-flex gap-5">
-          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="type.name" required />
-          <button type="button" class="btn btn-primary" [disabled]="!type.name" (click)="submitType(modalT)">Save</button>
+          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="category.name" required />
+          <button type="button" class="btn btn-primary" [disabled]="!category.name" (click)="submitType(modalT)">Save</button>
         </div>
       </div>
     </form>
   </div>
-  <div *ngIf="types.length > 0" class="m-3">
-    <h5>Type List</h5>
+  <div *ngIf="categories.length > 0" class="m-3">
+    <h5>Category List</h5>
     <ul class="list-group">
-      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let t of types">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let t of categories">
         {{ t.name }}
         <div>
           <button class="btn btn-sm btn-outline-danger" (click)="deleteType(t.id)">

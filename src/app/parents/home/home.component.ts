@@ -7,7 +7,7 @@ import {  BundleService } from 'src/app/pages/bundle/bundle.service';
 import { CartService } from '../services/cart.service';
 import Swal from 'sweetalert2'
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
-import { Book, Bundle, BundleBook, Grade, School, Type } from '../services/modal';
+import { Book, Bundle, BundleBook, Grade, School, Category } from '../services/modal';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +19,7 @@ import { Book, Bundle, BundleBook, Grade, School, Type } from '../services/modal
 export class HomeComponent {
   books: Book[] = [];
   grades: Grade[] = []
-  types: Type[] = []
+  types: Category[] = []
   bundles: Bundle[] = [];
   showBooks: Book[] = [];
   schools: School[] = [];
@@ -41,7 +41,7 @@ export class HomeComponent {
       this.books = books.map(book => ({
         ...book,
         grade: this.getGrade(book.grade),
-        type: this.getType(book.type),
+        category: this.getType(book.category),
       }));
       this.getBundles()
     });
@@ -57,7 +57,7 @@ export class HomeComponent {
     })
   }
   getTypes(){
-    this.bookService.getTypes().subscribe((types)=>{
+    this.bookService.getCategories().subscribe((types)=>{
       this.types = types
     })
   }

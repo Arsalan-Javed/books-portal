@@ -2,7 +2,7 @@ export interface Grade {
   id?: string;
   name: string;
 }
-export interface Type {
+export interface Category {
   id?: string;
   name: string;
 }
@@ -10,6 +10,8 @@ export interface Type {
 export interface School {
   id?: string;
   name: string;
+  representative:string;
+  phoneNumber:number | ''
 }
 
 export interface Book {
@@ -20,7 +22,7 @@ export interface Book {
   quantity: number;
   price: number;
   grade: string;
-  type: string;
+  category: string;
   academicYear: number
 }
 
@@ -28,6 +30,7 @@ export interface BundleBook {
   id: string;
   bookName: string;
   price: number;
+  quantity: number;
 }
 
 export interface Bundle {
@@ -36,6 +39,7 @@ export interface Bundle {
   image:string;
   grade: string;
   school: string;
+  price:number;
   books: BundleBook[];
 }
 
@@ -55,6 +59,8 @@ export interface PopulatedCartItem extends CartItem {
 export interface Order {
   id?: string;
   userId: string;
+  status:string;
+  paymentStatus:string;
   items: CartItem[];
   totalAmount: number;
   createdAt: Date;
