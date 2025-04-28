@@ -17,7 +17,7 @@
       <!-- end::Table head -->
       <!-- begin::Table body -->
       <tbody *ngIf="orders && orders.length > 0; else noOrders">
-        <tr *ngFor="let order of orders">
+        <tr *ngFor="let order of orders" class="cursor-pointer" (click)="goToOrder(order.id)">
           <td>
             <div class="d-flex align-items-center">
               <div class="d-flex justify-content-start flex-column">

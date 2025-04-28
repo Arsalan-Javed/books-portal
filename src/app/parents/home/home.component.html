@@ -29,7 +29,7 @@
           (click)="openShowBook(modalBookShow, bundle?.books)">Books: {{ bundle.books.length }}</h6>
       </div>
       <div class="d-flex justify-content-between align-items-center border-top p-3">
-        <div>Price: ${{ getTotalPrice(bundle.books) }}</div>
+        <div>Price: ${{ bundle.price }}</div>
         <button class="btn btn-secondary d-flex align-items-center gap-2 p-3" (click)="addCart(bundle)"><app-keenicon name="plus-circle" class="fs-3"></app-keenicon> Cart</button>
       </div>
     </div>
@@ -43,6 +43,6 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="modalShow.dismiss()"></button>
   </div>
   <div class="modal-body">
-    <app-books-list [books]='showBooks'></app-books-list>
+    <app-books-list [books]='showBooks' [isAddToCart]="true" (cartBook)="addBundleBook($event,modalShow)" ></app-books-list>
   </div>
 </ng-template>

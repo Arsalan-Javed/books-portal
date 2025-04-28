@@ -7,8 +7,10 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class BooksListComponent {
   @Input() books: any[] = [];
+  @Input() isAddToCart:boolean = false
   @Input() isSelect: boolean = false;
   @Output() selectedBooksEmit = new EventEmitter<any[]>();
+  @Output() cartBook = new EventEmitter<any[]>();
 
   selectedBooks: any[] = [];
   selectAll: boolean = false;
@@ -42,4 +44,8 @@ export class BooksListComponent {
   isBookSelected(book: any): boolean {
     return this.selectedBooks.includes(book);
   }
+  addBundleBook(book: any) {
+    this.cartBook.emit(book);
+  }
+
 }

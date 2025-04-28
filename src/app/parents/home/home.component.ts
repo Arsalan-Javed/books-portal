@@ -150,4 +150,28 @@ export class HomeComponent {
       }
     });
   }
+  addBundleBook(book:any,modal:any){
+    const item = { bookId: book.id };
+    this.cartService.addToCart(item).subscribe({
+      next: (cartId) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Added to Cart',
+          text: 'Book has been successfully added!',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        modal.close()
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to Book item to cart!',
+        });
+        modal.close()
+      }
+    });
+
+  }
 }

@@ -199,4 +199,20 @@ export class CartService {
       )
     );
   }
+  getOrderById(orderId: string): Observable<Order | undefined> {
+    const orderDoc = doc(this.ordersCollection, orderId);
+    return from(
+      getDoc(orderDoc).then((docSnapshot) => {
+        if (docSnapshot.exists()) {
+          return {
+            id: docSnapshot.id,
+            ...docSnapshot.data(),
+          } as Order;
+        } else {
+          return undefined;
+        }
+      })
+    );
+  }
+
 }

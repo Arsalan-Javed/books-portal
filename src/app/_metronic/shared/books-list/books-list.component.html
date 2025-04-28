@@ -28,8 +28,9 @@
         <th class="min-w-120px">Grade</th>
         <th class="min-w-120px">Category</th>
         <th class="min-w-120px">Academic Year</th>
-        <th class="min-w-120px">Quantity</th>
+        <th class="min-w-120px" *ngIf="!isAddToCart">Quantity</th>
         <th class="min-w-120px">Price </th>
+        <th class="min-w-100px text-end" *ngIf="isAddToCart">Actions</th>
       </tr>
     </thead>
     <!-- end::Table head -->
@@ -69,11 +70,17 @@
         <td>
           <span class="text-gray-900 fw-bolder fs-6">{{ book?.academicYear }}</span>
         </td>
-        <td>
+        <td *ngIf="!isAddToCart">
           <span class="text-gray-900 fw-bolder fs-6">{{ book?.quantity }}</span>
         </td>
         <td>
           <span class="text-gray-900 fw-bolder fs-6">${{ book?.price }}</span>
+        </td>
+        <td *ngIf="isAddToCart">
+          <div class="d-flex justify-content-end flex-shrink-0">
+            <button class="btn btn-secondary d-flex align-items-center gap-2 p-3"
+            (click)="addBundleBook(book)"><app-keenicon name="plus-circle" class="fs-3"></app-keenicon> Cart</button>
+          </div>
         </td>
       </tr>
     </tbody>

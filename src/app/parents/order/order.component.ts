@@ -38,4 +38,7 @@ export class OrderComponent {
       this.cdr.detectChanges()
     })
   }
+  goToOrder(id: any) {
+    this.router.navigate(['/order', id]);
+  }
 }
