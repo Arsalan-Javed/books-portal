@@ -1,48 +1,89 @@
-<h1 class="my-5 mx-20">Books</h1>
-<div class="d-flex flex-wrap gap-10 mx-20">
-  <div class="mb-4" *ngFor="let book of books">
-    <div class="card h-100">
-      <img [src]="'data:image/png;base64,' + book.image" class="card-img-top" alt="Book Image" />
-      <div class="card-body">
-        <h5 class="card-title">{{ book.bookName }}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Grade: {{ book.grade }}</h6>
-        <h6 class="card-subtitle mb-2 text-muted">Academic Year: {{ book.academicYear }}</h6>
-        <p class="card-text">{{ book.description }}</p>
+<div *ngIf="!isLoading; else loading">
+  <div class="d-flex justify-content-end gap-5 mx-20">
+    <div>
+      <input type="text" [(ngModel)]="filters.name" placeholder="Search by Name" class="form-control"(input)="applyFilters()">
+    </div>
+    <div>
+      <select *ngIf="schools && schools.length > 0 "
+        class="form-select w-100 text-capitalize" [(ngModel)]="filters.school" (change)="applyFilters()">
+        <option  selected value="">Select School</option>
+        @for (item of schools; track $index) {
+        <option [value]="item.id">{{ item.name }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <select *ngIf="types && types.length > 0 "
+        class="form-select w-100 text-capitalize" [(ngModel)]="filters.category" (change)="applyFilters()">
+        <option  selected value="">Select Category</option>
+        @for (item of types; track $index) {
+        <option [value]="item.id">{{ item.name }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <select *ngIf="grades && grades.length > 0 "
+        class="form-select w-100 text-capitalize" [(ngModel)]="filters.grade" (change)="applyFilters()">
+        <option  selected value="">Select Grade</option>
+        @for (item of grades; track $index) {
+        <option [value]="item.id">{{ item.name }}</option>
+        }
+      </select>
+    </div>
+  </div>
+  <h1 class="my-5 mx-20">Books</h1>
+  <div class="d-flex flex-wrap gap-10 mx-20">
+    <div class="mb-4" *ngFor="let book of filteredBooks">
+      <div class="card h-100">
+        <img [src]="'data:image/png;base64,' + book.image" class="card-img-top" alt="Book Image" />
+        <div class="card-body">
+          <h5 class="card-title">{{ book.bookName }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Grade: {{ book.grade }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">Academic Year: {{ book.academicYear }}</h6>
+          <p class="card-text">{{ book.description }}</p>
+        </div>
+        <div class="d-flex justify-content-between align-items-center border-top p-2">
+          <div>Price: ${{ book.price }}</div>
+          <button class="btn btn-secondary d-flex align-items-center gap-2 p-3" (click)="addToCart(book)"><app-keenicon
+              name="plus-circle" class="fs-3"></app-keenicon> Cart</button>
+        </div>
       </div>
-      <div class="d-flex justify-content-between align-items-center border-top p-2">
-        <div>Price: ${{ book.price }}</div>
-        <button class="btn btn-secondary d-flex align-items-center gap-2 p-3" (click)="addToCart(book)"><app-keenicon name="plus-circle" class="fs-3"></app-keenicon> Cart</button>
+    </div>
+  </div>
+  <h1 class="my-5 mx-20">Bundles</h1>
+  <div class="d-flex flex-wrap gap-10 mx-20">
+    <div class="mb-4" *ngFor="let bundle of filteredBundles">
+      <div class="card h-100">
+        <img [src]="'data:image/png;base64,' + bundle.image" class="card-img-top" alt="Book Image" />
+        <div class="card-body">
+          <h5 class="card-title">{{ bundle.bundleName }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">School: {{ bundle.school }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">Grade: {{ bundle.grade }}</h6>
+          <h6 class="card-subtitle text-decoration-underline text-primary cursor-pointer fw-bolder fs-6"
+            (click)="openShowBook(modalBookShow, bundle?.books)">Books: {{ bundle.books.length }}</h6>
+        </div>
+        <div class="d-flex justify-content-between align-items-center border-top p-3">
+          <div>Price: ${{ bundle.price }}</div>
+          <button class="btn btn-secondary d-flex align-items-center gap-2 p-3" (click)="addCart(bundle)"><app-keenicon
+              name="plus-circle" class="fs-3"></app-keenicon> Cart</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<h1 class="my-5 mx-20">Bundles</h1>
-<div class="d-flex flex-wrap gap-10 mx-20">
-  <div class="mb-4" *ngFor="let bundle of bundles">
-    <div class="card h-100">
-      <img [src]="'data:image/png;base64,' + bundle.image" class="card-img-top" alt="Book Image" />
-      <div class="card-body">
-        <h5 class="card-title">{{ bundle.bundleName }}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">School: {{ bundle.school }}</h6>
-        <h6 class="card-subtitle mb-2 text-muted">Grade: {{ bundle.grade }}</h6>
-        <h6 class="card-subtitle text-decoration-underline text-primary cursor-pointer fw-bolder fs-6"
-          (click)="openShowBook(modalBookShow, bundle?.books)">Books: {{ bundle.books.length }}</h6>
-      </div>
-      <div class="d-flex justify-content-between align-items-center border-top p-3">
-        <div>Price: ${{ bundle.price }}</div>
-        <button class="btn btn-secondary d-flex align-items-center gap-2 p-3" (click)="addCart(bundle)"><app-keenicon name="plus-circle" class="fs-3"></app-keenicon> Cart</button>
-      </div>
-    </div>
+<ng-template #loading>
+  <div class="text-center my-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-3">Loading details...</p>
   </div>
-</div>
-
-
+</ng-template>
 <ng-template #modalBookShow let-modalShow>
   <div class="modal-header">
     <h5 class="modal-title"> Books </h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalShow.dismiss()"></button>
   </div>
   <div class="modal-body">
-    <app-books-list [books]='showBooks' [isAddToCart]="true" (cartBook)="addBundleBook($event,modalShow)" ></app-books-list>
+    <app-books-list [books]='showBooks' [isAddToCart]="true"
+      (cartBook)="addBundleBook($event,modalShow)"></app-books-list>
   </div>
 </ng-template>

@@ -4,13 +4,40 @@
       <h3>Order Detail (ID: {{ order.id }})</h3>
     </div>
     <div class="card-body">
-      <p><strong>Status:</strong>
-        <span class="badge ms-2 p-2 bg-secondary" >
-          {{ order.status }}
-        </span></p>
-      <p><strong>Payment Status:</strong> <span class="badge ms-2 p-2 bg-secondary" >
-        {{ order.paymentStatus }}
-      </span></p>
+      <p><strong>User Name:</strong> {{order.user.username}}</p>
+      <p><strong>Email:</strong> {{order.user.email}}</p>
+      <div class="d-flex justify-content-between mb-2">
+        <p><strong>Status:</strong>
+          <span class="badge ms-2 p-3 bg-primary text-white text-capitalize">
+            {{ order.status }}
+          </span>
+        </p>
+        <div class="d-flex align-items-center w-25" *ngIf="user.isAdmin">
+          <label class="w-100">Status:</label>
+          <select class="form-select w-100 ms-2 text-capitalize" [(ngModel)]="order.status"
+            (change)="onStatusChange(order)">
+            <option value="placed">Placed</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="dispatched">Dispatched</option>
+            <option value="delivered">Delivered</option>
+          </select>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between">
+        <p><strong>Payment Status:</strong>
+          <span class="badge ms-2 p-3 bg-success text-white text-capitalize">
+            {{ order.paymentStatus }}
+          </span>
+        </p>
+        <div class="d-flex align-items-center w-25" *ngIf="user.isAdmin">
+          <label class="w-100">Payment Status:</label>
+          <select class="form-select w-100 ms-2 text-capitalize" [(ngModel)]="order.paymentStatus"
+            (change)="onStatusChange(order)">
+            <option value="unpaid">unpaid</option>
+            <option value="paid">paid</option>
+          </select>
+        </div>
+      </div>
       <p><strong>Total Amount:</strong> ${{ order.totalAmount }}</p>
       <p><strong>Created At:</strong> {{ order.createdAt | date:'medium' }}</p>
 
@@ -35,7 +62,8 @@
               <span *ngIf="item.bundle.books.length > 0">
                 books:
                 <span *ngFor="let book of item.bundle.books; let last = last"
-                (click)="openShowBook(modalBookShow, item.bundle?.books)" class="text-decoration-underline cursor-pointer">
+                  (click)="openShowBook(modalBookShow, item.bundle?.books)"
+                  class="text-decoration-underline cursor-pointer">
                   {{ book.bookName }}<span *ngIf="!last">, </span>
                 </span>
               </span>
@@ -81,6 +109,6 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="modalShow.dismiss()"></button>
   </div>
   <div class="modal-body">
-    <app-books-list [books]='showBooks'   ></app-books-list>
+    <app-books-list [books]='showBooks'></app-books-list>
   </div>
 </ng-template>

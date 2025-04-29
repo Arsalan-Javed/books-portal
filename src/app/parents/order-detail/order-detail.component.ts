@@ -7,11 +7,14 @@ import { Timestamp } from 'firebase/firestore';
 import { SharedModule } from 'src/app/_metronic/shared/shared.module';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BookService } from 'src/app/pages/books/book.service';
+import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
+import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [CommonModule,SharedModule],
+  imports: [CommonModule,SharedModule,FormsModule],
   templateUrl: './order-detail.component.html',
   styleUrl: './order-detail.component.scss'
 })
@@ -23,13 +26,16 @@ export class OrderDetailComponent {
   order:any
   showBooks:any
   shipmentCost: number = 0;
+  user:any
   constructor(private route: ActivatedRoute,
     private cartService: CartService,
     private cdr: ChangeDetectorRef,
     private modalService: NgbModal,
     private bookService: BookService,
+    private authService: AuthFirebaseService
     ) {  }
   ngOnInit() {
+    this.user = this.authService.getCurrentUser()
     this.orderId = this.route.snapshot.paramMap.get('id');
     if (this.orderId) {
       this.getOrder(this.orderId)
@@ -37,17 +43,20 @@ export class OrderDetailComponent {
     }
   }
   getOrder(id: any) {
-    this.cartService.getOrderById(id).subscribe(order => {
+    this.cartService.getOrderById(id).subscribe(async order => {
       if (order) {
+        const user = await this.authService.getUserById(order.userId);
+
         this.order = {
           ...order,
+          user: user || null,
           createdAt: (order.createdAt as any).toDate()
         };
+        this.cdr.detectChanges();
       }
-      this.cdr.detectChanges()
     });
-
   }
+
   openShowBook(content: any, showbooks: any) {
     this.showBooks = showbooks
       .map((sb: any) => {
@@ -108,9 +117,32 @@ export class OrderDetailComponent {
     return subTotal;
   }
 
-  // Calculate Grand Total
   calculateGrandTotal(): number {
     return this.calculateSubTotal() + this.shipmentCost;
   }
+  onStatusChange(order: any) {
+    if (!order?.id) return;
+
+  const { status, paymentStatus } = order;
+
+  this.cartService.updateOrder(order.id, { status, paymentStatus })
+    .then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Updated Successfully',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    })
+    .catch(() => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Update Failed',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    });
+  }
+
 
 }

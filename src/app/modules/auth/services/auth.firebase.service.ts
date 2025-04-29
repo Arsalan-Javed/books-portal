@@ -16,7 +16,8 @@ import {
   collection,
   doc,
   setDoc,
-  getDoc
+  getDoc,
+  getDocs
 } from 'firebase/firestore';
 import { environment } from 'src/environments/environment';
 import { AuthModel } from '../models/auth.model';
@@ -89,9 +90,6 @@ export class AuthFirebaseService {
     return auth;
   }
 
-
-
-
   logout() {
     localStorage.removeItem('currentUser');
     this.router.navigate(['/auth/login'], {
@@ -103,4 +101,28 @@ export class AuthFirebaseService {
     const userData = localStorage.getItem('currentUser');
     return userData ? JSON.parse(userData) : null;
   }
+  async getAllUsers(): Promise<any[]> {
+    const usersCollection = collection(this.firestore, 'users');
+    const snapshot = await getDocs(usersCollection);
+    const users = snapshot.docs.map(doc => ({
+      uid: doc.id,
+      ...doc.data()
+    }));
+    return users;
+  }
+  async getUserById(userId: string): Promise<any | null> {
+    const userRef = doc(this.firestore, 'users', userId);
+    const userSnapshot = await getDoc(userRef);
+
+    if (userSnapshot.exists()) {
+      return {
+        uid: userSnapshot.id,
+        ...userSnapshot.data()
+      };
+    } else {
+      return null;
+    }
+  }
+
+
 }

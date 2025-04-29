@@ -2,38 +2,49 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/_metronic/shared/shared.module';
-import {  BookService } from 'src/app/pages/books/book.service';
-import {  BundleService } from 'src/app/pages/bundle/bundle.service';
+import { BookService } from 'src/app/pages/books/book.service';
+import { BundleService } from 'src/app/pages/bundle/bundle.service';
 import { CartService } from '../services/cart.service';
 import Swal from 'sweetalert2'
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
 import { Book, Bundle, BundleBook, Grade, School, Category } from '../services/modal';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule,SharedModule],
+  imports: [CommonModule, SharedModule, FormsModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+  filters = {
+    name:'',
+    category: '',
+    school: '',
+    grade: ''
+  };
+  filteredBooks:any = [];
+  filteredBundles:any = [];
+
   books: Book[] = [];
   grades: Grade[] = []
   types: Category[] = []
   bundles: Bundle[] = [];
   showBooks: Book[] = [];
   schools: School[] = [];
-
+  isLoading: boolean = false
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
     private cdr: ChangeDetectorRef,
     private bundleService: BundleService,
-    private cartService:CartService,
+    private cartService: CartService,
     private authService: AuthFirebaseService
   ) {
   }
   ngOnInit() {
+    this.isLoading = true
     this.getGrades();
   }
   loadBooks() {
@@ -56,13 +67,13 @@ export class HomeComponent {
       this.loadBooks();
     })
   }
-  getTypes(){
-    this.bookService.getCategories().subscribe((types)=>{
+  getTypes() {
+    this.bookService.getCategories().subscribe((types) => {
       this.types = types
     })
   }
-  getSchools(){
-    this.bundleService.getSchool().subscribe((schools)=>{
+  getSchools() {
+    this.bundleService.getSchool().subscribe((schools) => {
       this.schools = schools
     })
   }
@@ -85,6 +96,8 @@ export class HomeComponent {
         grade: this.getGrade(bundle.grade),
         school: this.getSchool(bundle.school),
       }));
+      this.isLoading = false
+      this.applyFilters()
       this.cdr.detectChanges();
     });
   }
@@ -150,7 +163,7 @@ export class HomeComponent {
       }
     });
   }
-  addBundleBook(book:any,modal:any){
+  addBundleBook(book: any, modal: any) {
     const item = { bookId: book.id };
     this.cartService.addToCart(item).subscribe({
       next: (cartId) => {
@@ -174,4 +187,22 @@ export class HomeComponent {
     });
 
   }
+  applyFilters() {
+    const { name, category, school, grade } = this.filters;
+    const lowerName = name?.toLowerCase() || '';
+
+    this.filteredBooks = this.books.filter(book =>
+      (!name || book.bookName.toLowerCase().includes(lowerName)) &&
+      (!category || book.category === this.getType(category)) &&
+      (!grade || book.grade === this.getGrade(grade))
+    );
+
+    this.filteredBundles = this.bundles.filter(bundle =>
+      (!name || bundle.bundleName.toLowerCase().includes(lowerName)) &&
+      (!school || bundle.school === this.getSchool(school)) &&
+      (!grade || bundle.grade === this.getGrade(grade))
+    );
+  }
+
+
 }

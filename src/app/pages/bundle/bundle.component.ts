@@ -26,6 +26,7 @@ export class BundleComponent implements OnInit {
   types: Category[] = []
   schools: School[] = []
   dummyImg: string = './assets/images/books.jpg'
+  isLoading:boolean = false
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
@@ -35,6 +36,7 @@ export class BundleComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.isLoading = true
     this.getGrades();
     this.initForm();
   }
@@ -209,11 +211,12 @@ export class BundleComponent implements OnInit {
   getBundles() {
     this.bundleService.getBundles().subscribe((bundle) => {
       this.bundles = bundle;
-      this.bundles = bundle.map(bundle => ({
-        ...bundle,
-        grade: this.getGrade(bundle.grade),
-        school:this.getSchoolName(bundle.school)
-      }));
+      // this.bundles = bundle.map(bundle => ({
+      //   ...bundle,
+      //   grade: this.getGrade(bundle.grade),
+      //   school:this.getSchoolName(bundle.school)
+      // }));
+      this.isLoading = false
       this.cdr.detectChanges();
     });
   }

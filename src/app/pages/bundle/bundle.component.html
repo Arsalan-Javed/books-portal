@@ -14,7 +14,7 @@
 </div>
 <!-- end::Header -->
 <!-- begin::Body -->
-<div class="card-body py-3">
+<div class="card-body py-3" *ngIf="!isLoading; else loading">
   <!-- begin::Table container -->
   <div class="table-responsive">
     <!-- begin::Table -->
@@ -67,7 +67,7 @@
             <div class="d-flex align-items-center">
               <div class="d-flex justify-content-start flex-column">
                 <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
-                  {{ bundle?.school }}
+                  {{ getSchoolName(bundle.school) }}
                 </span>
               </div>
             </div>
@@ -76,7 +76,7 @@
             <div class="d-flex align-items-center">
               <div class="d-flex justify-content-start flex-column">
                 <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
-                  {{ bundle?.grade }}
+                  {{ getGrade(bundle.grade) }}
                 </span>
               </div>
             </div>
@@ -117,7 +117,12 @@
   <!-- end::Table container -->
 </div>
 <!-- begin::Body -->
-
+<ng-template #loading>
+  <div class="text-center my-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-3">Loading Bundles details...</p>
+  </div>
+</ng-template>
 
 <ng-template #modalContent let-modal>
   <div class="modal-header">

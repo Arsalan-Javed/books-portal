@@ -14,6 +14,10 @@ const Routing: Routes = [
     loadChildren: () => import('./bundle/bundle.module').then((m) => m.BundleModule),
   },
   {
+    path: 'orders',
+    loadChildren: () => import('./orders/orders.module').then((m) => m.OrderModule),
+  },
+  {
     path: 'crafted/pages/profile',
     loadChildren: () => import('../modules/profile/profile.module').then((m) => m.ProfileModule),
     // data: { layout: 'light-sidebar' },

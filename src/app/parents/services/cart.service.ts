@@ -214,5 +214,20 @@ export class CartService {
       })
     );
   }
+  getAllOrders(): Observable<Order[]> {
+    const ordersCol = this.ordersCollection;
+    return from(
+      getDocs(ordersCol).then((querySnapshot) => {
+        return querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        } as Order));
+      })
+    );
+  }
+  updateOrder(orderId: string, data: Partial<Order>): Promise<void> {
+    const orderRef = doc(this.ordersCollection, orderId);
+    return updateDoc(orderRef, data);
+  }
 
 }

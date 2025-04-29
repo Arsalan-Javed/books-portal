@@ -22,6 +22,7 @@ export class CartComponent {
   method: any
   cart: PopulatedCartItem[] = []
   userId:string
+  isLoading:boolean = false
   constructor(
     private router: Router,
     private cdr: ChangeDetectorRef,
@@ -31,12 +32,14 @@ export class CartComponent {
   ) {
   }
   ngOnInit() {
+    this.isLoading = true
     this.userId = this.authService.getCurrentUser().uid
     this.getCart(this.userId)
   }
   getCart(userId: any) {
     this.cartService.getCart(userId).subscribe((cart: any) => {
       this.cart = cart
+      this.isLoading = false
       this.cdr.detectChanges();
     })
   }

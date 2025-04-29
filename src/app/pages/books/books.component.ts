@@ -22,6 +22,7 @@ export class BooksComponent implements OnInit {
   grades: Grade[] = []
   categories: Category[] = []
   dummyImg: string = './assets/images/book.jpg'
+  isLoading:boolean = false
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
@@ -34,6 +35,7 @@ export class BooksComponent implements OnInit {
   @ViewChild('noticeSwal')
   noticeSwal!: SwalComponent;
   ngOnInit() {
+    this.isLoading = true
     this.getGrades();
   }
 
@@ -130,6 +132,7 @@ export class BooksComponent implements OnInit {
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
       this.books = books;
+      this.isLoading = false
       this.cdr.detectChanges();
     });
   }

@@ -16,6 +16,7 @@ import { Order } from '../services/modal';
   styleUrl: './order.component.scss'
 })
 export class OrderComponent {
+  isLoading:boolean = false
   orders:Order[]=[]
   userId:string
   constructor(
@@ -30,11 +31,13 @@ export class OrderComponent {
     this.getOrders(this.userId)
   }
   getOrders(id:string){
+    this.isLoading = true
     this.cartService.getOrders(id).subscribe((orders)=>{
       this.orders = orders.map(order => ({
         ...order,
         createdAt: (order.createdAt as any).toDate()
       }));
+      this.isLoading = false
       this.cdr.detectChanges()
     })
   }
