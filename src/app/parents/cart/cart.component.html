@@ -1,4 +1,4 @@
-<div class="card-body py-3"*ngIf="!isLoading; else loading">
+<div class="card-body py-3" *ngIf="!isLoading; else loading">
   <!-- begin::Table container -->
   <div class="table-responsive">
     <!-- begin::Table -->
@@ -110,21 +110,61 @@
             </div>
           </td>
         </tr>
+
+        <tr>
+          <td colspan="5">
+            <div class="d-flex justify-content-end gap-5">
+              <div class="d-flex align-items-center w-25">
+                <label class="w-100 text-end fw-bold">Delivered To:</label>
+                <select class="form-select w-100 ms-2 text-capitalize" [(ngModel)]="delivered"
+                  (change)="onStatusChange()">
+                  <option value="" disabled>Select Option</option>
+                  <option value="home">Home</option>
+                  <option value="school">School</option>
+                </select>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="delivered == 'home'">
+          <td colspan="5">
+            <div class="d-flex justify-content-end gap-5">
+              <input type="text" placeholder="Enter Address" [(ngModel)]="address"
+                class="form-control form-control-lg form-control-solid w-25">
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="delivered == 'school'">
+          <td colspan="5">
+            <div class="d-flex justify-content-end gap-5">
+              <div class="d-flex align-items-center w-25">
+                <label class="w-100 text-end fw-bold">Select School:</label>
+                <select class="form-select w-100 ms-2 text-capitalize" [(ngModel)]="school">
+                  <option value="" disabled>Select Option</option>
+                  @for (item of schools; track $index) {
+                  <option [value]="item.id">{{item.name}}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </td>
+        </tr>
         <tr>
           <td colspan="5">
             <div class="d-flex justify-content-end gap-5">
               <div class="
                 form-check form-check-custom form-check-solid form-check-success form-switch
                   ">
-                  <label class="form-check-label text-gray-700 fw-bold">Cash</label>
-                  <input class="form-check-input mx-3" type="checkbox"
-                    [(ngModel)]="method" />
-                  <label class="form-check-label text-gray-700 fw-bold">Online Pay</label>
-                </div>
+                <label class="form-check-label text-gray-700 fw-bold">Cash</label>
+                <input class="form-check-input mx-3" type="checkbox" [(ngModel)]="method" />
+                <label class="form-check-label text-gray-700 fw-bold">Online Pay</label>
+              </div>
               <button class="btn btn-primary" (click)="checkout()">Check Out</button>
             </div>
           </td>
         </tr>
+
       </tbody>
 
       <ng-template #noItem>

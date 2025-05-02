@@ -81,6 +81,9 @@
           </td>
           <td>
             <div class="d-flex justify-content-end flex-shrink-0">
+              <button class="btn btn-icon btn-bg-light btn-sm me-1" (click)="viewBook(modalContent, book)">
+                <app-keenicon name="notepad" class="fs-3"></app-keenicon>
+              </button>
               <button class="btn btn-icon btn-bg-light btn-sm me-1" (click)="editBook(modalContent, book)">
                 <app-keenicon name="pencil" class="fs-3"></app-keenicon>
               </button>
@@ -114,7 +117,7 @@
 
 <ng-template #modalContent let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">{{ currentBookId ? 'Update Book' : 'Add New Book' }}</h5>
+    <h5 class="modal-title">{{ isViewMode ? 'View' : (currentBookId ? 'Update' : 'Add') }} Book</h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body">
@@ -170,7 +173,7 @@
             <option [value]="type.id">{{ type.name }} </option>
             }
           </select>
-          <button class="btn btn-primary w-25" (click)="openCat(modalCat)" style="font-size: .8vw;">Add Category</button>
+          <button *ngIf="!isViewMode" class="btn btn-primary w-25" (click)="openCat(modalCat)" style="font-size: .8vw;">Add Category</button>
         </div>
       </div>
 
@@ -183,7 +186,7 @@
             <option [value]="grade.id">{{ grade.name }} </option>
             }
           </select>
-          <button class="btn btn-primary w-25" (click)="openGrade(modalGrade)"style="font-size: .8vw;">Add Grade</button>
+          <button *ngIf="!isViewMode" class="btn btn-primary w-25" (click)="openGrade(modalGrade)"style="font-size: .8vw;">Add Grade</button>
         </div>
       </div>
 
@@ -195,7 +198,7 @@
         </div>
       </div>
 
-      <div class="text-center">
+      <div class="text-center" *ngIf="!isViewMode">
         <button type="submit" class="btn btn-primary" [disabled]="bookForm.invalid" (click)="submitBook(modal)">
           {{ currentBookId ? 'Update' : 'Add' }} Book</button>
       </div>

@@ -61,6 +61,8 @@ export interface Order {
   userId: string;
   status:string;
   paymentStatus:string;
+  address?:string,
+  school?:string,
   items: CartItem[];
   totalAmount: number;
   createdAt: Date;

@@ -6,6 +6,18 @@ const Routing: Routes = [
     loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
   },
   {
+    path: 'schools',
+    loadChildren: () => import('./schools/schools.module').then((m) => m.SchoolsModule),
+  },
+  {
+    path: 'categories',
+    loadChildren: () => import('./categories/categories.module').then((m) => m.CategoriesModule),
+  },
+  {
+    path: 'grades',
+    loadChildren: () => import('./grades/grades.module').then((m) => m.GradesModule),
+  },
+  {
     path: 'books',
     loadChildren: () => import('./books/books.module').then((m) => m.BooksModule),
   },

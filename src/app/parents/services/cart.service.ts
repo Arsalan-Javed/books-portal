@@ -131,7 +131,7 @@ export class CartService {
     );
   }
 
-  placeOrder(userId: string, items: CartItem[]): Observable<string> {
+  placeOrder(userId: string, items: CartItem[],school?:string,address?:string): Observable<string> {
     const totalAmountPromise = Promise.all(
       items.map(async (item) => {
         if (item.bookId) {
@@ -174,6 +174,8 @@ export class CartService {
           userId,
           status:'placed',
           paymentStatus:'unpaid',
+          address:address,
+          school:school,
           items: sanitizedItems,
           totalAmount,
           createdAt: new Date(),

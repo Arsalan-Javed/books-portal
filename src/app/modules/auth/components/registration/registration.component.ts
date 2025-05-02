@@ -54,6 +54,14 @@ export class RegistrationComponent implements OnInit, OnDestroy {
             Validators.maxLength(100),
           ]),
         ],
+        address: [
+          '',
+          Validators.compose([
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(100),
+          ]),
+        ],
         email: [
           'qwe@qwe.qwe',
           Validators.compose([
@@ -85,39 +93,16 @@ export class RegistrationComponent implements OnInit, OnDestroy {
       }
     );
   }
-
-  // submit() {
-  //   this.hasError = false;
-  //   const result: {
-  //     [key: string]: string;
-  //   } = {};
-  //   Object.keys(this.f).forEach((key) => {
-  //     result[key] = this.f[key].value;
-  //   });
-  //   const newUser = new UserModel();
-  //   newUser.setUser(result);
-  //   const registrationSubscr = this.authService
-  //     .registration(newUser)
-  //     .pipe(first())
-  //     .subscribe((user: UserModel) => {
-  //       if (user) {
-  //         this.router.navigate(['/']);
-  //       } else {
-  //         this.hasError = true;
-  //       }
-  //     });
-  //   this.unsubscribe.push(registrationSubscr);
-  // }
   async submit() {
     this.hasError = false;
 
     if (this.registrationForm.invalid) return;
 
-    const { fullname, email, password } = this.registrationForm.value;
+    const { fullname, email, password,address } = this.registrationForm.value;
 
     try {
       // Call Firebase register function
-      const user = await this.authServiceFire.register(email, password, fullname);
+      const user = await this.authServiceFire.register(email, password, fullname,address);
       console.log('Registered user:', user);
 
       this.router.navigate(['/']); // Navigate on success

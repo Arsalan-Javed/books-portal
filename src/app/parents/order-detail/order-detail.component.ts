@@ -10,6 +10,7 @@ import { BookService } from 'src/app/pages/books/book.service';
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { BundleService } from 'src/app/pages/bundle/bundle.service';
 
 @Component({
   selector: 'app-order-detail',
@@ -27,11 +28,13 @@ export class OrderDetailComponent {
   showBooks:any
   shipmentCost: number = 0;
   user:any
+  selectedSchoolName:any
   constructor(private route: ActivatedRoute,
     private cartService: CartService,
     private cdr: ChangeDetectorRef,
     private modalService: NgbModal,
     private bookService: BookService,
+    private bundleService:BundleService,
     private authService: AuthFirebaseService
     ) {  }
   ngOnInit() {
@@ -40,6 +43,7 @@ export class OrderDetailComponent {
     if (this.orderId) {
       this.getOrder(this.orderId)
       this.getGrades()
+
     }
   }
   getOrder(id: any) {
@@ -52,6 +56,9 @@ export class OrderDetailComponent {
           user: user || null,
           createdAt: (order.createdAt as any).toDate()
         };
+        if (order.school) {
+          this.getSchoolNameById(order.school);
+        }
         this.cdr.detectChanges();
       }
     });
@@ -143,6 +150,19 @@ export class OrderDetailComponent {
       });
     });
   }
+  getSchoolNameById(id: string): void {
+    this.bundleService.getSchoolById(id).subscribe({
+      next: (school: any) => {
+        this.selectedSchoolName = school.name;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error fetching school:', err);
+        this.selectedSchoolName = 'Unknown';
+      }
+    });
+  }
+
 
 
 }

@@ -5,7 +5,7 @@ import { CartService } from '../services/cart.service';
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/_metronic/shared/shared.module';
-import { PopulatedCartItem } from '../services/modal';
+import { PopulatedCartItem, School } from '../services/modal';
 import Swal from 'sweetalert2'
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,8 +21,12 @@ import { Router } from '@angular/router';
 export class CartComponent {
   method: any
   cart: PopulatedCartItem[] = []
+  schools: School[] = []
   userId:string
   isLoading:boolean = false
+  delivered:string =''
+  address:string =''
+  school:string =''
   constructor(
     private router: Router,
     private cdr: ChangeDetectorRef,
@@ -33,8 +37,11 @@ export class CartComponent {
   }
   ngOnInit() {
     this.isLoading = true
-    this.userId = this.authService.getCurrentUser().uid
+    const user = this.authService.getCurrentUser()
+    this.userId = user.uid
+    this.address = user.address
     this.getCart(this.userId)
+    this.getSchool()
   }
   getCart(userId: any) {
     this.cartService.getCart(userId).subscribe((cart: any) => {
@@ -118,7 +125,8 @@ export class CartComponent {
 
 
   checkout() {
-    this.cartService.placeOrder(this.userId, this.cart).subscribe({
+    if(this.school){this.address=''}
+    this.cartService.placeOrder(this.userId, this.cart,this.school,this.address).subscribe({
       next: () => {
         Swal.fire({
           title: 'Order Placed!',
@@ -143,6 +151,14 @@ export class CartComponent {
       }
     });
   }
-
+  onStatusChange(){
+    this.school =''
+  }
+  getSchool() {
+    this.bundleService.getSchool().subscribe((schools) => {
+      this.schools = schools;
+      this.isLoading = false
+    })
+  }
 
 }

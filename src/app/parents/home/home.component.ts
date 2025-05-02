@@ -174,7 +174,6 @@ export class HomeComponent {
           timer: 2000,
           showConfirmButton: false,
         });
-        modal.close()
       },
       error: (err) => {
         Swal.fire({

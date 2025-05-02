@@ -39,6 +39,24 @@ export class BundleService {
       })
     );
   }
+  updateSchool(id: string, school: Partial<School>): Observable<void> {
+    const docRef = doc(db, 'school', id);
+    return from(updateDoc(docRef, school));
+  }
+  getSchoolById(id: string): Observable<School> {
+    const docRef = doc(this.schoolCollection, id);
+    return from(
+      getDoc(docRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          return { id: docSnap.id, ...docSnap.data() } as School;
+        } else {
+          return Promise.reject(new Error('School not found'));
+        }
+      })
+    );
+  }
+
+
   getSchool(): Observable<School[]> {
     return from(
       getDocs(this.schoolCollection).then((querySnapshot) =>

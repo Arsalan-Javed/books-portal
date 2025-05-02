@@ -93,6 +93,9 @@
 
           <td>
             <div class="d-flex justify-content-end flex-shrink-0">
+              <button class="btn btn-icon btn-bg-light btn-sm me-1" (click)="viewBundle(modalContent, bundle)">
+                <app-keenicon name="notepad" class="fs-3"></app-keenicon>
+              </button>
               <button class="btn btn-icon btn-bg-light btn-sm me-1" (click)="editBundle(modalContent, bundle)">
                 <app-keenicon name="pencil" class="fs-3"></app-keenicon>
               </button>
@@ -126,7 +129,8 @@
 
 <ng-template #modalContent let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">{{ currentBundleId ? 'Update Bundle' : 'Add New Bundle' }}</h5>
+    <h5 class="modal-title">
+      {{ isViewMode ? 'View' : (currentBundleId ? 'Update' : 'Add') }} Bundle</h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body">
@@ -159,7 +163,7 @@
             <option [value]="grade.id">{{ grade.name }} </option>
             }
           </select>
-          <button class="btn btn-primary w-25 p-0" (click)="openGrade(modalGrade)">Add Grade</button>
+          <button *ngIf="!isViewMode" class="btn btn-primary w-25 p-0" (click)="openGrade(modalGrade)">Add Grade</button>
         </div>
       </div>
 
@@ -172,11 +176,11 @@
             <option [value]="school.id">{{ school.name }} </option>
             }
           </select>
-          <button class="btn btn-primary w-25 p-0" (click)="openSchool(modalSchool)">Add School</button>
+          <button *ngIf="!isViewMode" class="btn btn-primary w-25 p-0" (click)="openSchool(modalSchool)">Add School</button>
         </div>
       </div>
 
-      <div class="mb-6 text-center">
+      <div class="mb-6 text-center" *ngIf="!isViewMode">
         <button class="btn btn-primary w-25" (click)="openSelectBooks(modalBook)">Add Books in Bundle</button>
       </div>
 
@@ -188,7 +192,7 @@
         <div class="col-3 text-start">Price</div>
         <div class="col-3 text-start">Quantity</div>
         <div class="col-2">Total</div>
-        <div class="col-1">Action</div>
+        <div class="col-1" *ngIf="!isViewMode">Action</div>
       </div>
 
       <div class="row mb-3 align-items-center" *ngFor="let bookGroup of booksFormArray.controls; let i = index">
@@ -209,24 +213,32 @@
           (getBookControl(i, 'quantity').value || 0)
           }}
         </div>
-        <div class="col-1 text-center">
+        <div class="col-1 text-center" *ngIf="!isViewMode">
           <button type="button" class="btn btn-outline-danger" (click)="onRemoveBook(i)">
             <i class="bi bi-trash"></i>
           </button>
         </div>
       </div>
 
-      <div class="w-100 d-flex align-items-center justify-content-end mb-3">
+      <div class="w-100 d-flex align-items-center justify-content-end mb-3"*ngIf="!isViewMode">
+        <div class="row w-50">
+          <label class="col-lg-5 text-end col-form-label fw-bold fs-6"><span>Discount</span></label>
+          <div class="col-lg-6">
+            <input type="number" class="form-control form-control-lg form-control-solid" formControlName="discount" />
+          </div>
+        </div>
+      </div>
+      <div class="w-100 d-flex align-items-center justify-content-end mb-3"*ngIf="!isViewMode">
         <div class="row w-50">
           <label class="col-lg-5 text-end col-form-label fw-bold fs-6"><span>Bundle Price</span></label>
           <div class="col-lg-6">
-            <input type="text" class="form-control form-control-lg form-control-solid" formControlName="price" />
+            <input type="number" class="form-control form-control-lg form-control-solid" formControlName="price" />
           </div>
         </div>
       </div>
 
 
-      <div class="text-center">
+      <div class="text-center" *ngIf="!isViewMode">
         <button type="submit" class="btn btn-primary" [disabled]="bundleForm.invalid" (click)="submitBundle(modal)">
           {{ currentBundleId ? 'Update' : 'Add' }} Bundle
         </button>

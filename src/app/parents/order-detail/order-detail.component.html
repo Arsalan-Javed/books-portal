@@ -6,6 +6,10 @@
     <div class="card-body">
       <p><strong>User Name:</strong> {{order.user.username}}</p>
       <p><strong>Email:</strong> {{order.user.email}}</p>
+      <p><strong>Delivered To:</strong>
+        <span *ngIf="order.address" class="ms-5"> Address: {{order.address}}</span>
+        <span *ngIf="order.school" class="ms-5"> school: {{selectedSchoolName}}</span>
+      </p>
       <div class="d-flex justify-content-between mb-2">
         <p><strong>Status:</strong>
           <span class="badge ms-2 p-3 bg-primary text-white text-capitalize">

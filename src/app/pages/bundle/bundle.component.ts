@@ -27,6 +27,7 @@ export class BundleComponent implements OnInit {
   schools: School[] = []
   dummyImg: string = './assets/images/books.jpg'
   isLoading:boolean = false
+  isViewMode: boolean = false;
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
@@ -56,35 +57,71 @@ export class BundleComponent implements OnInit {
 
   initForm() {
     this.bundleForm = this.fb.group({
-      bundleName: ['', Validators.required],
+      bundleName: [{ value: '', disabled: true }],
       image: ['', Validators.required],
       grade: ['', Validators.required],
       school: ['', Validators.required],
       price: [0, Validators.required],
+      discount: [5],
       books: this.fb.array([]),
     });
-    this.booksFormArray.valueChanges.subscribe(() => {
-      const totalPrice = this.getTotalBundlePrice();
-      this.bundleForm.get('price')?.setValue(totalPrice, { emitEvent: false });
+
+    this.bundleForm.valueChanges.subscribe((changes) => {
+      this.calculateDiscountPrice(changes);
+    });
+
+    this.bundleForm.get('school')?.valueChanges.subscribe(() => {
+      this.updateBundleName();
+    });
+
+    this.bundleForm.get('grade')?.valueChanges.subscribe(() => {
+      this.updateBundleName();
     });
 
   }
+  calculateDiscountPrice(changes:any) {
+    const price = this.getTotalPrice(changes.books) || 0;
+    const discount = changes.discount || 0;
+
+    const discountedPrice = Math.round(price - (price * discount) / 100) || 0;
+
+    this.bundleForm.get('price')?.setValue(discountedPrice, { emitEvent: false });
+  }
+
+  updateBundleName() {
+    const gradeId = this.bundleForm.get('grade')?.value;
+    const schoolId = this.bundleForm.get('school')?.value;
+
+    const gradeName = this.grades.find(g => g.id === gradeId)?.name || '';
+    const schoolName = this.schools.find(s => s.id === schoolId)?.name || '';
+
+    const bundleName = schoolName && gradeName ? `${schoolName} - Grade: ${gradeName}` : '';
+    this.bundleForm.get('bundleName')?.setValue(bundleName, { emitEvent: false });
+  }
+
+
   get booksFormArray(): FormArray {
     return this.bundleForm.get('books') as FormArray;
   }
   addBooksToForm() {
     this.booksFormArray.clear();
+
     this.selectedBooks.forEach((book) => {
-      this.booksFormArray.push(
-        this.fb.group({
-          id: [book.id],
-          bookName: [book.bookName],
-          price: [book.price],
-          quantity:[book.quantity ]
-        })
-      );
+      const group = this.fb.group({
+        id: [book.id],
+        bookName: [book.bookName],
+        price: [book.price],
+        quantity: [book.quantity],
+      });
+
+      if (this.isViewMode) {
+        group.disable();
+      }
+
+      this.booksFormArray.push(group);
     });
   }
+
 
   getBookControl(index: number, controlName: string): FormControl {
     return this.booksFormArray.at(index).get(controlName) as FormControl;
@@ -92,12 +129,15 @@ export class BundleComponent implements OnInit {
 
 
   open(content: any) {
+    this.bundleForm.enable();
+    this.isViewMode = false
     this.bundleForm.reset({
-      bundleName: '',
+      bundleName:{ value: '', disabled: true},
       image: '',
       grade: null,
       school: null,
       books: [],
+      discount:5
     });
     this.selectedBooks = [];
     this.currentBundleId = ''
@@ -156,8 +196,20 @@ export class BundleComponent implements OnInit {
   }
 
   editBundle(modal: any, bundle: Bundle) {
+    this.bundleForm.enable();
+    this.isViewMode = false
     this.currentBundleId = bundle?.id || '';
     this.bundleForm.patchValue(bundle);
+    this.selectedBooks = bundle.books;
+    this.addBooksToForm()
+    this.modalService.open(modal, { size: 'lg', centered: true });
+    this.bundleForm.get('price')?.setValue(bundle.price, { emitEvent: false });
+  }
+  viewBundle(modal: any, bundle: Bundle) {
+    this.isViewMode = true;
+    this.currentBundleId = bundle?.id || '';
+    this.bundleForm.patchValue(bundle);
+    this.bundleForm.disable();
     this.selectedBooks = bundle.books;
     this.addBooksToForm()
     this.modalService.open(modal, { size: 'lg', centered: true });
@@ -250,17 +302,18 @@ export class BundleComponent implements OnInit {
   }
 
   getTotalPrice(books: BundleBook[] = []): number {
-    return books.reduce((sum, book) => sum + book.price, 0);
+    return books.reduce((sum, book) => sum + (book.price * book.quantity), 0);
   }
 
-  openShowBook(content: any, showbooks: any) {
-    this.showBooks = showbooks
+  openShowBook(content: any, books: any) {
+    this.showBooks = books
       .map((sb: any) => {
         const matchedBook = this.books.find(book => book.id === sb.id);
         if (matchedBook) {
           return {
             ...matchedBook,
-            price: sb.price
+            price: sb.price,
+            quantity:sb.quantity
           };
         }
         return null;

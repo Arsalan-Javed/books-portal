@@ -23,6 +23,7 @@ export class BooksComponent implements OnInit {
   categories: Category[] = []
   dummyImg: string = './assets/images/book.jpg'
   isLoading:boolean = false
+  isViewMode: boolean = false;
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
@@ -54,6 +55,8 @@ export class BooksComponent implements OnInit {
   }
 
   open(content: any) {
+    this.bookForm.enable();
+    this.isViewMode = false
     this.currentBookId = ''
     this.dummyImg = './assets/images/book.jpg'
     this.bookForm.reset({
@@ -124,8 +127,17 @@ export class BooksComponent implements OnInit {
   }
 
   editBook(modal: any, book: Book) {
+    this.bookForm.enable();
+    this.isViewMode = false
     this.currentBookId = book?.id
     this.bookForm.patchValue(book);
+    this.modalService.open(modal, { size: 'lg', centered: true });
+  }
+  viewBook(modal: any, book: Book) {
+    this.isViewMode = true;
+    this.currentBookId = book?.id
+    this.bookForm.patchValue(book);
+    this.bookForm.disable();
     this.modalService.open(modal, { size: 'lg', centered: true });
   }
 

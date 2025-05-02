@@ -43,6 +43,10 @@ export class BookService {
       })
     );
   }
+  updateGrade(id: string, grade: Partial<Grade>): Observable<void> {
+    const docRef = doc(this.gradesCollection, id);
+    return from(updateDoc(docRef, grade));
+  }
   getGrades(): Observable<Grade[]> {
     return from(
       getDocs(this.gradesCollection).then((querySnapshot) =>
@@ -68,6 +72,10 @@ export class BookService {
         }
       })
     );
+  }
+  updateCategory(id: string, category: Partial<Category>): Observable<void> {
+    const docRef = doc(this.categoriesCollection, id);
+    return from(updateDoc(docRef, category));
   }
   getCategories(): Observable<Category[]> {
     return from(
