@@ -1,7 +1,23 @@
-.card{
+.card {
   width: 18vw;
-  img{
+
+  img {
     width: 100%;
     max-height: 18vh;
   }
+}
+
+.bundle-logo {
+  position: absolute;
+  top: -15px;
+  width: 2vw !important;
+  right: -10px;
+  border: 1px solid #e3e3ec;
+  border-radius: 50%;
+  background: #f1f1f4;
+}
+.actual-price{
+  color: red;
+  text-decoration: line-through;
+  padding: 0 10px;
 }

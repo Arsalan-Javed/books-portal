@@ -4,8 +4,32 @@
   <h3 class="card-title">
     <span class="card-label fw-bolder fs-3 mb-1">Bundle List</span>
   </h3>
-  <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
+  <div class="d-flex gap-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
     title="Click to add a user">
+    <div class="d-flex justify-content-end gap-5">
+      <div>
+        <input type="text" [(ngModel)]="filters.name" placeholder="Search by Name" class="form-control"
+          (input)="applyFilters()">
+      </div>
+      <div>
+        <select *ngIf="schools && schools.length > 0 "
+          class="form-select w-100 text-capitalize" [(ngModel)]="filters.school" (change)="applyFilters()">
+          <option  selected value="">Select School</option>
+          @for (item of schools; track $index) {
+          <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <select *ngIf="grades && grades.length > 0 " class="form-select w-100 text-capitalize"
+          [(ngModel)]="filters.grade" (change)="applyFilters()">
+          <option selected value="">Select Grade</option>
+          @for (item of grades; track $index) {
+          <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
     <button type="button" class="btn btn-primary" (click)="open(modalContent)">
       Add Bundle
     </button>
@@ -41,7 +65,7 @@
       <!-- end::Table head -->
       <!-- begin::Table body -->
       <tbody *ngIf="bundles && bundles.length > 0; else noBooks">
-        <tr *ngFor="let bundle of bundles">
+        <tr *ngFor="let bundle of filteredBundles">
           <td>
             <div class="form-check form-check-sm form-check-custom form-check-solid">
               <input class="form-check-input widget-9-check" type="checkbox" value="1" />

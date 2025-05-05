@@ -12,10 +12,12 @@ import Swal from 'sweetalert2';
   styleUrl: './schools.component.scss'
 })
 export class SchoolsComponent {
-  isLoading:boolean = false
+  isLoading: boolean = false
   schools: School[] = []
+  filterSchool:any
   schoolForm!: FormGroup;
   selectedSchoolId: any;
+  school: any
   constructor(
     private modalService: NgbModal,
     private bundleService: BundleService,
@@ -23,7 +25,7 @@ export class SchoolsComponent {
     private cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit(){
+  ngOnInit() {
     this.isLoading = true
     this.getSchool()
     this.schoolForm = this.fb.group({
@@ -37,6 +39,7 @@ export class SchoolsComponent {
     this.bundleService.getSchool().subscribe((schools) => {
       this.schools = schools;
       this.isLoading = false
+      this.applyFilters()
       this.cdr.detectChanges();
     })
   }
@@ -51,61 +54,59 @@ export class SchoolsComponent {
     this.modalService.open(modal, { size: 'lg', centered: true });
   }
 
+  submitSchool(modal: any) {
+    const schoolData: School = this.schoolForm.value;
 
-submitSchool(modal: any) {
-  const schoolData: School = this.schoolForm.value;
-
-  if (this.selectedSchoolId) {
-    this.bundleService.updateSchool(this.selectedSchoolId, schoolData).subscribe({
-      next: () => {
-        modal.close();
-        this.getSchool();
-        Swal.fire({
-          icon: 'success',
-          title: 'Update',
-          text: 'School updated successfully!',
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      },
-      error: (err: any) => {
-        console.error('Error updating School:', err.message);
-        Swal.fire({
-          icon: 'error',
-          title: 'Update Failed',
-          text: 'An error occurred while updating the school.',
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      }
-    });
-  } else {
-    this.bundleService.addSchool(schoolData).subscribe({
-      next: (id) => {
-        modal.close();
-        this.getSchool();
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'School added successfully!',
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      },
-      error: (err) => {
-        console.error('Error adding School:', err.message);
-        Swal.fire({
-          icon: 'error',
-          title: 'Add Failed',
-          text: 'An error occurred while adding the school.',
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      }
-    });
+    if (this.selectedSchoolId) {
+      this.bundleService.updateSchool(this.selectedSchoolId, schoolData).subscribe({
+        next: () => {
+          modal.close();
+          this.getSchool();
+          Swal.fire({
+            icon: 'success',
+            title: 'Update',
+            text: 'School updated successfully!',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        },
+        error: (err: any) => {
+          console.error('Error updating School:', err.message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Update Failed',
+            text: 'An error occurred while updating the school.',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+      });
+    } else {
+      this.bundleService.addSchool(schoolData).subscribe({
+        next: (id) => {
+          modal.close();
+          this.getSchool();
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'School added successfully!',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        },
+        error: (err) => {
+          console.error('Error adding School:', err.message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Add Failed',
+            text: 'An error occurred while adding the school.',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+      });
+    }
   }
-}
-
 
   deleteSchool(id: any) {
     Swal.fire({
@@ -129,5 +130,13 @@ submitSchool(modal: any) {
         });
       }
     });
+  }
+
+  applyFilters() {
+    const name = this.school
+    const lowerName = name?.toLowerCase() || '';
+    this.filterSchool = this.schools.filter(s=>
+      (!name || s.name.toLowerCase().includes(lowerName))
+      )
   }
 }

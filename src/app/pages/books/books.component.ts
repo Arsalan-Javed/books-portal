@@ -24,6 +24,12 @@ export class BooksComponent implements OnInit {
   dummyImg: string = './assets/images/book.jpg'
   isLoading:boolean = false
   isViewMode: boolean = false;
+  filters = {
+    name:'',
+    category: '',
+    grade: ''
+  };
+  filteredBooks:any = [];
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
@@ -143,8 +149,13 @@ export class BooksComponent implements OnInit {
 
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
-      this.books = books;
+      this.books = books.map(book => ({
+        ...book,
+        grade: this.getGrade(book.grade),
+        category: this.getCategories(book.category),
+      }));
       this.isLoading = false
+      this.applyFilters()
       this.cdr.detectChanges();
     });
   }
@@ -298,7 +309,7 @@ export class BooksComponent implements OnInit {
     });
   }
 
-  getType(id: any): string {
+  getCategories(id: any): string {
     const type = this.categories.find(t => t.id === id);
     return type ? type.name : 'Unknown Type';
   }
@@ -318,6 +329,15 @@ export class BooksComponent implements OnInit {
     this.cdr.detectChanges();
     this.noticeSwal.fire();
   }
+  applyFilters() {
+    const { name, category, grade } = this.filters;
+    const lowerName = name?.toLowerCase() || '';
 
+    this.filteredBooks = this.books.filter(book =>
+      (!name || book.bookName.toLowerCase().includes(lowerName)) &&
+      (!category || book.category === this.getCategories(category)) &&
+      (!grade || book.grade === this.getGrade(grade))
+    );
+  }
 
 }

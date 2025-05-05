@@ -1,7 +1,11 @@
 
-
+<div class="menu-item me-lg-3" *ngIf="!userId">
+  <a class="menu-link nav-link px-3 py-2 rounded" routerLinkActive="active menu-here" routerLink="/auth/login">
+    <span class="menu-title"> Login</span>
+  </a>
+</div>
 <!--begin::Activities-->
-<div class="app-navbar-item" [ngClass]="itemClass">
+<div class="app-navbar-item" [ngClass]="itemClass"*ngIf="userId">
   <div [ngClass]="btnClass" class="position-relative" id="kt_activities_toggle" routerLink="/cart">
     <app-keenicon name="handcart" class="fs-2"></app-keenicon>
     <span
@@ -14,7 +18,7 @@
 
 
 <!--begin::User menu-->
-<div class="app-navbar-item" [ngClass]="itemClass">
+<div class="app-navbar-item" [ngClass]="itemClass"*ngIf="userId">
   <!--begin::Menu wrapper-->
   <div class="cursor-pointer symbol" [ngClass]="userAvatarClass" data-kt-menu-trigger="{default: 'click'}"
     data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end" (click)="logOut()">

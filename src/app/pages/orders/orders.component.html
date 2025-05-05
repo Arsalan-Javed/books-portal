@@ -1,3 +1,36 @@
+<div class="card-header border-0 pt-5 d-flex justify-content-between align-content-center align-items-center">
+  <h3 class="card-title">
+    <span class="card-label fw-bolder fs-3 mb-1">Orders List</span>
+  </h3>
+  <div class="d-flex gap-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
+    title="Click to add a user">
+    <div class="d-flex justify-content-end gap-5">
+      <div>
+        <input type="text" [(ngModel)]="filters.name" placeholder="Search by Name" class="form-control"
+          (input)="applyFilters()">
+      </div>
+      <div>
+        <select class="form-select w-100 text-capitalize" [(ngModel)]="filters.payment" (change)="applyFilters()">
+          <option selected value="">Select Payment Status</option>
+          <option value="unpaid">unpaid</option>
+          <option value="paid">paid</option>
+        </select>
+      </div>
+
+      <div>
+        <select class="form-select w-100 text-capitalize" [(ngModel)]="filters.status" (change)="applyFilters()">
+          <option selected value="">Select Status</option>
+          <option value="placed">Placed</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="dispatched">Dispatched</option>
+          <option value="delivered">Delivered</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <div class="card-body py-3" *ngIf="orders; else loading">
   <!-- begin::Table container -->
   <div class="table-responsive">
@@ -18,7 +51,7 @@
       <!-- end::Table head -->
       <!-- begin::Table body -->
       <tbody *ngIf="!isLoading; else noOrders">
-        <tr *ngFor="let order of orders" class="cursor-pointer" (click)="goToOrder(order.id)">
+        <tr *ngFor="let order of filteredOrder" class="cursor-pointer" (click)="goToOrder(order.id)">
           <td>
             <div class="d-flex align-items-center">
               <div class="d-flex justify-content-start flex-column">
@@ -32,8 +65,8 @@
             <div class="d-flex align-items-center">
               <div class="d-flex justify-content-start flex-column">
                 <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
-                User Name: {{ order?.user?.username }} <br>
-                Email:  {{ order?.user?.email }}
+                  User Name: {{ order?.user?.username }} <br>
+                  Email: {{ order?.user?.email }}
                 </span>
               </div>
             </div>

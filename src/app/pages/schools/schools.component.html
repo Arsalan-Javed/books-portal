@@ -2,8 +2,12 @@
   <h3 class="card-title">
     <span class="card-label fw-bolder fs-3 mb-1">Schools List</span>
   </h3>
-  <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
+  <div class="d-flex gap-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
     title="Click to add a user">
+    <div class="d-flex justify-content-end gap-5">
+      <input type="text" [(ngModel)]="school" placeholder="Search by Name" class="form-control"
+      (input)="applyFilters()">
+    </div>
     <button type="button" class="btn btn-primary" (click)="open(modalSchool)">
       Add School
     </button>
@@ -30,7 +34,7 @@
       <!-- end::Table head -->
       <!-- begin::Table body -->
       <tbody *ngIf="schools && schools.length > 0; else noSchools">
-        <tr *ngFor="let school of schools">
+        <tr *ngFor="let school of filterSchool">
 
           <td>
             <div class="d-flex justify-content-start flex-column">

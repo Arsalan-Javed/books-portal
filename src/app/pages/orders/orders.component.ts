@@ -13,6 +13,8 @@ export class OrdersComponent {
   orders:any
   isLoading:boolean = false
   users:any
+  filteredOrder:any
+  filters:any={name:'',payment:'',status:''}
   constructor(
     private router: Router,
     private cdr: ChangeDetectorRef,
@@ -38,6 +40,7 @@ export class OrdersComponent {
         createdAt: (order.createdAt as any).toDate()
       }));
       this.isLoading = false
+      this.applyFilters()
       this.cdr.detectChanges();
     });
   }
@@ -47,5 +50,19 @@ export class OrdersComponent {
   }
   goToOrder(id: any) {
     this.router.navigate(['orders/order', id]);
+  }
+  applyFilters(){
+    const { name, payment, status } = this.filters;
+    const lowerName = name?.toLowerCase() || '';
+    this.filteredOrder = this.orders.filter((o:any) =>
+    (
+      !name ||
+      o.id.toLowerCase().includes(lowerName) ||
+      o.user?.username?.toLowerCase().includes(lowerName) ||
+      o.user?.email?.toLowerCase().includes(lowerName)
+    ) &&
+      (!payment || o.paymentStatus === payment) &&
+      (!status || o.status === status)
+    );
   }
 }

@@ -25,7 +25,6 @@ export class AdminAuthGuard implements CanActivate {
       return true;
     }
 
-    this.authService.logout();
-    return this.router.parseUrl('/auth/login'); // or wherever you want to redirect
+    return this.router.parseUrl('/home'); // or wherever you want to redirect
   }
 }

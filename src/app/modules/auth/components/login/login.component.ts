@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           if(user.isAdmin){
             this.router.navigate([this.returnUrl]);
           }else{
-            this.router.navigate(['/parent']);
+            this.router.navigate(['/home']);
           }
         } else {
           this.hasError = true;

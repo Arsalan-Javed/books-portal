@@ -7,23 +7,23 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <div class="navbar-nav me-auto mb-2 mb-lg-0 ms-20">
         <div class="menu-item me-lg-3">
-          <a class="menu-link nav-link px-3 py-2 rounded" routerLinkActive="active menu-here" routerLink="/parent">
-            <span class="menu-title"> Home</span>
+          <a class="nav-link px-3 py-2 rounded"  routerLink="/home">
+            <span class="menu-title"> <img src="assets/images/booklogo.jpg" width="30" height="30"></span>
           </a>
         </div>
 
-        <div class="menu-item me-lg-3">
+        <div class="menu-item me-lg-3" *ngIf="user">
           <a class="menu-link nav-link px-3 py-2 rounded" routerLinkActive="active menu-here" routerLink="/order">
             <span class="menu-title"> Orders</span>
           </a>
         </div>
       </div>
-      <app-parent-navbar class="app-navbar flex-shrink-0" [appHeaderDefaulMenuDisplay]="appHeaderDefaulMenuDisplay"
+      <app-parent-navbar class="app-navbar flex-shrink-0"
         [isRtl]="false"></app-parent-navbar>
 
     </div>
   </div>
 </nav>
-<div class="my-5 mx-20">
+<div >
   <router-outlet></router-outlet>
 </div>

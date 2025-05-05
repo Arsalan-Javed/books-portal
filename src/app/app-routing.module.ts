@@ -22,11 +22,16 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivate: [AuthGuard],
+    canActivate: [],
     loadChildren: () =>
       import('./parents/parents.module').then((m) => m.ParentsModule),
   },
   { path: '**', redirectTo: 'error/404' },
+  {
+    path: '',
+    redirectTo: '/home',
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({

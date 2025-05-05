@@ -28,6 +28,12 @@ export class BundleComponent implements OnInit {
   dummyImg: string = './assets/images/books.jpg'
   isLoading:boolean = false
   isViewMode: boolean = false;
+  filteredBundles:any = [];
+  filters = {
+    name:'',
+    school: '',
+    grade: ''
+  };
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
@@ -263,11 +269,8 @@ export class BundleComponent implements OnInit {
   getBundles() {
     this.bundleService.getBundles().subscribe((bundle) => {
       this.bundles = bundle;
-      // this.bundles = bundle.map(bundle => ({
-      //   ...bundle,
-      //   grade: this.getGrade(bundle.grade),
-      //   school:this.getSchoolName(bundle.school)
-      // }));
+      this.bundles.sort((a, b) => a.school.localeCompare(b.school));
+      this.applyFilters()
       this.isLoading = false
       this.cdr.detectChanges();
     });
@@ -481,6 +484,17 @@ export class BundleComponent implements OnInit {
       const quantity = group.get('quantity')?.value || 0;
       return total + (price * quantity);
     }, 0);
+  }
+
+  applyFilters() {
+    const { name, school, grade } = this.filters;
+    const lowerName = name?.toLowerCase() || '';
+
+    this.filteredBundles = this.bundles.filter(bundle =>
+      (!name || bundle.bundleName.toLowerCase().includes(lowerName)) &&
+      (!school || bundle.school === school) &&
+      (!grade || bundle.grade === grade)
+    );
   }
 
 }

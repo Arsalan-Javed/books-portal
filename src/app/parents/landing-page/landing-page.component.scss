@@ -1,0 +1,30 @@
+.landing-page{
+  position: relative;
+  background-image: url('/assets/images/landing-image.jpg');
+  width: 100vw;
+  height: 90vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 5%;
+  gap: 10px;
+  .title{
+    font-size: 2vw;
+    font-weight: 800;
+    font-family: "Assistant", sans-serif;
+    color: #0a090a;
+    span{
+      color: #c10d14;
+      text-decoration: underline;
+    }
+  }
+}
+.start-btn{
+  background: #c10d14;
+  padding: 1 10px;
+  color: #ffffff;
+}
+

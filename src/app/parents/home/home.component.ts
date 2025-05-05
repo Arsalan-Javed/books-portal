@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/_metronic/shared/shared.module';
 import { BookService } from 'src/app/pages/books/book.service';
@@ -9,6 +9,7 @@ import Swal from 'sweetalert2'
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
 import { Book, Bundle, BundleBook, Grade, School, Category } from '../services/modal';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -17,16 +18,15 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   filters = {
     name:'',
     category: '',
     school: '',
     grade: ''
   };
-  filteredBooks:any = [];
-  filteredBundles:any = [];
-
+  filteredItems:any = [];
+  allItems:any
   books: Book[] = [];
   grades: Grade[] = []
   types: Category[] = []
@@ -40,12 +40,26 @@ export class HomeComponent {
     private cdr: ChangeDetectorRef,
     private bundleService: BundleService,
     private cartService: CartService,
+    private router: Router,
     private authService: AuthFirebaseService
   ) {
   }
   ngOnInit() {
     this.isLoading = true
     this.getGrades();
+    const filters = history.state.filters
+    if (filters) {
+      this.filters = filters
+      this.applyFilters();
+    } else {
+      this.filters = {
+        name: '',
+        category: '',
+        school: '',
+        grade: ''
+      };
+      this.applyFilters();
+    }
   }
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
@@ -53,6 +67,8 @@ export class HomeComponent {
         ...book,
         grade: this.getGrade(book.grade),
         category: this.getType(book.category),
+        name:book.bookName,
+        type: 'book'
       }));
       this.getBundles()
     });
@@ -95,8 +111,11 @@ export class HomeComponent {
         ...bundle,
         grade: this.getGrade(bundle.grade),
         school: this.getSchool(bundle.school),
+        name:bundle.bundleName,
+        type: 'bundle'
       }));
       this.isLoading = false
+      this.allItems = [...this.books, ...this.bundles];
       this.applyFilters()
       this.cdr.detectChanges();
     });
@@ -190,18 +209,14 @@ export class HomeComponent {
     const { name, category, school, grade } = this.filters;
     const lowerName = name?.toLowerCase() || '';
 
-    this.filteredBooks = this.books.filter(book =>
-      (!name || book.bookName.toLowerCase().includes(lowerName)) &&
-      (!category || book.category === this.getType(category)) &&
-      (!grade || book.grade === this.getGrade(grade))
-    );
-
-    this.filteredBundles = this.bundles.filter(bundle =>
-      (!name || bundle.bundleName.toLowerCase().includes(lowerName)) &&
-      (!school || bundle.school === this.getSchool(school)) &&
-      (!grade || bundle.grade === this.getGrade(grade))
-    );
+    this.filteredItems = this.allItems?.filter((item: any) =>
+    (!name || item.name?.toLowerCase().includes(lowerName)) &&
+    (!category || item.category === this.getType(category)) &&
+    (!school || item.school === this.getSchool(school)) &&
+    (!grade || item.grade === this.getGrade(grade))
+  );
   }
+
 
 
 }

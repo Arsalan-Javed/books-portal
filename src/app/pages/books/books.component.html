@@ -4,8 +4,33 @@
   <h3 class="card-title">
     <span class="card-label fw-bolder fs-3 mb-1">Books List</span>
   </h3>
-  <div class="card-toolbar" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
+  <div class="d-flex gap-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
     title="Click to add a user">
+    <div class="d-flex justify-content-end gap-5">
+      <div>
+        <input type="text" [(ngModel)]="filters.name" placeholder="Search by Name" class="form-control"
+          (input)="applyFilters()">
+      </div>
+
+      <div>
+        <select *ngIf="categories && categories.length > 0 " class="form-select w-100 text-capitalize"
+          [(ngModel)]="filters.category" (change)="applyFilters()">
+          <option selected value="">Select Category</option>
+          @for (item of categories; track $index) {
+          <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <select *ngIf="grades && grades.length > 0 " class="form-select w-100 text-capitalize"
+          [(ngModel)]="filters.grade" (change)="applyFilters()">
+          <option selected value="">Select Grade</option>
+          @for (item of grades; track $index) {
+          <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
     <button type="button" class="btn btn-primary" (click)="open(modalContent)">
       Add Book
     </button>
@@ -42,8 +67,8 @@
       </thead>
       <!-- end::Table head -->
       <!-- begin::Table body -->
-      <tbody *ngIf="books && books.length > 0; else noBooks">
-        <tr *ngFor="let book of books">
+      <tbody *ngIf="filteredBooks && filteredBooks.length > 0; else noBooks">
+        <tr *ngFor="let book of filteredBooks">
           <td>
             <div class="form-check form-check-sm form-check-custom form-check-solid">
               <input class="form-check-input widget-9-check" type="checkbox" value="1" />
@@ -65,10 +90,10 @@
             <span class="text-gray-900 fw-bolder fs-6">{{ book?.description }}</span>
           </td>
           <td>
-            <span class="text-gray-900 fw-bolder fs-6">{{ getGrade(book.grade) }}</span>
+            <span class="text-gray-900 fw-bolder fs-6">{{book.grade }}</span>
           </td>
           <td>
-            <span class="text-gray-900 fw-bolder fs-6">{{ getType(book.category) }}</span>
+            <span class="text-gray-900 fw-bolder fs-6">{{ book.category }}</span>
           </td>
           <td>
             <span class="text-gray-900 fw-bolder fs-6">{{ book?.academicYear }}</span>
@@ -121,7 +146,7 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body">
-    <form [formGroup]="bookForm" >
+    <form [formGroup]="bookForm">
 
       <div class="mb-3 d-flex justify-content-center">
         <input type="file" #fileInput (change)="onFileChange($event)" hidden />
@@ -167,26 +192,28 @@
       <div class="row mb-6">
         <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Category</span></label>
         <div class="col-lg-9 d-flex gap-5">
-          <select class="form-select form-select-solid form-select-lg"formControlName="category">
+          <select class="form-select form-select-solid form-select-lg" formControlName="category">
             <option value="null" selected>Select a Category...</option>
             @for (type of categories; track $index) {
             <option [value]="type.id">{{ type.name }} </option>
             }
           </select>
-          <button *ngIf="!isViewMode" class="btn btn-primary w-25" (click)="openCat(modalCat)" style="font-size: .8vw;">Add Category</button>
+          <button *ngIf="!isViewMode" class="btn btn-primary w-25" (click)="openCat(modalCat)"
+            style="font-size: .8vw;">Add Category</button>
         </div>
       </div>
 
       <div class="row mb-6">
         <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Grade</span></label>
         <div class="col-lg-9 d-flex gap-5">
-          <select class="form-select form-select-solid form-select-lg"formControlName="grade">
+          <select class="form-select form-select-solid form-select-lg" formControlName="grade">
             <option value="null" selected>Select a Grade...</option>
             @for (grade of grades; track $index) {
             <option [value]="grade.id">{{ grade.name }} </option>
             }
           </select>
-          <button *ngIf="!isViewMode" class="btn btn-primary w-25" (click)="openGrade(modalGrade)"style="font-size: .8vw;">Add Grade</button>
+          <button *ngIf="!isViewMode" class="btn btn-primary w-25" (click)="openGrade(modalGrade)"
+            style="font-size: .8vw;">Add Grade</button>
         </div>
       </div>
 
@@ -246,12 +273,13 @@
   </div>
 
   <div class="modal-body p-3">
-    <form >
+    <form>
       <div class="mb-3">
         <label for="name" class="form-label">Category Name</label>
         <div class="d-flex gap-5">
           <input type="text" class="form-control" id="name" name="name" [(ngModel)]="category.name" required />
-          <button type="button" class="btn btn-primary" [disabled]="!category.name" (click)="submitType(modalT)">Save</button>
+          <button type="button" class="btn btn-primary" [disabled]="!category.name"
+            (click)="submitType(modalT)">Save</button>
         </div>
       </div>
     </form>

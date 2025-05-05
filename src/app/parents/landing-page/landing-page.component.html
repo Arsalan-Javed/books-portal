@@ -1,0 +1,25 @@
+<div class="landing-page">
+  <div class="title">The <span>BEST</span> Way to Buy <br>
+    Back-to-School Supplies!</div>
+      <div class="d-flex gap-5 w-50">
+        <div class="w-50">
+          <select
+            class="form-select w-100 text-capitalize" [(ngModel)]="filters.school" >
+            <option  selected value="">Select School</option>
+            @for (item of schools; track $index) {
+            <option [value]="item.id">{{ item.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="w-50">
+          <select
+            class="form-select w-100 text-capitalize" [(ngModel)]="filters.grade" >
+            <option  selected value="">Select Grade</option>
+            @for (item of grades; track $index) {
+            <option [value]="item.id">{{ item.name }}</option>
+            }
+          </select>
+        </div>
+        <button class="btn start-btn w-25" (click)="applyFilters()">Get Started</button>
+      </div>
+</div>
