@@ -88,10 +88,10 @@
             </td>
 
             <td> <span class="text-gray-900 fw-bolder fs-6">
-                ${{ getBundlePrice(item).toFixed(2) }}
+                ${{ item?.bundle.price }}
               </span></td>
 
-            <td><span class="text-gray-900 fw-bolder fs-6">${{ (getBundlePrice(item) * item.quantity).toFixed(2)
+            <td><span class="text-gray-900 fw-bolder fs-6">${{ (item?.bundle.price * item.quantity).toFixed(2)
                 }}</span></td>
 
             <td>

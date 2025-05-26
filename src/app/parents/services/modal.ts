@@ -48,7 +48,9 @@ export interface CartItem {
   userId: string;
   bookId?: string;
   bundleId?: string;
+  price?:number;
   quantity: number;
+  isDiscount?:boolean
 }
 
 export interface PopulatedCartItem extends CartItem {

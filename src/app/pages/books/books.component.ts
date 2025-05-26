@@ -149,11 +149,7 @@ export class BooksComponent implements OnInit {
 
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
-      this.books = books.map(book => ({
-        ...book,
-        grade: this.getGrade(book.grade),
-        category: this.getCategories(book.category),
-      }));
+      this.books = books
       this.isLoading = false
       this.applyFilters()
       this.cdr.detectChanges();

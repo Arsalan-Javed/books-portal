@@ -90,10 +90,10 @@
             <span class="text-gray-900 fw-bolder fs-6">{{ book?.description }}</span>
           </td>
           <td>
-            <span class="text-gray-900 fw-bolder fs-6">{{book.grade }}</span>
+            <span class="text-gray-900 fw-bolder fs-6">{{ getGrade(book?.grade) }}</span>
           </td>
           <td>
-            <span class="text-gray-900 fw-bolder fs-6">{{ book.category }}</span>
+            <span class="text-gray-900 fw-bolder fs-6">{{ getCategories(book?.category) }}</span>
           </td>
           <td>
             <span class="text-gray-900 fw-bolder fs-6">{{ book?.academicYear }}</span>

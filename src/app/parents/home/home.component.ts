@@ -141,7 +141,7 @@ export class HomeComponent implements OnInit {
   }
 
   addToCart(book: any) {
-    const item = { bookId: book.id };
+    const item = {...book, bookId: book.id};
     this.cartService.addToCart(item).subscribe({
       next: (cartId) => {
         Swal.fire({
@@ -162,7 +162,7 @@ export class HomeComponent implements OnInit {
     });
   }
   addCart(bundle: any) {
-    const item = { bundleId: bundle.id };
+    const item = { ...bundle,bundleId: bundle.id, price: bundle.price};
     this.cartService.addToCart(item).subscribe({
       next: (cartId) => {
         Swal.fire({
@@ -183,7 +183,7 @@ export class HomeComponent implements OnInit {
     });
   }
   addBundleBook(book: any, modal: any) {
-    const item = { bookId: book.id };
+    const item = {...book, bookId: book.id,isDiscount:true };
     this.cartService.addToCart(item).subscribe({
       next: (cartId) => {
         Swal.fire({

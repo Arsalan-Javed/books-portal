@@ -1,6 +1,6 @@
 <div *ngIf="!isLoading; else loading">
-  <div class="d-flex justify-content-center gap-5 mt-5" style="width: 48%;">
-    <div class="w-25">
+  <div class="d-flex justify-content-center gap-5 mt-5" style="width: 100%;">
+    <div style="width: 40%;">
       <input type="text" [(ngModel)]="filters.name" placeholder="Search by Name" class="form-control"(input)="applyFilters()">
     </div>
     <div>

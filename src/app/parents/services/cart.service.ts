@@ -27,13 +27,17 @@ export class CartService {
   cartChanged$ = this.cartChangedSubject.asObservable();
   constructor(private authService: AuthFirebaseService) {}
 
-  addToCart(item: { bookId?: string; bundleId?: string }): Observable<string> {
+  addToCart(item: any, isDiscount?: boolean): Observable<string> {
     const userId = this.authService.getCurrentUser().uid;
 
     const conditions = [
       where('userId', '==', userId),
       item.bookId ? where('bookId', '==', item.bookId) : where('bundleId', '==', item.bundleId),
     ];
+
+    if (item.hasOwnProperty('isDiscount')) {
+      conditions.push(where('isDiscount', '==', item.isDiscount));
+    }
 
     const cartQuery = query(this.cartCollection, ...conditions);
 
@@ -52,9 +56,10 @@ export class CartService {
           });
         } else {
           const cartItem: CartItem = {
-            ...item,
+            ...item, // <- Save the full item
             userId,
             quantity: 1,
+            isDiscount: isDiscount ?? item.isDiscount ?? false,
           };
           return addDoc(this.cartCollection, cartItem).then((docRef) => {
             this.cartChangedSubject.next();
@@ -64,6 +69,7 @@ export class CartService {
       })
     );
   }
+
 
   getCartByUser(userId: string): Observable<CartItem[]> {
     const q = query(this.cartCollection, where('userId', '==', userId));
@@ -83,18 +89,20 @@ export class CartService {
           ...doc.data()
         })) as CartItem[];
 
-        const populatedItems: PopulatedCartItem[] = await Promise.all(
+        const populatedItems: any[] = await Promise.all(
           items.map(async (item) => {
             let book, bundle;
 
             if (item.bookId) {
-              const bookSnap = await getDoc(doc(db, 'books', item.bookId));
-              book = bookSnap.exists() ? ({ id: bookSnap.id, ...bookSnap.data() } as Book) : undefined;
+              book = item
+              // const bookSnap = await getDoc(doc(db, 'books', item.bookId));
+              // book = bookSnap.exists() ? ({ id: bookSnap.id,price:item.price ,...bookSnap.data() } as Book) : undefined;
             }
 
             if (item.bundleId) {
-              const bundleSnap = await getDoc(doc(db, 'bundles', item.bundleId));
-              bundle = bundleSnap.exists() ? ({ id: bundleSnap.id, ...bundleSnap.data() } as Bundle) : undefined;
+              bundle = item
+              // const bundleSnap = await getDoc(doc(db, 'bundles', item.bundleId));
+              // bundle = bundleSnap.exists() ? ({ id: bundleSnap.id,price:item.price, ...bundleSnap.data() } as Bundle) : undefined;
             }
 
             return {
@@ -131,63 +139,47 @@ export class CartService {
     );
   }
 
-  placeOrder(userId: string, items: CartItem[],school?:string,address?:string): Observable<string> {
-    const totalAmountPromise = Promise.all(
-      items.map(async (item) => {
-        if (item.bookId) {
-          const bookSnap = await getDoc(doc(db, 'books', item.bookId));
-          if (bookSnap.exists()) {
-            const book = bookSnap.data() as Book;
-            return item.quantity * book.price;
-          }
-        }
+  placeOrder(
+    userId: string,
+    items: any[],
+    school?: string,
+    address?: string
+  ): Observable<string> {
+    const totalAmount = items.reduce((sum, item) => {
+      return sum + item.price * item.quantity;
+    }, 0);
 
-        if (item.bundleId) {
-          const bundleSnap = await getDoc(doc(db, 'bundles', item.bundleId));
-          if (bundleSnap.exists()) {
-            const bundle = bundleSnap.data() as Bundle;
-            return item.quantity * bundle.books.reduce((sum, b) => sum + b.price, 0);
-          }
+    const sanitizedItems = items.map((item) => {
+      const sanitizedItem: any = {};
+      Object.keys(item).forEach((key) => {
+        const value = (item as any)[key];
+        if (value !== undefined && value !== null) {
+          sanitizedItem[key] = value;
         }
+      });
+      return sanitizedItem;
+    });
 
-        return 0;
-      })
-    );
+    const order: Order = {
+      userId,
+      status: 'placed',
+      paymentStatus: 'unpaid',
+      address,
+      school,
+      items: sanitizedItems,
+      totalAmount,
+      createdAt: new Date(),
+    };
 
     return from(
-      totalAmountPromise.then(async (prices) => {
-        const totalAmount = prices.reduce((sum, price) => sum + price, 0);
-
-        // Sanitize items to remove undefined fields
-        const sanitizedItems = items.map((item) => {
-          const sanitizedItem: any = {};
-          Object.keys(item).forEach((key) => {
-            const value = (item as any)[key];
-            if (value !== undefined) {
-              sanitizedItem[key] = value;
-            }
-          });
-          return sanitizedItem;
-        });
-
-        const order: Order = {
-          userId,
-          status:'placed',
-          paymentStatus:'unpaid',
-          address:address,
-          school:school,
-          items: sanitizedItems,
-          totalAmount,
-          createdAt: new Date(),
-        };
-
-        const orderRef = await addDoc(this.ordersCollection, order);
+      addDoc(this.ordersCollection, order).then(async (orderRef) => {
         await this.clearCart(userId).toPromise();
         this.cartChangedSubject.next();
         return orderRef.id;
       })
     );
   }
+
 
 
   getOrders(userId: string): Observable<Order[]> {

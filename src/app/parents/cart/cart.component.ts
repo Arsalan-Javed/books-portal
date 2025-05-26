@@ -20,7 +20,7 @@ import { Router } from '@angular/router';
 })
 export class CartComponent {
   method: any
-  cart: PopulatedCartItem[] = []
+  cart: any[] = []
   schools: School[] = []
   userId:string
   isLoading:boolean = false
@@ -99,16 +99,7 @@ export class CartComponent {
     this.cartService.updateCartItem(item.id as string, { quantity: item.quantity }).subscribe(() => { });
   }
 
-  getTotalPrice(): number {
-    return this.cart.reduce((total, item) => {
-      const price = item.book
-        ? item.book.price
-        : item.bundle
-          ? this.getBundlePrice(item)
-          : 0;
-      return total + (item.quantity * price);
-    }, 0);
-  }
+
 
   getGrandTotalPrice(): number {
     if (!this.cart || this.cart.length === 0) return 0;
@@ -117,7 +108,7 @@ export class CartComponent {
       if (item.book) {
         return total + (item.quantity * item.book.price);
       } else if (item.bundle) {
-        return total + (item.quantity * this.getBundlePrice(item));
+        return total + (item.quantity * item.bundle.price);
       }
       return total;
     }, 0);
