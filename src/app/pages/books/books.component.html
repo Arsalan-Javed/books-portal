@@ -30,6 +30,9 @@
           }
         </select>
       </div>
+      <button type="button" class="btn btn-primary" (click)="filters = { name: '', category: '', grade: '' }; applyFilters()">
+        Clear Filters
+      </button>
     </div>
     <button type="button" class="btn btn-primary" (click)="open(modalContent)">
       Add Book
@@ -204,7 +207,7 @@
       </div>
 
       <div class="row mb-6">
-        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Grade</span></label>
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span  >Grade</span></label>
         <div class="col-lg-9 d-flex gap-5">
           <select class="form-select form-select-solid form-select-lg" formControlName="grade">
             <option value="null" selected>Select a Grade...</option>
@@ -218,7 +221,7 @@
       </div>
 
       <div class="row mb-6">
-        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">Academic Year</span></label>
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span  >Academic Year</span></label>
         <div class="col-lg-9 fv-row">
           <input type="number" class="form-control form-control-lg form-control-solid" formControlName="academicYear"
             placeholder="Enter Academic Year" />

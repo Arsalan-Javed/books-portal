@@ -1,16 +1,20 @@
 export interface Grade {
   id?: string;
   name: string;
+  isDeleted?:boolean
 }
 export interface Category {
   id?: string;
   name: string;
+  isDeleted?:boolean
 }
 
 export interface School {
   id?: string;
   name: string;
+  address: string;
   representative:string;
+  isDeleted?:boolean
   phoneNumber:number | ''
 }
 
@@ -23,7 +27,8 @@ export interface Book {
   price: number;
   grade: string;
   category: string;
-  academicYear: number
+  academicYear: number;
+  isDeleted?:boolean
 }
 
 export interface BundleBook {
@@ -40,11 +45,13 @@ export interface Bundle {
   grade: string;
   school: string;
   price:number;
+  isDeleted?:boolean
   books: BundleBook[];
 }
 
 export interface CartItem {
   id?: string;
+  docId?:string;
   userId: string;
   bookId?: string;
   bundleId?: string;
@@ -63,7 +70,10 @@ export interface Order {
   userId: string;
   status:string;
   paymentStatus:string;
-  address?:string,
+  address?: {
+    street: string;
+    city: string;
+  }
   school?:string,
   items: CartItem[];
   totalAmount: number;

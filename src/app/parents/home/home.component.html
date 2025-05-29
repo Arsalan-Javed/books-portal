@@ -1,30 +1,31 @@
 <div *ngIf="!isLoading; else loading">
   <div class="d-flex justify-content-center gap-5 mt-5" style="width: 100%;">
     <div style="width: 40%;">
-      <input type="text" [(ngModel)]="filters.name" placeholder="Search by Name" class="form-control"(input)="applyFilters()">
+      <input type="text" [(ngModel)]="filters.name" placeholder="Search by Name" class="form-control"
+        (input)="applyFilters()">
     </div>
     <div>
-      <select *ngIf="schools && schools.length > 0 "
-        class="form-select w-100 text-capitalize" [(ngModel)]="filters.school" (change)="applyFilters()">
-        <option  selected value="">Select School</option>
+      <select *ngIf="schools && schools.length > 0 " class="form-select w-100 text-capitalize"
+        [(ngModel)]="filters.school" (change)="applyFilters()">
+        <option selected value="">Select School</option>
         @for (item of schools; track $index) {
         <option [value]="item.id">{{ item.name }}</option>
         }
       </select>
     </div>
     <div>
-      <select *ngIf="types && types.length > 0 "
-        class="form-select w-100 text-capitalize" [(ngModel)]="filters.category" (change)="applyFilters()">
-        <option  selected value="">Select Category</option>
+      <select *ngIf="types && types.length > 0 " class="form-select w-100 text-capitalize"
+        [(ngModel)]="filters.category" (change)="applyFilters()">
+        <option selected value="">Select Category</option>
         @for (item of types; track $index) {
         <option [value]="item.id">{{ item.name }}</option>
         }
       </select>
     </div>
     <div>
-      <select *ngIf="grades && grades.length > 0 "
-        class="form-select w-100 text-capitalize" [(ngModel)]="filters.grade" (change)="applyFilters()">
-        <option  selected value="">Select Grade</option>
+      <select *ngIf="grades && grades.length > 0 " class="form-select w-100 text-capitalize" [(ngModel)]="filters.grade"
+        (change)="applyFilters()">
+        <option selected value="">Select Grade</option>
         @for (item of grades; track $index) {
         <option [value]="item.id">{{ item.name }}</option>
         }
@@ -38,7 +39,7 @@
         <img src="assets/images/small-book.jpg" class="bundle-logo" *ngIf="item.type === 'bundle'">
         <img [src]="'data:image/png;base64,' + item.image" class="card-img-top" alt="Image" />
         <div class="card-body">
-          <h5 class="card-title">{{ item.name  }}</h5>
+          <h5 class="card-title">{{ item.name }}</h5>
           <ng-container *ngIf="item.type === 'book'">
             <h6 class="card-subtitle mb-2 text-muted">Grade: {{ item.grade }}</h6>
             <h6 class="card-subtitle mb-2 text-muted">Academic Year: {{ item.academicYear }}</h6>
@@ -52,13 +53,17 @@
           </ng-container>
         </div>
         <div class="d-flex justify-content-between align-items-center border-top p-2">
-          <div >
-            <div>Price: <span class="actual-price"*ngIf="item.type === 'bundle'">${{ getTotalPrice(item.books) }}</span> ${{ item.price }}</div>
+          <div>
+            <div>Price: <span class="actual-price" *ngIf="item.type === 'bundle'">${{ getTotalPrice(item.books)
+                }}</span> ${{ item.price }}</div>
           </div>
           <button class="btn btn-secondary d-flex align-items-center gap-2 p-3"
-                  (click)="item.type === 'book' ? addToCart(item) : addCart(item)">
-            <app-keenicon name="plus-circle" class="fs-3"></app-keenicon> Cart
+            [disabled]="item.type === 'book' && item.quantity === 0"
+            (click)="item.type === 'book' ? addToCart(item) : addCart(item)">
+            <span *ngIf="item.type === 'book' && item.quantity === 0">Out of Stock</span>
+            <span *ngIf="item.type !== 'book' || item.quantity > 0"><app-keenicon name="plus-circle" class="fs-3"></app-keenicon>  Cart</span>
           </button>
+
         </div>
       </div>
     </div>

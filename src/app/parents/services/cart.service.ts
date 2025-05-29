@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
-import {  db } from 'src/app/pages/books/book.service';
+import {  BookService, db } from 'src/app/pages/books/book.service';
 import { Book, Bundle, CartItem, Order, PopulatedCartItem } from './modal';
 
 
@@ -25,9 +25,10 @@ export class CartService {
   private ordersCollection = collection(db, 'orders');
   private cartChangedSubject = new BehaviorSubject<void>(undefined);
   cartChanged$ = this.cartChangedSubject.asObservable();
-  constructor(private authService: AuthFirebaseService) {}
+  private booksCollection = collection(db, 'books');
+  constructor(private authService: AuthFirebaseService,private bookService:BookService) {}
 
-  addToCart(item: any, isDiscount?: boolean): Observable<string> {
+  addToCart(item: any): Observable<string> {
     const userId = this.authService.getCurrentUser().uid;
 
     const conditions = [
@@ -56,10 +57,10 @@ export class CartService {
           });
         } else {
           const cartItem: CartItem = {
-            ...item, // <- Save the full item
+            ...item,
             userId,
-            quantity: 1,
-            isDiscount: isDiscount ?? item.isDiscount ?? false,
+            quantity: item.isDiscount ? (item.quantity) : 1,
+            isDiscount: item.isDiscount ?? item.isDiscount ?? false,
           };
           return addDoc(this.cartCollection, cartItem).then((docRef) => {
             this.cartChangedSubject.next();
@@ -85,7 +86,7 @@ export class CartService {
     return from(
       getDocs(cartQuery).then(async (querySnapshot) => {
         const items: CartItem[] = querySnapshot.docs.map(doc => ({
-          id: doc.id,
+          docId: doc.id,
           ...doc.data()
         })) as CartItem[];
 
@@ -123,8 +124,9 @@ export class CartService {
   }
 
   removeCartItem(id: string): Observable<void> {
-    this.cartChangedSubject.next();
-    return from(deleteDoc(doc(db, 'cart', id)));
+    this.cartChangedSubject.next()
+    const cartDocRef = doc(this.cartCollection, id);
+    return from(deleteDoc(cartDocRef));
   }
 
   clearCart(userId: string): Observable<void[]> {
@@ -143,7 +145,7 @@ export class CartService {
     userId: string,
     items: any[],
     school?: string,
-    address?: string
+    address?: any
   ): Observable<string> {
     const totalAmount = items.reduce((sum, item) => {
       return sum + item.price * item.quantity;
@@ -152,7 +154,7 @@ export class CartService {
     const sanitizedItems = items.map((item) => {
       const sanitizedItem: any = {};
       Object.keys(item).forEach((key) => {
-        const value = (item as any)[key];
+        const value = item[key];
         if (value !== undefined && value !== null) {
           sanitizedItem[key] = value;
         }
@@ -164,7 +166,7 @@ export class CartService {
       userId,
       status: 'placed',
       paymentStatus: 'unpaid',
-      address,
+      address: address,
       school,
       items: sanitizedItems,
       totalAmount,
@@ -173,11 +175,53 @@ export class CartService {
 
     return from(
       addDoc(this.ordersCollection, order).then(async (orderRef) => {
+        const bookQuantityMap: Record<string, number> = {};
+
+        for (const item of items) {
+          if (item.type === 'book') {
+            bookQuantityMap[item.id] = (bookQuantityMap[item.id] || 0) + item.quantity;
+          } else if (item.type === 'bundle' && Array.isArray(item.books)) {
+            for (const book of item.books) {
+              const bundleQty = item.quantity || 1;
+              if (book?.id && typeof book.quantity === 'number') {
+                const totalBookQty = book.quantity * bundleQty;
+                bookQuantityMap[book.id] = (bookQuantityMap[book.id] || 0) + totalBookQty;
+              }
+            }
+          }
+        }
+
+        const updatePromises = Object.entries(bookQuantityMap).map(([bookId, qty]) =>
+          this.decreaseBookQuantity(bookId, qty)
+        );
+
+        await Promise.all(updatePromises);
+
+        // ✅ STEP 3: Clear cart and notify listeners
         await this.clearCart(userId).toPromise();
         this.cartChangedSubject.next();
+
         return orderRef.id;
       })
     );
+  }
+
+
+
+  decreaseBookQuantity(bookId: string, orderedQty: number): Promise<void> {
+    const docRef = doc(db, 'books', bookId);
+
+    return getDoc(docRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        const book = docSnap.data();
+        const currentQty = book.quantity ?? 0;
+        const newQty = Math.max(currentQty - orderedQty, 0); // Prevent negative quantity
+
+        return this.bookService.updateBook(bookId, { quantity: newQty }).toPromise();
+      } else {
+        return Promise.reject(`Book with ID ${bookId} not found`);
+      }
+    });
   }
 
 

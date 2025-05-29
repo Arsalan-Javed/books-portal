@@ -61,7 +61,7 @@ export class BookService {
     const docRef = doc(db, 'grade', id);
     return from(deleteDoc(docRef));
   }
-  addType(category: Category): Observable<string> {
+  addCategory(category: Category): Observable<string> {
     const gradeQuery = query(this.categoriesCollection, where('name', '==', category.name));
     return from(
       getDocs(gradeQuery).then((querySnapshot) => {
@@ -129,4 +129,19 @@ export class BookService {
     const docRef = doc(db, 'books', id);
     return from(deleteDoc(docRef));
   }
+  increaseBookQuantity(bookId: string, quantityToAdd: number): Promise<void> {
+    const docRef = doc(db, 'books', bookId);
+    return getDoc(docRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        const book = docSnap.data();
+        const currentQty = book.quantity ?? 0;
+        const newQty = currentQty + quantityToAdd;
+
+        return this.updateBook(bookId, { quantity: newQty }).toPromise();
+      } else {
+        return Promise.reject(`Book with ID ${bookId} not found`);
+      }
+    });
+  }
+
 }

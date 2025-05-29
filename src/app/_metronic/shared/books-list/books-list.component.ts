@@ -14,6 +14,13 @@ export class BooksListComponent {
 
   selectedBooks: any[] = [];
   selectAll: boolean = false;
+  bookInput:any
+  filteredBooks:any
+
+  ngOnChanges() {
+    this.filteredBooks = [...this.books];
+  }
+
   toggleSelection(book: any, event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.checked) {
@@ -47,5 +54,16 @@ export class BooksListComponent {
   addBundleBook(book: any) {
     this.cartBook.emit(book);
   }
+
+  applyFilters() {
+    const name = this.bookInput;
+    const lowerName = name?.toLowerCase() || '';
+    this.filteredBooks = this.books.filter(s =>
+      (!name || s.bookName?.toLowerCase().includes(lowerName))
+    );
+  }
+
+
+
 
 }

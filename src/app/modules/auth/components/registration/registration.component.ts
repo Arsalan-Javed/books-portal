@@ -62,6 +62,14 @@ export class RegistrationComponent implements OnInit, OnDestroy {
             Validators.maxLength(100),
           ]),
         ],
+        phone: [
+          '',
+          Validators.compose([
+            Validators.required,
+            Validators.minLength(11),
+            Validators.pattern('^[0-9]{11}$')
+          ]),
+        ],
         email: [
           'qwe@qwe.qwe',
           Validators.compose([
@@ -98,11 +106,11 @@ export class RegistrationComponent implements OnInit, OnDestroy {
 
     if (this.registrationForm.invalid) return;
 
-    const { fullname, email, password,address } = this.registrationForm.value;
+    const { fullname, email, password,address,phone } = this.registrationForm.value;
 
     try {
       // Call Firebase register function
-      const user = await this.authServiceFire.register(email, password, fullname,address);
+      const user = await this.authServiceFire.register(email, password, fullname,address,phone);
       console.log('Registered user:', user);
 
       this.router.navigate(['/']); // Navigate on success

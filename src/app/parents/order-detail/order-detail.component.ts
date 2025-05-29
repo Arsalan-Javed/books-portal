@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../services/cart.service';
 import { Book, Category, Grade, Order } from '../services/modal';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ import { BundleService } from 'src/app/pages/bundle/bundle.service';
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [CommonModule,SharedModule,FormsModule],
+  imports: [CommonModule, SharedModule, FormsModule],
   templateUrl: './order-detail.component.html',
   styleUrl: './order-detail.component.scss'
 })
@@ -24,19 +24,20 @@ export class OrderDetailComponent {
   grades: Grade[] = []
   types: Category[] = []
   orderId: string | null = null;
-  order:any
-  showBooks:any
+  order: any
+  showBooks: any
   shipmentCost: number = 0;
-  user:any
-  selectedSchoolName:any
+  user: any
+  selectedSchool: any
   constructor(private route: ActivatedRoute,
+    private router: Router,
     private cartService: CartService,
     private cdr: ChangeDetectorRef,
     private modalService: NgbModal,
     private bookService: BookService,
-    private bundleService:BundleService,
+    private bundleService: BundleService,
     private authService: AuthFirebaseService
-    ) {  }
+  ) { }
   ngOnInit() {
     this.user = this.authService.getCurrentUser()
     this.orderId = this.route.snapshot.paramMap.get('id');
@@ -72,7 +73,7 @@ export class OrderDetailComponent {
           return {
             ...matchedBook,
             price: sb.price,
-            quantity:sb.quantity
+            quantity: sb.quantity
           };
         }
         return null;
@@ -107,8 +108,8 @@ export class OrderDetailComponent {
       this.loadBooks();
     })
   }
-  getTypes(){
-    this.bookService.getCategories().subscribe((types)=>{
+  getTypes() {
+    this.bookService.getCategories().subscribe((types) => {
       this.types = types
     })
   }
@@ -127,38 +128,68 @@ export class OrderDetailComponent {
   calculateGrandTotal(): number {
     return this.calculateSubTotal() + this.shipmentCost;
   }
+
   onStatusChange(order: any) {
     if (!order?.id) return;
 
-  const { status, paymentStatus } = order;
+    const { status, paymentStatus } = order;
 
-  this.cartService.updateOrder(order.id, { status, paymentStatus })
-    .then(() => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Updated Successfully',
-        showConfirmButton: false,
-        timer: 2000
+    this.cartService.updateOrder(order.id, { status, paymentStatus })
+      .then(async () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Updated Successfully',
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+        if (status === 'cancel') {
+          const bookQuantityMap: Record<string, number> = {};
+
+          for (const item of order.items) {
+            if (item.type === 'book') {
+              bookQuantityMap[item.id] = (bookQuantityMap[item.id] || 0) + item.quantity;
+            } else if (item.type === 'bundle' && Array.isArray(item.books)) {
+              const bundleQty = item.quantity || 1;
+              for (const book of item.books) {
+                if (book?.id && typeof book.quantity === 'number') {
+                  const totalQty = book.quantity * bundleQty;
+                  bookQuantityMap[book.id] = (bookQuantityMap[book.id] || 0) + totalQty;
+                }
+              }
+            }
+          }
+
+          const updatePromises = Object.entries(bookQuantityMap).map(([bookId, qty]) =>
+            this.bookService.increaseBookQuantity(bookId, qty)
+          );
+
+          await Promise.all(updatePromises);
+        }
+      })
+      .catch(() => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Update Failed',
+          showConfirmButton: false,
+          timer: 2000
+        });
       });
-    })
-    .catch(() => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Update Failed',
-        showConfirmButton: false,
-        timer: 2000
-      });
-    });
+  }
+
+
+  backOrder() {
+    this.router.navigate(['orders'])
   }
   getSchoolNameById(id: string): void {
     this.bundleService.getSchoolById(id).subscribe({
       next: (school: any) => {
-        this.selectedSchoolName = school.name;
+        this.selectedSchool = school;
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching school:', err);
-        this.selectedSchoolName = 'Unknown';
+        this.selectedSchool = 'Unknown';
       }
     });
   }

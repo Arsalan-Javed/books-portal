@@ -39,6 +39,7 @@ export class ParentNavbarComponent implements OnInit {
     })
   }
   logOut(){
+    window.location.reload();
     this.authService.logout()
   }
 

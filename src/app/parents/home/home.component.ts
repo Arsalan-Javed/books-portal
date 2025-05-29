@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit {
   filteredItems:any = [];
   allItems:any
   books: Book[] = [];
+  allBooks:Book[]=[]
   grades: Grade[] = []
   types: Category[] = []
   bundles: Bundle[] = [];
@@ -63,7 +64,9 @@ export class HomeComponent implements OnInit {
   }
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
-      this.books = books.map(book => ({
+      this.allBooks = books
+      this.books = books.filter(b => !b.isDeleted)
+      .map(book => ({
         ...book,
         grade: this.getGrade(book.grade),
         category: this.getType(book.category),
@@ -107,13 +110,14 @@ export class HomeComponent implements OnInit {
   }
   getBundles() {
     this.bundleService.getBundles().subscribe((bundle) => {
-      this.bundles = bundle.map(bundle => ({
+      this.bundles = bundle.filter(b => !b.isDeleted)
+      .map(bundle => ({
         ...bundle,
         grade: this.getGrade(bundle.grade),
         school: this.getSchool(bundle.school),
         name:bundle.bundleName,
         type: 'bundle'
-      }));
+      }))
       this.isLoading = false
       this.allItems = [...this.books, ...this.bundles];
       this.applyFilters()
@@ -121,16 +125,17 @@ export class HomeComponent implements OnInit {
     });
   }
   getTotalPrice(books: BundleBook[] = []): number {
-    return books.reduce((sum, book) => sum + book.price, 0);
+    return books.reduce((sum, book) => sum + (book.price*book.quantity), 0);
   }
-  openShowBook(content: any, showbooks: any) {
-    this.showBooks = showbooks
+  openShowBook(content: any, books: any) {
+    this.showBooks = books
       .map((sb: any) => {
-        const matchedBook = this.books.find(book => book.id === sb.id);
+        const matchedBook = this.allBooks.find(book => book.id === sb.id);
         if (matchedBook) {
           return {
             ...matchedBook,
-            price: sb.price
+            price: sb.price,
+            quantity:sb.quantity
           };
         }
         return null;
@@ -183,7 +188,7 @@ export class HomeComponent implements OnInit {
     });
   }
   addBundleBook(book: any, modal: any) {
-    const item = {...book, bookId: book.id,isDiscount:true };
+    const item = {...book, bookId: book.id,quantity:book.quantity , isDiscount:true };
     this.cartService.addToCart(item).subscribe({
       next: (cartId) => {
         Swal.fire({

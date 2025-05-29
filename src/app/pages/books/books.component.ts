@@ -51,9 +51,9 @@ export class BooksComponent implements OnInit {
     this.bookForm = this.fb.group({
       bookName: ['', Validators.required],
       image: ['', Validators.required],
-      grade: [null, Validators.required],
+      grade: [null],
       category: [null, Validators.required],
-      academicYear: ['', Validators.required],
+      academicYear: [''],
       description: ['', Validators.required],
       quantity: [0, [Validators.required, Validators.min(1)]],
       price: [0, [Validators.required, Validators.min(0)]]
@@ -149,7 +149,7 @@ export class BooksComponent implements OnInit {
 
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
-      this.books = books
+      this.books = books.filter(book => !book.isDeleted)
       this.isLoading = false
       this.applyFilters()
       this.cdr.detectChanges();
@@ -157,7 +157,7 @@ export class BooksComponent implements OnInit {
   }
   getGrades() {
     this.bookService.getGrades().subscribe((grades) => {
-      this.grades = grades;
+      this.grades = grades.filter(g => !g.isDeleted);
       this.getTypes()
       this.loadBooks();
     }, () => {
@@ -166,7 +166,7 @@ export class BooksComponent implements OnInit {
   }
   getTypes() {
     this.bookService.getCategories().subscribe((cat) => {
-      this.categories = cat;
+      this.categories = cat.filter(c => !c.isDeleted);
     })
   }
   deleteBook(id: any) {
@@ -179,7 +179,7 @@ export class BooksComponent implements OnInit {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bookService.deleteBook(id).subscribe({
+        this.bookService.updateBook(id,{isDeleted:true}).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The Book has been deleted.', 'success');
             this.loadBooks();
@@ -240,7 +240,7 @@ export class BooksComponent implements OnInit {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bookService.deleteGrade(id).subscribe({
+        this.bookService.updateGrade(id,{isDeleted:true}).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The grade has been deleted.', 'success');
             this.getGrades();
@@ -263,7 +263,7 @@ export class BooksComponent implements OnInit {
     this.modalService.open(content, { size: 'md', centered: true });
   }
   submitType(modal: any) {
-    this.bookService.addType(this.category).subscribe({
+    this.bookService.addCategory(this.category).subscribe({
       next: (id) => {
         this.showAlert(this.successAlert);
         this.bookForm.patchValue({category:id});
@@ -291,7 +291,7 @@ export class BooksComponent implements OnInit {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bookService.deleteCategory(id).subscribe({
+        this.bookService.updateCategory(id,{isDeleted:true}).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The Type has been deleted.', 'success');
             this.getTypes();
@@ -331,8 +331,8 @@ export class BooksComponent implements OnInit {
 
     this.filteredBooks = this.books.filter(book =>
       (!name || book.bookName.toLowerCase().includes(lowerName)) &&
-      (!category || book.category === this.getCategories(category)) &&
-      (!grade || book.grade === this.getGrade(grade))
+      (!category || book.category === category) &&
+      (!grade || book.grade === grade)
     );
   }
 

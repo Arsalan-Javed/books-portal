@@ -22,11 +22,11 @@ export class CartComponent {
   method: any
   cart: any[] = []
   schools: School[] = []
-  userId:string
-  isLoading:boolean = false
-  delivered:string =''
-  address:string =''
-  school:string =''
+  userId: string
+  isLoading: boolean = false
+  delivered: string = ''
+  address:any;
+  school: string = ''
   constructor(
     private router: Router,
     private cdr: ChangeDetectorRef,
@@ -42,6 +42,7 @@ export class CartComponent {
     this.address = user.address
     this.getCart(this.userId)
     this.getSchool()
+    this.address = { street: '', city: '' }
   }
   getCart(userId: any) {
     this.cartService.getCart(userId).subscribe((cart: any) => {
@@ -50,7 +51,7 @@ export class CartComponent {
       this.cdr.detectChanges();
     })
   }
-  remove(id: any) {
+  remove(docId: any) {
     Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to remove this item from your cart?',
@@ -62,8 +63,8 @@ export class CartComponent {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.cartService.removeCartItem(id).subscribe(() => {
-          this.cart = this.cart.filter(item => item.id !== id);
+        this.cartService.removeCartItem(docId).subscribe(() => {
+          this.cart = this.cart.filter(item => item.docId !== docId);
           this.cdr.detectChanges();
           Swal.fire({
             title: 'Removed!',
@@ -96,7 +97,7 @@ export class CartComponent {
   }
 
   updateCartItem(item: PopulatedCartItem) {
-    this.cartService.updateCartItem(item.id as string, { quantity: item.quantity }).subscribe(() => { });
+    this.cartService.updateCartItem(item.docId as string, { quantity: item.quantity }).subscribe(() => { });
   }
 
 
@@ -116,9 +117,19 @@ export class CartComponent {
 
 
   checkout() {
-    if(this.school){this.address=''}
-    this.cartService.placeOrder(this.userId, this.cart,this.school,this.address).subscribe({
+    if (this.school) { this.address = { street: '', city: '' } }
+    Swal.fire({
+      title: 'Placing your order...',
+      html: 'Please wait while we process your order.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    this.cartService.placeOrder(this.userId, this.cart, this.school, this.address).subscribe({
       next: () => {
+        Swal.close();
         Swal.fire({
           title: 'Order Placed!',
           text: 'Your order has been placed successfully.',
@@ -131,6 +142,7 @@ export class CartComponent {
         });
       },
       error: (err) => {
+        Swal.close();
         Swal.fire({
           title: 'Error!',
           text: 'Something went wrong while placing your order.',
@@ -142,8 +154,8 @@ export class CartComponent {
       }
     });
   }
-  onStatusChange(){
-    this.school =''
+  onStatusChange() {
+    this.school = ''
   }
   getSchool() {
     this.bundleService.getSchool().subscribe((schools) => {

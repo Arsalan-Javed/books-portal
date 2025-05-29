@@ -29,6 +29,9 @@
           }
         </select>
       </div>
+      <button type="button" class="btn btn-primary" (click)="filters = { name: '', school: '', grade: '' }; applyFilters()">
+        Clear Filters
+      </button>
     </div>
     <button type="button" class="btn btn-primary" (click)="open(modalContent)">
       Add Bundle
@@ -171,10 +174,15 @@
       </div>
 
       <div class="row mb-6">
-        <label class="col-lg-3 col-form-label fw-bold fs-6"><span>Bundle Name</span></label>
-        <div class="col-lg-9 ">
-          <input type="text" class="form-control form-control-lg form-control-solid" formControlName="bundleName"
-            placeholder="Enter Bundle Name" />
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">School</span></label>
+        <div class="col-lg-9 d-flex gap-5">
+          <select class="form-select form-select-solid form-select-lg" formControlName="school">
+            <option value="null" selected>Select a School...</option>
+            @for (school of schools; track $index) {
+            <option [value]="school.id">{{ school.name }} </option>
+            }
+          </select>
+          <button *ngIf="!isViewMode" class="btn btn-primary w-25 p-0" (click)="openSchool(modalSchool)">Add School</button>
         </div>
       </div>
 
@@ -192,15 +200,10 @@
       </div>
 
       <div class="row mb-6">
-        <label class="col-lg-3 col-form-label fw-bold fs-6"><span class="required">School</span></label>
-        <div class="col-lg-9 d-flex gap-5">
-          <select class="form-select form-select-solid form-select-lg" formControlName="school">
-            <option value="null" selected>Select a School...</option>
-            @for (school of schools; track $index) {
-            <option [value]="school.id">{{ school.name }} </option>
-            }
-          </select>
-          <button *ngIf="!isViewMode" class="btn btn-primary w-25 p-0" (click)="openSchool(modalSchool)">Add School</button>
+        <label class="col-lg-3 col-form-label fw-bold fs-6"><span>Bundle Name</span></label>
+        <div class="col-lg-9 ">
+          <input type="text" class="form-control form-control-lg form-control-solid" formControlName="bundleName"
+            placeholder="Enter Bundle Name" />
         </div>
       </div>
 
@@ -347,6 +350,10 @@
       <div class="mb-3">
         <label for="name" class="form-label">Phone Number</label>
         <input type="number" class="form-control" id="name" name="name" [(ngModel)]="school.phoneNumber" required />
+      </div>
+      <div class="mb-3">
+        <label for="name" class="form-label">Address</label>
+        <input type="text" class="form-control" id="address" name="address" [(ngModel)]="school.address" required />
       </div>
       <div class="text-end">
         <button type="button" class="btn btn-primary"

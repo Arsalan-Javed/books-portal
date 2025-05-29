@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BookService } from '../books/book.service';
 import { BundleService } from '../bundle/bundle.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { School } from 'src/app/parents/services/modal';
 import Swal from 'sweetalert2';
 
@@ -18,6 +18,7 @@ export class SchoolsComponent {
   schoolForm!: FormGroup;
   selectedSchoolId: any;
   school: any
+  isViewMode:boolean = false
   constructor(
     private modalService: NgbModal,
     private bundleService: BundleService,
@@ -31,24 +32,29 @@ export class SchoolsComponent {
     this.schoolForm = this.fb.group({
       name: [''],
       representative: [''],
-      phoneNumber: ['']
+      phoneNumber: [''],
+      address: [''],
     });
 
   }
   getSchool() {
     this.bundleService.getSchool().subscribe((schools) => {
-      this.schools = schools;
+      this.schools = schools.filter(s => !s.isDeleted);
       this.isLoading = false
       this.applyFilters()
       this.cdr.detectChanges();
     })
   }
   open(content: any) {
+    this.isViewMode = false;
+    this.schoolForm.enable();
     this.selectedSchoolId = null;
     this.schoolForm.reset()
     this.modalService.open(content, { size: 'md', centered: true });
   }
   edit(modal: any, school: School) {
+    this.isViewMode = false;
+    this.schoolForm.enable();
     this.selectedSchoolId = school.id
     this.schoolForm.patchValue(school);
     this.modalService.open(modal, { size: 'lg', centered: true });
@@ -118,7 +124,7 @@ export class SchoolsComponent {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bundleService.deleteSchool(id).subscribe({
+        this.bundleService.updateSchool(id,{isDeleted:true}).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The school has been deleted.', 'success');
             this.getSchool();
@@ -132,6 +138,14 @@ export class SchoolsComponent {
     });
   }
 
+  view(modal: any, school: School) {
+    this.isViewMode = true;
+    this.selectedSchoolId = school.id
+    this.schoolForm.patchValue(school);
+    this.schoolForm.disable()
+    this.modalService.open(modal, { size: 'lg', centered: true });
+
+  }
   applyFilters() {
     const name = this.school
     const lowerName = name?.toLowerCase() || '';

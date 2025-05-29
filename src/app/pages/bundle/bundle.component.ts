@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BookService } from '../books/book.service';
-import {  BundleService } from './bundle.service';
+import { BundleService } from './bundle.service';
 import { SweetAlertOptions } from 'sweetalert2';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import Swal from 'sweetalert2';
@@ -17,20 +17,20 @@ export class BundleComponent implements OnInit {
   books: Book[] = [];
   bundleForm!: FormGroup;
   currentBundleId: string = '';
-  selectedBooks: { id: string; bookName: string; price: number ,quantity:number}[] = [];
+  selectedBooks: { id: string; bookName: string; price: number, quantity: number }[] = [];
   bundles: Bundle[] = [];
   showBooks: Book[] = []
   grades: Grade[] = []
   grade: Grade = { name: '' };
-  school: School = { name: '' ,representative:'',phoneNumber:'' };
+  school: School = { name: '', representative: '', phoneNumber: '', address: '' };
   types: Category[] = []
   schools: School[] = []
   dummyImg: string = './assets/images/books.jpg'
-  isLoading:boolean = false
+  isLoading: boolean = false
   isViewMode: boolean = false;
-  filteredBundles:any = [];
+  filteredBundles: any = [];
   filters = {
-    name:'',
+    name: '',
     school: '',
     grade: ''
   };
@@ -85,7 +85,7 @@ export class BundleComponent implements OnInit {
     });
 
   }
-  calculateDiscountPrice(changes:any) {
+  calculateDiscountPrice(changes: any) {
     const price = this.getTotalPrice(changes.books) || 0;
     const discount = changes.discount || 0;
 
@@ -138,12 +138,12 @@ export class BundleComponent implements OnInit {
     this.bundleForm.enable();
     this.isViewMode = false
     this.bundleForm.reset({
-      bundleName:{ value: '', disabled: true},
+      bundleName: { value: '', disabled: true },
       image: '',
       grade: null,
       school: null,
       books: [],
-      discount:5
+      discount: 5
     });
     this.selectedBooks = [];
     this.currentBundleId = ''
@@ -165,6 +165,7 @@ export class BundleComponent implements OnInit {
             title: 'Success!',
             text: 'Bundle Successfully Updated',
           };
+          modal.close();
           this.showAlert(this.successAlert);
         },
         error: (err) => {
@@ -184,6 +185,7 @@ export class BundleComponent implements OnInit {
             title: 'Success!',
             text: 'Bundle Successfully Added',
           };
+          modal.close();
           this.showAlert(this.successAlert);
         },
         error: (err) => {
@@ -197,7 +199,6 @@ export class BundleComponent implements OnInit {
       });
     }
 
-    modal.close();
     this.loadBooks();
   }
 
@@ -224,11 +225,11 @@ export class BundleComponent implements OnInit {
 
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
-      this.books = books;
-      this.books = books.map(book => ({
+      this.books = books
+      .map(book => ({
         ...book,
         grade: this.getGrade(book.grade),
-        category:this.getType(book.category)
+        category: this.getType(book.category)
       }));
       this.cdr.detectChanges();
       this.getBundles()
@@ -236,7 +237,7 @@ export class BundleComponent implements OnInit {
   }
   getGrades() {
     this.bookService.getGrades().subscribe((grades) => {
-      this.grades = grades;
+      this.grades = grades.filter(g => !g.isDeleted);
       this.getTypes()
       this.loadBooks();
     }, () => {
@@ -251,7 +252,7 @@ export class BundleComponent implements OnInit {
   }
   getSchool() {
     this.bundleService.getSchool().subscribe((schools) => {
-      this.schools = schools;
+      this.schools = schools.filter(s => !s.isDeleted);
     })
   }
   getGrade(id: any): string {
@@ -268,7 +269,7 @@ export class BundleComponent implements OnInit {
   }
   getBundles() {
     this.bundleService.getBundles().subscribe((bundle) => {
-      this.bundles = bundle;
+      this.bundles = bundle.filter(b => !b.isDeleted);
       this.bundles.sort((a, b) => a.school.localeCompare(b.school));
       this.applyFilters()
       this.isLoading = false
@@ -286,7 +287,7 @@ export class BundleComponent implements OnInit {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bundleService.deleteBundle(id).subscribe({
+        this.bundleService.updateBundle(id,{isDeleted:true}).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The Bundle has been deleted.', 'success');
             this.loadBooks();
@@ -316,7 +317,7 @@ export class BundleComponent implements OnInit {
           return {
             ...matchedBook,
             price: sb.price,
-            quantity:sb.quantity
+            quantity: sb.quantity
           };
         }
         return null;
@@ -363,7 +364,7 @@ export class BundleComponent implements OnInit {
           id: [book.id],
           bookName: [book.bookName],
           price: [book.price],
-          quantity:[book.quantity]
+          quantity: [book.quantity]
         })
       );
     });
@@ -393,7 +394,7 @@ export class BundleComponent implements OnInit {
       next: (gradeId) => {
         console.log('Grade added with ID:', gradeId);
         this.showAlert(this.successAlert);
-        this.bundleForm.patchValue({grade:gradeId});
+        this.bundleForm.patchValue({ grade: gradeId });
         modal.close();
         this.getGrades()
       },
@@ -418,7 +419,7 @@ export class BundleComponent implements OnInit {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bookService.deleteGrade(id).subscribe({
+        this.bookService.updateGrade(id,{isDeleted:true}).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The grade has been deleted.', 'success');
             this.getGrades();
@@ -433,14 +434,14 @@ export class BundleComponent implements OnInit {
   }
 
   openSchool(content: any) {
-    this.school = { name: '' ,representative:'',phoneNumber:'' }
+    this.school = { name: '', representative: '', phoneNumber: '', address: '' }
     this.modalService.open(content, { size: 'md', centered: true });
   }
   submitSchool(modal: any) {
     this.bundleService.addSchool(this.school).subscribe({
       next: (id) => {
         this.showAlert(this.successAlert);
-        this.bundleForm.patchValue({school:id});
+        this.bundleForm.patchValue({ school: id });
         modal.close();
         this.getSchool()
       },
@@ -465,10 +466,10 @@ export class BundleComponent implements OnInit {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bundleService.deleteSchool(id).subscribe({
+        this.bundleService.updateSchool(id,{isDeleted:true}).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The school has been deleted.', 'success');
-            this.getGrades();
+            this.getSchool();
           },
           error: (error) => {
             Swal.fire('Error!', 'There was a problem deleting the school.', 'error');

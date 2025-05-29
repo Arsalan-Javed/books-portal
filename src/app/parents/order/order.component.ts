@@ -36,7 +36,8 @@ export class OrderComponent {
       this.orders = orders.map(order => ({
         ...order,
         createdAt: (order.createdAt as any).toDate()
-      }));
+      }))
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());;
       this.isLoading = false
       this.cdr.detectChanges()
     })

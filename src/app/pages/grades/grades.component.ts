@@ -26,7 +26,7 @@ export class GradesComponent {
   }
   getGrades() {
     this.bookService.getGrades().subscribe((grades) => {
-      this.grades = grades;
+      this.grades = grades.filter(g => !g.isDeleted);
       this.isLoading = false
       this.cdr.detectChanges();
     })
@@ -100,7 +100,7 @@ export class GradesComponent {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bookService.deleteGrade(id).subscribe({
+        this.bookService.updateGrade(id,{isDeleted:true}).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The grade has been deleted.', 'success');
             this.getGrades();

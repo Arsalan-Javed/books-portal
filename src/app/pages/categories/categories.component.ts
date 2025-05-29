@@ -27,7 +27,7 @@ export class CategoriesComponent {
 
   getCategories() {
     this.bookService.getCategories().subscribe((cat) => {
-      this.categories = cat;
+      this.categories = cat.filter(c => !c.isDeleted);
       this.isLoading = false
       this.cdr.detectChanges();
     })
@@ -67,7 +67,7 @@ export class CategoriesComponent {
         }
       });
     } else {
-      this.bookService.addType(this.category).subscribe({
+      this.bookService.addCategory(this.category).subscribe({
         next: (id) => {
           modal.close();
           this.getCategories()
@@ -101,7 +101,7 @@ export class CategoriesComponent {
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bookService.deleteCategory(id).subscribe({
+        this.bookService.updateCategory(id,{isDeleted:true}).subscribe({
           next: () => {
             Swal.fire('Deleted!', 'The Type has been deleted.', 'success');
             this.getCategories();

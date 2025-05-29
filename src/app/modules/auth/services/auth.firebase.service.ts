@@ -34,7 +34,7 @@ export class AuthFirebaseService {
 
   constructor(private router: Router,) {  }
 
-  async register(email: string, password: string, username: string,address:string): Promise<User> {
+  async register(email: string, password: string, username: string,address:string,phone:string): Promise<User> {
     const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
     if (userCredential.user) {
       await updateProfile(userCredential.user, { displayName: username });
@@ -44,6 +44,7 @@ export class AuthFirebaseService {
         email: email,
         username: username,
         address:address,
+        phone:phone,
         createdAt: new Date()
       });
     }

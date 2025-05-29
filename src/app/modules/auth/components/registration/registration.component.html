@@ -202,6 +202,32 @@
         control: registrationForm.controls['address']
       }"></ng-container>
   </div>
+  <div class="fv-row mb-8">
+    <label class="form-label fw-bolder text-gray-900 fs-6">Phone</label>
+    <input class="form-control bg-transparent" type="text" name="phone" formControlName="phone" maxlength="11"
+      placeholder="Phone" autocomplete="off" [ngClass]="{
+        'is-invalid': registrationForm.controls['phone'].invalid && registrationForm.controls['phone'].touched,
+        'is-valid': registrationForm.controls['phone'].valid
+      }" />
+
+    <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
+        validation: 'required',
+        message: 'Phone number is required',
+        control: registrationForm.controls['phone']
+      }"></ng-container>
+    <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
+        validation: 'minlength',
+        message: 'Phone number should be 11 digits',
+        control: registrationForm.controls['phone']
+      }"></ng-container>
+    <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
+        validation: 'pattern',
+        message: 'Phone number must contain only digits',
+        control: registrationForm.controls['phone']
+      }"></ng-container>
+  </div>
+
+
   <!--end::Form group-->
 
   <!--begin::Form group-->

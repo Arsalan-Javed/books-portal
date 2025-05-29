@@ -51,7 +51,7 @@
 
             <td>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-icon btn-bg-light btn-sm" (click)="remove(item.id)">
+                <button class="btn btn-icon btn-bg-light btn-sm" (click)="remove(item.docId)">
                   <app-keenicon name="trash" class="fs-3"></app-keenicon>
                 </button>
               </div>
@@ -96,7 +96,7 @@
 
             <td>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-icon btn-bg-light btn-sm" (click)="remove(item.id)">
+                <button class="btn btn-icon btn-bg-light btn-sm" (click)="remove(item.docId)">
                   <app-keenicon name="trash" class="fs-3"></app-keenicon>
                 </button>
               </div>
@@ -128,8 +128,10 @@
         </tr>
         <tr *ngIf="delivered == 'home'">
           <td colspan="5">
-            <div class="d-flex justify-content-end gap-5">
-              <input type="text" placeholder="Enter Address" [(ngModel)]="address"
+            <div class="d-flex justify-content-end gap-5" *ngIf="address">
+              <input type="text" placeholder="Enter Street" [(ngModel)]="address.street"
+                class="form-control form-control-lg form-control-solid w-25">
+                <input type="text" placeholder="Enter City" [(ngModel)]="address.city"
                 class="form-control form-control-lg form-control-solid w-25">
             </div>
           </td>

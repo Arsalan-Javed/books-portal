@@ -2,9 +2,13 @@
   <!-- begin::Table -->
   <div class="text-end">
     <div class="text-end mb-3" *ngIf="isSelect">
-      <button class="btn btn-primary" (click)="emitSelectedBooks()">
-        Select Books
-      </button>
+      <div class="d-flex justify-content-end gap-5">
+        <input type="text" [(ngModel)]="bookInput" placeholder="Search by Name" class="form-control w-50"
+        (input)="applyFilters()">
+        <button class="btn btn-primary" (click)="emitSelectedBooks()">
+          Select Books
+        </button>
+      </div>
     </div>
 
   </div>
@@ -28,7 +32,7 @@
         <th class="min-w-120px">Grade</th>
         <th class="min-w-120px">Category</th>
         <th class="min-w-120px">Academic Year</th>
-        <th class="min-w-120px" *ngIf="!isAddToCart">Quantity</th>
+        <th class="min-w-120px" >Quantity</th>
         <th class="min-w-120px">Price </th>
         <th class="min-w-100px text-end" *ngIf="isAddToCart">Actions</th>
       </tr>
@@ -36,7 +40,7 @@
     <!-- end::Table head -->
     <!-- begin::Table body -->
     <tbody *ngIf="books && books.length > 0; else noBooks">
-      <tr *ngFor="let book of books">
+      <tr *ngFor="let book of filteredBooks">
         <td>
           <div class="form-check form-check-sm form-check-custom form-check-solid">
             <ng-container *ngIf="isSelect">
@@ -70,7 +74,7 @@
         <td>
           <span class="text-gray-900 fw-bolder fs-6">{{ book?.academicYear }}</span>
         </td>
-        <td *ngIf="!isAddToCart">
+        <td >
           <span class="text-gray-900 fw-bolder fs-6">{{ book?.quantity }}</span>
         </td>
         <td>

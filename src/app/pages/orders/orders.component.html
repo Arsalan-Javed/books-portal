@@ -26,6 +26,9 @@
           <option value="delivered">Delivered</option>
         </select>
       </div>
+      <button type="button" class="btn btn-primary" (click)="filters = { name: '', payment: '', status: '' }; applyFilters()">
+        Clear Filters
+      </button>
     </div>
   </div>
 

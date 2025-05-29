@@ -38,12 +38,27 @@ export class OrdersComponent {
         ...order,
         user: this.getUser(order.userId),
         createdAt: (order.createdAt as any).toDate()
-      }));
-      this.isLoading = false
-      this.applyFilters()
+      }))
+      .sort((a, b) => {
+      const statusDiff = this.statusPriority[a.status] - this.statusPriority[b.status];
+      if (statusDiff !== 0) return statusDiff;
+
+      return b.createdAt.getTime() - a.createdAt.getTime();
+      });
+
+      this.isLoading = false;
+      this.applyFilters();
       this.cdr.detectChanges();
     });
   }
+
+  statusPriority: { [key: string]: number } = {
+    placed: 1,
+    confirmed: 2,
+    dispatched: 3,
+    delivered: 4,
+    cancel:5
+  };
 
   getUser(id: string): any {
     return this.users.find((user: any) => user.uid === id);
@@ -65,4 +80,15 @@ export class OrdersComponent {
       (!status || o.status === status)
     );
   }
+  groupByPaymentStatus(orders: Order[]): { [key: string]: Order[] } {
+    return orders.reduce((acc, order) => {
+      const status = order.status || 'Unknown';
+      if (!acc[status]) {
+        acc[status] = [];
+      }
+      acc[status].push(order);
+      return acc;
+    }, {} as { [key: string]: Order[] });
+  }
+
 }
