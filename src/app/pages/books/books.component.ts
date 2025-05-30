@@ -89,6 +89,19 @@ export class BooksComponent implements OnInit {
 
   submitBook(modal: any) {
     if (this.bookForm.invalid) return;
+    const newBookName = this.bookForm.getRawValue().bookName.trim().toLowerCase();
+    const isDuplicate = this.books.some(book => book.bookName.trim().toLowerCase() === newBookName);
+
+    if (isDuplicate) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Duplicate Book',
+        text: 'A book with this name already exists!',
+      });
+      return;
+    }
+
+
     if (this.currentBookId) {
       this.bookService.updateBook(this.currentBookId, this.bookForm.value).subscribe({
         next: () => {
