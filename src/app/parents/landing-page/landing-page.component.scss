@@ -1,30 +1,159 @@
-.landing-page{
-  position: relative;
-  background-image: url('/assets/images/landing-image.jpg');
-  width: 100vw;
-  height: 90vh;
-  background-repeat: no-repeat;
-  background-size: cover;
+// .landing-page {
+//   position: relative;
+//   background-image: url("/assets/images/landingpage.png");
+//   width: 100vw;
+//   height: 90vh;
+//   background-repeat: no-repeat;
+//   background-size: cover;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: flex-start;
+//   padding: 0 5%;
+//   gap: 10px;
+//   .title {
+//     font-size: 2vw;
+//     font-weight: 800;
+//     font-family: "Assistant", sans-serif;
+//     color: #0a090a;
+//     span {
+//       color: #c10d14;
+//       text-decoration: underline;
+//     }
+//   }
+// }
+// .start-btn {
+//   background: #c10d14;
+//   padding: 1 10px;
+//   color: #ffffff;
+// }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+}
+.logo {
+  height: 40px;
+  margin-right: 0.5rem;
+}
+.app-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+}
+.hero {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: #e3f2fd;
+}
+.hero h1 {
+  margin-bottom: 0.5rem;
+}
+.tagline {
+  font-size: 1.2rem;
+  color: #ff8c00;
+  margin-bottom: 0.5rem;
+}
+.hero p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #333;
+}
+.hero-actions button {
+  margin: 0 0.5rem;
+}
+.selection-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+}
+.card {
+  width: 350px;
+  height: fit-content;
+}
+.full-width {
+  width: 100%;
+  margin-top: 1rem;
+}
+.how-it-works {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  background: #fafafa;
+  text-align: start;
+}
+.works-card {
+  width: 600px;
+  text-align: center;
+}
+.steps-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.how-it-works h2 {
+  margin-bottom: 0.5rem;
+}
+.how-it-works ol {
+  text-align: left;
+  padding-left: 1.2rem;
+}
+
+// Footer styles
+.bundle-card {
+  width: 300px;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  text-align: center;
+  background: white;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 0 5%;
-  gap: 10px;
-  .title{
-    font-size: 2vw;
-    font-weight: 800;
-    font-family: "Assistant", sans-serif;
-    color: #0a090a;
-    span{
-      color: #c10d14;
-      text-decoration: underline;
+  justify-content: space-between;
+
+  .card-header {
+    h2 {
+      font-size: 20px;
+      margin: 0;
+      color: #1a2b49;
+    }
+    .grade {
+      font-size: 16px;
+      color: #444;
+    }
+  }
+
+  .card-image {
+    margin: 12px 0;
+    img {
+      width: 100%;
+      border-radius: 12px;
+    }
+  }
+
+  .card-details {
+    font-size: 16px;
+    color: #333;
+    h3 {
+      margin: 8px 0;
+      font-size: 22px;
+      font-weight: bold;
+      color: #1a2b49;
+    }
+  }
+
+  .card-footer {
+    margin-top: 12px;
+    button {
+      width: 100%;
+      border-radius: 24px;
+      font-weight: bold;
+      background-color: #ff8c00;
     }
   }
 }
-.start-btn{
-  background: #c10d14;
-  padding: 1 10px;
-  color: #ffffff;
-}
-

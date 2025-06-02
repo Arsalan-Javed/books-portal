@@ -1,25 +1,256 @@
-<div class="landing-page">
-  <div class="title">The <span>BEST</span> Way to Buy <br>
-    Back-to-School Supplies!</div>
-      <div class="d-flex gap-5 w-50">
-        <div class="w-50">
-          <select
-            class="form-select w-100 text-capitalize" [(ngModel)]="filters.school" >
-            <option  selected value="">Select School</option>
-            @for (item of schools; track $index) {
-            <option [value]="item.id">{{ item.name }}</option>
-            }
-          </select>
-        </div>
-        <div class="w-50">
-          <select
-            class="form-select w-100 text-capitalize" [(ngModel)]="filters.grade" >
-            <option  selected value="">Select Grade</option>
-            @for (item of grades; track $index) {
-            <option [value]="item.id">{{ item.name }}</option>
-            }
-          </select>
-        </div>
-        <button class="btn start-btn w-25" (click)="applyFilters()">Get Started</button>
-      </div>
+<section class="hero">
+  <h1 style="font-weight: bolder">
+    Be <span style="color: red">Ready</span> from Day One
+  </h1>
+  <p class="tagline">Your School Companion!</p>
+  <p>Select your school & grade to browse kits, or find a tutor.</p>
+  <div class="hero-actions">
+    <button
+      mat-raised-button
+      color="primary"
+      style="background-color: rgb(255, 187, 0)"
+      (click)="browseKits()"
+    >
+      Browse Kits
+    </button>
+    <button
+      mat-stroked-button
+      color="accent"
+      style="background-color: darkblue; color: white"
+    >
+      Find a Tutor
+    </button>
+  </div>
+</section>
+
+<section class="how-it-works" style="background-color: rgb(173, 198, 235)">
+  <div class="works-card">
+    <img
+      src="../../../assets/images/supplies1.png"
+      alt="School Kit Steps"
+      class="steps-image"
+      height="300px"
+    />
+    <span>
+      <h2>How School Kits Work</h2>
+      <ol>
+        <li>Select your school & grade level</li>
+        <li>Kit delivered to home or school</li>
+        <li>Ready for the first day</li>
+      </ol>
+    </span>
+  </div>
+  <mat-card class="card">
+    <mat-card-header>
+      <mat-card-title
+        >School Kit
+        <mat-icon style="color: rgb(93, 8, 250); margin-left: 10px"
+          >library</mat-icon
+        >
+      </mat-card-title>
+      <!-- <mat-icon style="color: rgb(93, 8, 250); margin-left: 3px"
+        >backpack</mat-icon
+      > -->
+      <mat-card-subtitle
+        >Find All Day One school kits. Select a school and grade then
+        browse</mat-card-subtitle
+      >
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form1" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>School</mat-label>
+          <mat-select formControlName="school">
+            <mat-option *ngFor="let s of schools" [value]="s">{{
+              s.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          class="full-width"
+          style="border-radius: 10px"
+        >
+          <mat-label>Grade</mat-label>
+
+          <mat-select formControlName="grade">
+            <mat-option *ngFor="let g of grades" [value]="g">{{
+              g.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          class="full-width"
+          style="background-color: rgb(255, 187, 0)"
+          (click)="browseKits(form1.value)"
+        >
+          Get Started
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- <mat-card class="card">
+    <mat-card-header>
+      <mat-icon style="color: blue; margin-left: 10px">school</mat-icon>
+      <mat-card-title>Tutoring</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form2" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill" class="full-width">
+          <input
+            matInput
+            formControlName="location"
+            placeholder="City or ZIP"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-select formControlName="subject">
+            <mat-option *ngFor="let subj of grades" [value]="subj">{{
+              subj
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-select formControlName="grade">
+            <mat-option *ngFor="let g of grades" [value]="g">{{
+              g
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" class="full-width">
+          Search
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card> -->
+</section>
+
+<section class="how-it-works" style="background-color: beige">
+  <!-- <div class="works-card">
+    <img
+      src="../../../assets/images/bundlekit3.png"
+      alt="School Kit Steps"
+      class="steps-image"
+      height="300px"
+    />
+    <h2>How School Kits Work</h2>
+    <ol>
+      <li>Select your school & grade level</li>
+      <li>Kit delivered to home or school</li>
+      <li>Ready for the first day</li>
+    </ol>
+  </div> -->
+
+  <div class="works-card">
+    <img
+      src="../../../assets/images/tutor1.png"
+      alt="Tutoring Steps"
+      class="steps-image"
+      height="300px"
+    />
+    <h2>How Tutoring Works</h2>
+    <ol>
+      <li>Select location, subject & grade</li>
+      <li>Matched with a tutor</li>
+      <li>Schedule online or in-person session</li>
+    </ol>
+  </div>
+  <mat-card class="card">
+    <mat-card-header>
+      <mat-icon style="color: darkblue; margin-left: 10px">school</mat-icon>
+      <mat-card-title>Tutoring</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form2" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill" class="full-width">
+          <input
+            matInput
+            formControlName="location"
+            placeholder="City or ZIP"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-select formControlName="subject">
+            <mat-option *ngFor="let subj of grades" [value]="subj">{{
+              subj
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-select formControlName="grade">
+            <mat-option *ngFor="let g of grades" [value]="g">{{
+              g
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          style="background-color: darkblue; color: white"
+          class="full-width"
+        >
+          Find my Tutor
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</section>
+<div class="how-it-works" style="background-color: rgb(201, 201, 181)">
+  <h3>Our Parteners Schools</h3>
 </div>
+
+<section class="how-it-works" style="background-color: rgb(201, 201, 181)">
+  <!-- <div *ngFor="let school of schools" class="how-it-works-card">
+    <img
+      src="../../../assets/images/standre_black.png"
+      alt="School Kit Steps"
+      class="steps-image"
+      height="300px"
+      width="50%"
+    />
+    <button
+      mat-raised-button
+      color="primary"
+      style="background-color: rgb(255, 187, 0); width: 100%"
+      (click)="browseKits({ school: school.name })"
+    >
+      View
+    </button>
+  </div> -->
+  <div class="bundle-card" *ngFor="let school of schools">
+    <div class="card-header">
+      <h2>{{ school.name.toUpperCase() }}</h2>
+      <!-- <p class="grade">1st Grade</p> -->
+    </div>
+    <div class="card-image">
+      <img
+        src="../../../assets/images/standre_black.png"
+        alt="School bundle image"
+      />
+    </div>
+    <!-- <div class="card-details">
+      <p>• Includes 45 essential items</p>
+      <h3>$ 45</h3>
+    </div> -->
+    <div class="card-footer">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="browseKits({ school: school })"
+      >
+        View Bundle
+      </button>
+    </div>
+  </div>
+</section>
+
+---

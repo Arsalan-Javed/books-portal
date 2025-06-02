@@ -1,29 +1,75 @@
-<nav class="navbar navbar-expand-lg bg-white border-bottom">
+<nav
+  class="navbar navbar-expand-lg border-bottom"
+  style="background-color: rgb(250, 186, 11)"
+>
   <div class="container-fluid mx-10">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <div class="navbar-nav me-auto mb-2 mb-lg-0 ms-20">
-        <div class="menu-item me-lg-3">
-          <a class="nav-link px-3 py-2 rounded"  routerLink="/home">
-            <span class="menu-title"> <img src="assets/images/booklogo.jpg" width="30" height="30"></span>
+      <div class="me-lg-3">
+        <a routerLink="/home">
+          <span>
+            <img src="../../assets/images/1.png" height="100px" width="120px"
+          /></span>
+        </a>
+      </div>
+      <div
+        class="navbar-nav me-auto mb-2 mb-lg-0 ms-20"
+        style="width: 100%; display: flex; justify-content: center"
+      >
+        <div class="menu-item me-lg-3" *ngIf="user">
+          <a
+            class="menu-link nav-link px-3 py-2 rounded"
+            routerLinkActive="active menu-here"
+            routerLink="/home"
+          >
+            <span class="menu-title">Home</span>
           </a>
         </div>
-
-        <div class="menu-item me-lg-3" *ngIf="user">
-          <a class="menu-link nav-link px-3 py-2 rounded" routerLinkActive="active menu-here" routerLink="/order">
-            <span class="menu-title"> Orders</span>
+        <div style="align-items: center">
+          <a
+            class="menu-link nav-link px-3 py-2 rounded"
+            routerLinkActive="active menu-here"
+            routerLink="/browse"
+          >
+            <span class="menu-title">School Supplies</span>
+          </a>
+        </div>
+        <div>
+          <a
+            class="menu-link nav-link px-3 py-2 rounded"
+            routerLinkActive="active menu-here"
+            routerLink="/order"
+          >
+            <span class="menu-title">Tutoring Center</span>
+          </a>
+        </div>
+        <div>
+          <a
+            class="menu-link nav-link px-3 py-2 rounded"
+            routerLinkActive="active menu-here"
+            routerLink="/order"
+          >
+            <span class="menu-title">My Orders</span>
           </a>
         </div>
       </div>
-      <app-parent-navbar class="app-navbar flex-shrink-0"
-        [isRtl]="false"></app-parent-navbar>
-
+      <app-parent-navbar
+        class="app-navbar flex-shrink-0"
+        [isRtl]="false"
+      ></app-parent-navbar>
     </div>
   </div>
 </nav>
-<div >
+<div>
   <router-outlet></router-outlet>
 </div>

@@ -19,6 +19,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 function appInitializer(authService: AuthService) {
   return () => {
@@ -58,6 +59,7 @@ function appInitializer(authService: AuthService) {
       multi: true,
       deps: [AuthService],
     },
+    provideAnimationsAsync(),
   ],
   bootstrap: [AppComponent],
 })

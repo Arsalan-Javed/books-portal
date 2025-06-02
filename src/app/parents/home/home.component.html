@@ -1,12 +1,31 @@
 <div *ngIf="!isLoading; else loading">
-  <div class="d-flex justify-content-center gap-5 mt-5" style="width: 100%;">
-    <div style="width: 40%;">
-      <input type="text" [(ngModel)]="filters.name" placeholder="Search by Name" class="form-control"
-        (input)="applyFilters()">
+  <div
+    class="d-flex justify-content-center gap-5 mt-5"
+    style="width: 100%"
+    [style]="{
+      'max-width': '1200px',
+      margin: '0 auto',
+      'background-color': '#f8f9fa',
+      padding: '20px',
+      'border-radius': '10px'
+    }"
+  >
+    <div style="width: 40%">
+      <input
+        type="text"
+        [(ngModel)]="filters.name"
+        placeholder="Search by Name"
+        class="form-control"
+        (input)="applyFilters()"
+      />
     </div>
     <div>
-      <select *ngIf="schools && schools.length > 0 " class="form-select w-100 text-capitalize"
-        [(ngModel)]="filters.school" (change)="applyFilters()">
+      <select
+        *ngIf="schools && schools.length > 0"
+        class="form-select w-100 text-capitalize"
+        [(ngModel)]="filters.school"
+        (change)="applyFilters()"
+      >
         <option selected value="">Select School</option>
         @for (item of schools; track $index) {
         <option [value]="item.id">{{ item.name }}</option>
@@ -14,8 +33,12 @@
       </select>
     </div>
     <div>
-      <select *ngIf="types && types.length > 0 " class="form-select w-100 text-capitalize"
-        [(ngModel)]="filters.category" (change)="applyFilters()">
+      <select
+        *ngIf="types && types.length > 0"
+        class="form-select w-100 text-capitalize"
+        [(ngModel)]="filters.category"
+        (change)="applyFilters()"
+      >
         <option selected value="">Select Category</option>
         @for (item of types; track $index) {
         <option [value]="item.id">{{ item.name }}</option>
@@ -23,8 +46,12 @@
       </select>
     </div>
     <div>
-      <select *ngIf="grades && grades.length > 0 " class="form-select w-100 text-capitalize" [(ngModel)]="filters.grade"
-        (change)="applyFilters()">
+      <select
+        *ngIf="grades && grades.length > 0"
+        class="form-select w-100 text-capitalize"
+        [(ngModel)]="filters.grade"
+        (change)="applyFilters()"
+      >
         <option selected value="">Select Grade</option>
         @for (item of grades; track $index) {
         <option [value]="item.id">{{ item.name }}</option>
@@ -33,43 +60,77 @@
     </div>
   </div>
 
-  <div class="d-flex flex-wrap justify-content-center gap-10 my-5 mx-20 ">
-    <div class="mb-4 " *ngFor="let item of filteredItems">
+  <div class="d-flex flex-wrap justify-content-center gap-10 my-5 mx-20">
+    <div class="mb-4" *ngFor="let item of filteredItems">
       <div class="card h-100 position-relative">
-        <img src="assets/images/small-book.jpg" class="bundle-logo" *ngIf="item.type === 'bundle'">
-        <img [src]="'data:image/png;base64,' + item.image" class="card-img-top" alt="Image" />
+        <div
+          style="padding: 10px; margin-bottom: 5px"
+          style="background-color: darkblue"
+        >
+          <img
+            src="assets/images/small-book.jpg"
+            class="bundle-logo"
+            *ngIf="item.type === 'bundle'"
+          />
+          <!-- <img [src]="'data:image/png;base64,' + item.image" class="card-img-top" alt="Image" /> -->
+          <img src="assets/images/epma.png" class="card-img-top" alt="Image" />
+        </div>
         <div class="card-body">
           <h5 class="card-title">{{ item.name }}</h5>
           <ng-container *ngIf="item.type === 'book'">
-            <h6 class="card-subtitle mb-2 text-muted">Grade: {{ item.grade }}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">Academic Year: {{ item.academicYear }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">
+              Grade: {{ item.grade }}
+            </h6>
+            <h6 class="card-subtitle mb-2 text-muted">
+              Academic Year: {{ item.academicYear }}
+            </h6>
             <p class="card-text">{{ item.description }}</p>
           </ng-container>
           <ng-container *ngIf="item.type === 'bundle'">
-            <h6 class="card-subtitle mb-2 text-muted">School: {{ item.school }}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">Grade: {{ item.grade }}</h6>
-            <h6 class="card-subtitle text-decoration-underline text-primary cursor-pointer fw-bolder fs-6"
-              (click)="openShowBook(modalBookShow, item?.books)">Books: {{ item.books.length }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">
+              School: {{ item.school }}
+            </h6>
+            <h6 class="card-subtitle mb-2 text-muted">
+              Grade: {{ item.grade }}
+            </h6>
+            <h6
+              class="card-subtitle text-decoration-underline text-primary cursor-pointer fw-bolder fs-6"
+              (click)="openShowBook(modalBookShow, item?.books)"
+            >
+              Books: {{ item.books.length }}
+            </h6>
           </ng-container>
         </div>
-        <div class="d-flex justify-content-between align-items-center border-top p-2">
+        <div
+          class="d-flex justify-content-between align-items-center border-top p-2"
+          style="background-color: rgb(231, 173, 14)"
+        >
           <div>
-            <div>Price: <span class="actual-price" *ngIf="item.type === 'bundle'">${{ getTotalPrice(item.books)
-                }}</span> ${{ item.price }}</div>
+            <div>
+              Price:
+              <span class="actual-price" *ngIf="item.type === 'bundle'"
+                >${{ getTotalPrice(item.books) }}</span
+              >
+              ${{ item.price }}
+            </div>
           </div>
-          <button class="btn btn-secondary d-flex align-items-center gap-2 p-3"
+          <button
+            class="btn btn-secondary d-flex align-items-center gap-2 p-3"
             [disabled]="item.type === 'book' && item.quantity === 0"
-            (click)="item.type === 'book' ? addToCart(item) : addCart(item)">
-            <span *ngIf="item.type === 'book' && item.quantity === 0">Out of Stock</span>
-            <span *ngIf="item.type !== 'book' || item.quantity > 0"><app-keenicon name="plus-circle" class="fs-3"></app-keenicon>  Cart</span>
+            (click)="item.type === 'book' ? addToCart(item) : addCart(item)"
+          >
+            <span *ngIf="item.type === 'book' && item.quantity === 0"
+              >Out of Stock</span
+            >
+            <span *ngIf="item.type !== 'book' || item.quantity > 0"
+              ><app-keenicon name="plus-circle" class="fs-3"></app-keenicon>
+              Cart</span
+            >
           </button>
-
         </div>
       </div>
     </div>
   </div>
-
-
 </div>
 <ng-template #loading>
   <div class="text-center my-5">
@@ -79,11 +140,19 @@
 </ng-template>
 <ng-template #modalBookShow let-modalShow>
   <div class="modal-header">
-    <h5 class="modal-title"> Books </h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modalShow.dismiss()"></button>
+    <h5 class="modal-title">Books</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modalShow.dismiss()"
+    ></button>
   </div>
   <div class="modal-body">
-    <app-books-list [books]='showBooks' [isAddToCart]="true"
-      (cartBook)="addBundleBook($event,modalShow)"></app-books-list>
+    <app-books-list
+      [books]="showBooks"
+      [isAddToCart]="true"
+      (cartBook)="addBundleBook($event, modalShow)"
+    ></app-books-list>
   </div>
 </ng-template>
