@@ -15,6 +15,7 @@ export class ParentNavbarComponent implements OnInit {
 	userAvatarClass: string = 'symbol-35px symbol-md-40px';
 	btnIconClass: string = 'fs-2 fs-md-1';
   userId:any
+  user:any
 	constructor(
     private cartService:CartService,
     private authService:AuthFirebaseService,
@@ -25,6 +26,7 @@ export class ParentNavbarComponent implements OnInit {
 
 	ngOnInit(): void {
     const userId = this.authService.getCurrentUser()?.uid
+    this.user = this.authService.getCurrentUser()
     this.userId = userId
     this.getCart(userId)
     this.cartService.cartChanged$.subscribe(() => {

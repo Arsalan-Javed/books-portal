@@ -1,126 +1,133 @@
-<div class="container my-5" *ngIf="order; else loading">
-  <div class="card">
-    <div class="card-header text-white align-items-center">
-      <div class="d-flex align-items-center gap-5">
-        <button class="btn p-0 border-0 bg-transparent"
-        (click)="backOrder()"  *ngIf="user.isAdmin"><app-keenicon name="left-square" class="fs-1"></app-keenicon></button>
-        <h3> Order Detail (ID: {{ order.id }})</h3>
-      </div>
-    </div>
-    <div class="card-body">
-      <p><strong>User Name:</strong> {{order.user.username}}</p>
-      <p><strong>Email:</strong> {{order.user.email}}</p>
-      <p><strong>Phone Number:</strong> {{order.user.phone}}</p>
-      <p><strong>Delivered To:</strong>
-        <span *ngIf="order.address.street" > <strong class="me-2">Address</strong> Street:{{order?.address?.street}} City:{{order?.address?.city}} </span>
-        <span *ngIf="order.school" > <strong class="me-2">school</strong>  Address:{{ selectedSchool?.address }}, Phone Number:{{ selectedSchool?.phoneNumber }}</span>
-      </p>
-      <div class="d-flex justify-content-between mb-2">
-        <p><strong>Status:</strong>
-          <span class="badge ms-2 p-3 bg-primary text-white text-capitalize">
-            {{ order.status }}
-          </span>
-        </p>
-        <div class="d-flex align-items-center w-25" *ngIf="user.isAdmin">
-          <label class="w-100">Status:</label>
-          <select class="form-select w-100 ms-2 text-capitalize" [(ngModel)]="order.status">
-            <option value="placed">Placed</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="dispatched">Dispatched</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancel">Cancel</option>
-          </select>
+<div style="background: linear-gradient(to bottom right,#e8eaec,#b7c3d1,#a8b8c9);min-height: 92.5vh;">
 
+  <div class="container pt-5" *ngIf="order; else loading">
+    <div class="card">
+      <div class="card-header text-white align-items-center">
+        <div class="d-flex align-items-center gap-5">
+          <button class="btn p-0 border-0 bg-transparent" (click)="backOrder()" *ngIf="user.isAdmin"><app-keenicon
+              name="left-square" class="fs-1"></app-keenicon></button>
+          <h3> Order Detail (ID: {{ order.id }})</h3>
         </div>
       </div>
-      <div class="d-flex justify-content-between">
-        <p><strong>Payment Status:</strong>
-          <span class="badge ms-2 p-3 bg-success text-white text-capitalize">
-            {{ order.paymentStatus }}
-          </span>
+      <div class="card-body">
+        <p><strong>User Name:</strong> {{order.user.username}}</p>
+        <p><strong>Email:</strong> {{order.user.email}}</p>
+        <p><strong>Phone Number:</strong> {{order.user.phone}}</p>
+        <p><strong>Delivered To:</strong>
+          <span *ngIf="order.address.street"> <strong class="me-2">Address</strong> Street:{{order?.address?.street}}
+            City:{{order?.address?.city}} </span>
+          <span *ngIf="order.school"> <strong class="me-2">school</strong> Address:{{ selectedSchool?.address }}, Phone
+            Number:{{ selectedSchool?.phoneNumber }}</span>
         </p>
-        <div class="d-flex align-items-center w-25" *ngIf="user.isAdmin">
-          <label class="w-100">Payment Status:</label>
-          <select class="form-select w-100 ms-2 text-capitalize" [(ngModel)]="order.paymentStatus">
-            <option value="unpaid">unpaid</option>
-            <option value="paid">paid</option>
-          </select>
+        <div class="d-flex justify-content-between mb-2">
+          <p><strong>Status:</strong>
+            <span class="badge ms-2 p-3 bg-primary text-white text-capitalize">
+              {{ order.status }}
+            </span>
+          </p>
+          <div class="d-flex align-items-center w-25" *ngIf="user.isAdmin">
+            <label class="w-100">Status:</label>
+            <select class="form-select w-100 ms-2 text-capitalize" [(ngModel)]="order.status">
+              <option value="placed">Placed</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="dispatched">Dispatched</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancel">Cancel</option>
+            </select>
+
+          </div>
         </div>
-      </div>
-      <div class="d-flex justify-content-between mt-2">
-        <p><strong>Total Amount:</strong> ${{ order.totalAmount }}</p>
-        <button *ngIf="user.isAdmin" class="btn btn-primary" (click)="onStatusChange(order)">update</button>
-      </div>
-      <p><strong>Created At:</strong> {{ order.createdAt | date:'medium' }}</p>
+        <div class="d-flex justify-content-between">
+          <p><strong>Payment Status:</strong>
+            <span class="badge ms-2 p-3 bg-success text-white text-capitalize">
+              {{ order.paymentStatus }}
+            </span>
+          </p>
+          <div class="d-flex align-items-center w-25" *ngIf="user.isAdmin">
+            <label class="w-100">Payment Status:</label>
+            <select class="form-select w-100 ms-2 text-capitalize" [(ngModel)]="order.paymentStatus">
+              <option value="unpaid">unpaid</option>
+              <option value="paid">paid</option>
+            </select>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between mt-2">
+          <p><strong>Total Amount:</strong> ${{ order.totalAmount }}</p>
+          <button *ngIf="user.isAdmin" class="btn btn-primary" (click)="onStatusChange(order)">update</button>
+        </div>
+        <p><strong>Created At:</strong> {{ order.createdAt | date:'medium' }}</p>
 
-      <hr>
+        <hr>
 
-      <table class="table table-bordered mt-3">
-        <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>Item Name</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of order.items; index as i">
-            <td>{{ i + 1 }}</td>
-            <td *ngIf="item.book">{{ item.book.bookName }}</td>
-            <td *ngIf="item.bundle">
-              {{ item.bundle.bundleName }} <br>
-              <span *ngIf="item.bundle.books.length > 0">
-                books:
-                <span *ngFor="let book of item.bundle.books; let last = last"
-                  (click)="openShowBook(modalBookShow, item.bundle?.books)"
-                  class="text-decoration-underline cursor-pointer">
-                  {{ book.bookName }}<span *ngIf="!last">, </span>
+        <table class="table table-bordered mt-3">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Item Name</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of order.items; index as i">
+              <td>{{ i + 1 }}</td>
+              <td *ngIf="item.book">{{ item.book.bookName }}</td>
+              <td *ngIf="item.bundle">
+                {{ item.bundle.bundleName }} <br>
+                <span *ngIf="item.bundle.books.length > 0">
+                  books:
+                  <span *ngFor="let book of item.bundle.books; let last = last"
+                    (click)="openShowBook(modalBookShow, item.bundle?.books)"
+                    class="text-decoration-underline cursor-pointer">
+                    {{ book.bookName }}<span *ngIf="!last">, </span>
+                  </span>
                 </span>
-              </span>
-            </td>
+              </td>
 
-            <td>{{ item.quantity }}</td>
-            <td *ngIf="item.book">${{ item.book.price }}</td>
-            <td *ngIf="item.bundle">${{ item.bundle.price }}</td>
-            <td *ngIf="item.book">${{ item.quantity * item.book.price }}</td>
-            <td *ngIf="item.bundle">${{ item.quantity * item.bundle.price }}</td>
-          </tr>
-          <tr>
-            <td colspan="4" class="text-end pe-5"><strong>SubTotal:</strong></td>
-            <td class="text-right">${{ calculateSubTotal() }}</td>
-          </tr>
+              <td>{{ item.quantity }}</td>
+              <td *ngIf="item.book">${{ item.book.price }}</td>
+              <td *ngIf="item.bundle">${{ item.bundle.price }}</td>
+              <td *ngIf="item.book">${{ item.quantity * item.book.price }}</td>
+              <td *ngIf="item.bundle">${{ item.quantity * item.bundle.price }}</td>
+            </tr>
+            <tr>
+              <td colspan="4" class="text-end pe-5"><strong>SubTotal:</strong></td>
+              <td class="text-right">${{ calculateSubTotal() }}</td>
+            </tr>
 
-          <tr>
-            <td colspan="4" class="text-end pe-5"><strong>Shipment:</strong></td>
-            <td class="text-right">${{ shipmentCost }}</td>
-          </tr>
+            <tr>
+              <td colspan="4" class="text-end pe-5"><strong>Shipment:</strong></td>
+              <td class="text-right">${{ shipmentCost }}</td>
+            </tr>
 
-          <tr>
-            <td colspan="4" class="text-end pe-5"><strong>Grand Total:</strong></td>
-            <td class="text-right">${{ calculateGrandTotal() }}</td>
-          </tr>
+            <tr>
+              <td colspan="4" class="text-end pe-5"><strong>Grand Total:</strong></td>
+              <td class="text-right">${{ calculateGrandTotal() }}</td>
+            </tr>
 
-        </tbody>
-      </table>
+          </tbody>
+        </table>
 
+      </div>
     </div>
   </div>
-</div>
 
-<ng-template #loading>
-  <div class="text-center my-5">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-3">Loading order details...</p>
-  </div>
-</ng-template>
-<ng-template #modalBookShow let-modalShow>
-  <div class="modal-header">
-    <h5 class="modal-title"> Books </h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modalShow.dismiss()"></button>
-  </div>
-  <div class="modal-body">
-    <app-books-list [books]='showBooks'></app-books-list>
-  </div>
-</ng-template>
+
+  <ng-template #loading>
+    <div class="d-flex justify-content-center align-items-center flex-column" style="height: 100vh;">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3 mb-0">Loading details...</p>
+    </div>
+  </ng-template>
+
+  <ng-template #modalBookShow let-modalShow>
+    <div class="modal-header">
+      <h5 class="modal-title"> Books </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalShow.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <app-books-list [books]='showBooks'></app-books-list>
+    </div>
+  </ng-template>
+</div>

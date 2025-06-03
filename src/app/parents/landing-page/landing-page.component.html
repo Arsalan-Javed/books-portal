@@ -4,7 +4,7 @@
       <div class="d-flex gap-5 w-50">
         <div class="w-50">
           <select
-            class="form-select w-100 text-capitalize" [(ngModel)]="filters.school" >
+            class="form-select w-100 text-capitalize " [(ngModel)]="filters.school" >
             <option  selected value="">Select School</option>
             @for (item of schools; track $index) {
             <option [value]="item.id">{{ item.name }}</option>

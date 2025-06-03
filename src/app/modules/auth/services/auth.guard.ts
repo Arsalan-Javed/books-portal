@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './auth.service';
 import { AuthFirebaseService } from './auth.firebase.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard  {
-  constructor(private authService: AuthFirebaseService) {}
+  constructor(private authService: AuthFirebaseService,private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const currentUser:any = this.authService.getCurrentUser();
@@ -15,6 +15,6 @@ export class AuthGuard  {
     }
 
     // not logged in so redirect to login page with the return url
-    return false;
+    return this.router.parseUrl('/home');;
   }
 }
