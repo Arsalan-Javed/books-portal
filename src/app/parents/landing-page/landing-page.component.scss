@@ -67,6 +67,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+
   gap: 2rem;
   padding: 2rem 1rem;
 }
@@ -90,12 +91,14 @@
 .works-card {
   width: 600px;
   text-align: center;
+
 }
 .steps-image {
   width: 100%;
   border-radius: 8px;
   margin-bottom: 1rem;
 }
+
 .how-it-works h2 {
   margin-bottom: 0.5rem;
 }
@@ -157,3 +160,4 @@
     }
   }
 }
+

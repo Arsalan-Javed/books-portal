@@ -26,7 +26,7 @@ body {
     // Mobile mode
     @include media-breakpoint-down(md) {
         font-size: $app-general-root-font-size-mobile !important;
-    }    
+    }
 }
 
 body {
@@ -52,11 +52,11 @@ router-outlet {
 // Layouts
 body,
 .app-default {
-    background-color: var(--#{$prefix}app-bg-color);    
+    background-color: var(--#{$prefix}app-bg-color);
 }
 
 .app-blank {
-    background-color: var(--#{$prefix}app-blank-bg-color);    
+    background-color: var(--#{$prefix}app-blank-bg-color);
 }
 
 // Reset CSS3 Transitions for child elements
