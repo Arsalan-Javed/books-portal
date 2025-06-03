@@ -1,18 +1,29 @@
-<div class="card-header border-0 pt-5 d-flex justify-content-between align-content-center align-items-center">
+<div
+  class="card-header border-0 pt-5 d-flex justify-content-between align-content-center align-items-center"
+>
   <h3 class="card-title">
     <span class="card-label fw-bolder fs-3 mb-1">Schools List</span>
   </h3>
-  <div class="d-flex gap-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="hover"
-    title="Click to add a user">
+  <div
+    class="d-flex gap-5"
+    data-bs-toggle="tooltip"
+    data-bs-placement="top"
+    data-bs-trigger="hover"
+    title="Click to add a user"
+  >
     <div class="d-flex justify-content-end gap-5">
-      <input type="text" [(ngModel)]="school" placeholder="Search by Name" class="form-control"
-      (input)="applyFilters()">
+      <input
+        type="text"
+        [(ngModel)]="school"
+        placeholder="Search by Name"
+        class="form-control"
+        (input)="applyFilters()"
+      />
     </div>
     <button type="button" class="btn btn-primary" (click)="open(modalSchool)">
       Add School
     </button>
   </div>
-
 </div>
 <!-- end::Header -->
 <!-- begin::Body -->
@@ -20,11 +31,12 @@
   <!-- begin::Table container -->
   <div class="table-responsive">
     <!-- begin::Table -->
-    <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+    <table
+      class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4"
+    >
       <!-- begin::Table head -->
       <thead>
         <tr class="fw-bolder text-muted">
-
           <th class="min-w-150px">Name</th>
           <th class="min-w-140px">Representative</th>
           <th class="min-w-120px">Phone Number</th>
@@ -36,32 +48,46 @@
       <!-- begin::Table body -->
       <tbody *ngIf="schools && schools.length > 0; else noSchools">
         <tr *ngFor="let school of filterSchool">
-
           <td>
             <div class="d-flex justify-content-start flex-column">
               <span class="text-gray-900 fw-bolder text-hover-primary fs-6">
-                {{ school?.name }}
+                {{ school?.name | uppercase }}
               </span>
             </div>
           </td>
           <td>
-            <span class="text-gray-900 fw-bolder fs-6">{{ school?.representative }}</span>
+            <span class="text-gray-900 fw-bolder fs-6">{{
+              school?.representative | titlecase
+            }}</span>
           </td>
           <td>
-            <span class="text-gray-900 fw-bolder fs-6">{{ school?.phoneNumber }}</span>
+            <span class="text-gray-900 fw-bolder fs-6">{{
+              school?.phoneNumber
+            }}</span>
           </td>
           <td>
-            <span class="text-gray-900 fw-bolder fs-6">{{ school?.address }}</span>
+            <span class="text-gray-900 fw-bolder fs-6">{{
+              school?.address | titlecase
+            }}</span>
           </td>
           <td>
             <div class="d-flex justify-content-end flex-shrink-0">
-              <button class="btn btn-icon btn-bg-light btn-sm me-1" (click)="view(modalSchool, school)">
+              <button
+                class="btn btn-icon btn-bg-light btn-sm me-1"
+                (click)="view(modalSchool, school)"
+              >
                 <app-keenicon name="notepad" class="fs-3"></app-keenicon>
               </button>
-              <button class="btn btn-icon btn-bg-light btn-sm me-1" (click)="edit(modalSchool, school)">
+              <button
+                class="btn btn-icon btn-bg-light btn-sm me-1"
+                (click)="edit(modalSchool, school)"
+              >
                 <app-keenicon name="pencil" class="fs-3"></app-keenicon>
               </button>
-              <button class="btn btn-icon btn-bg-light btn-sm" (click)="deleteSchool(school?.id)">
+              <button
+                class="btn btn-icon btn-bg-light btn-sm"
+                (click)="deleteSchool(school?.id)"
+              >
                 <app-keenicon name="trash" class="fs-3"></app-keenicon>
               </button>
             </div>
@@ -88,37 +114,89 @@
   </div>
 </ng-template>
 
-
 <ng-template #modalSchool let-modalS>
   <div class="modal-header">
-    <h4 class="modal-title">{{isViewMode ? 'View' : (selectedSchoolId ? 'Update' : 'Add')}} School</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modalS.dismiss()"></button>
+    <h4 class="modal-title">
+      {{ isViewMode ? "View" : selectedSchoolId ? "Update" : "Add" }} School
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modalS.dismiss()"
+    ></button>
   </div>
 
   <div class="modal-body p-3">
     <form [formGroup]="schoolForm" (ngSubmit)="submitSchool(modalS)">
       <div class="mb-3">
         <label for="name" class="form-label">School Name</label>
-        <input type="text" class="form-control" id="name" formControlName="name" required />
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          formControlName="name"
+          required
+        />
       </div>
       <div class="mb-3">
         <label for="representative" class="form-label">Representative</label>
-        <input type="text" class="form-control" id="representative" formControlName="representative" required />
+        <input
+          type="text"
+          class="form-control"
+          id="representative"
+          formControlName="representative"
+          required
+        />
       </div>
       <div class="mb-3">
         <label for="phoneNumber" class="form-label">Phone Number</label>
-        <input type="number" class="form-control" id="phoneNumber" formControlName="phoneNumber" required />
+        <input
+          type="number"
+          class="form-control"
+          id="phoneNumber"
+          formControlName="phoneNumber"
+          required
+        />
       </div>
       <div class="mb-3">
         <label for="phoneNumber" class="form-label">Address</label>
-        <input type="text" class="form-control" id="address" formControlName="address" required />
+        <input
+          type="text"
+          class="form-control"
+          id="address"
+          formControlName="address"
+          required
+        />
       </div>
-      <div class="text-end" *ngIf="!isViewMode">
-        <button type="submit" class="btn btn-primary" [disabled]="schoolForm.invalid">{{selectedSchoolId ? 'Update':'Save'}}</button>
+      <!-- mascot -->
+      <div class="mb-3">
+        <input type="file" #fileInput (change)="onFileChange($event)" hidden />
+
+        <div class="img-wrapper" (click)="fileInput.click()">
+          <img
+            [src]="
+              selectedSchoolId
+                ? 'data:image/png;base64,' + schoolForm.get('image')?.value
+                : ''
+            "
+          />
+          <div class="overlay">
+            <button class="btn" style="background-color: yellow">
+              Click to upload mascot image
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="text-end">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="schoolForm.invalid"
+        >
+          {{ selectedSchoolId ? "Update" : "Save" }}
+        </button>
       </div>
     </form>
-
   </div>
-
-
 </ng-template>

@@ -86,7 +86,7 @@ export class LandingPageComponent {
       this.getCategories(),
     ]).subscribe(([grades, schools, categories]) => {
       this.grades = grades;
-      this.schools = schools;
+      this.schools = schools.filter((s) => !s.isDeleted);
       this.categories = categories;
       this.isLoading = false;
       this.cdr.detectChanges();

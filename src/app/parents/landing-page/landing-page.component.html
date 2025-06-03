@@ -233,7 +233,11 @@
     </div>
     <div class="card-image">
       <img
-        src="../../../assets/images/standre_black.png"
+        [src]="
+          school.image
+            ? 'data:image/png;base64,' + school.image
+            : '../../../assets/images/school_default.png'
+        "
         alt="School bundle image"
       />
     </div>
