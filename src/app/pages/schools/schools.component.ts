@@ -19,6 +19,7 @@ export class SchoolsComponent {
   selectedSchoolId: any;
   school: any
   isViewMode:boolean = false
+  dummyImg: string = ''
   constructor(
     private modalService: NgbModal,
     private bundleService: BundleService,
@@ -31,6 +32,7 @@ export class SchoolsComponent {
     this.getSchool()
     this.schoolForm = this.fb.group({
       name: [''],
+      image: [''],
       representative: [''],
       phoneNumber: [''],
       address: [''],
@@ -46,6 +48,7 @@ export class SchoolsComponent {
     })
   }
   open(content: any) {
+    this.dummyImg = './assets/images/school.png'
     this.isViewMode = false;
     this.schoolForm.enable();
     this.selectedSchoolId = null;
@@ -152,5 +155,18 @@ export class SchoolsComponent {
     this.filterSchool = this.schools.filter(s=>
       (!name || s.name.toLowerCase().includes(lowerName))
       )
+  }
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        this.dummyImg = base64String
+        const strippedBase64 = base64String.replace(/^data:image\/[a-z]+;base64,/, '');
+        this.schoolForm.patchValue({ image: strippedBase64 })
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }

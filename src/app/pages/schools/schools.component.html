@@ -97,6 +97,16 @@
 
   <div class="modal-body p-3">
     <form [formGroup]="schoolForm" (ngSubmit)="submitSchool(modalS)">
+
+      <div class="mb-3 d-flex justify-content-center">
+        <input type="file" #fileInput (change)="onFileChange($event)" hidden />
+
+        <div class="img-wrapper" (click)="fileInput.click()">
+          <img [src]="selectedSchoolId ? 'data:image/png;base64,' + schoolForm.get('image')?.value : dummyImg" />
+        </div>
+
+      </div>
+
       <div class="mb-3">
         <label for="name" class="form-label">School Name</label>
         <input type="text" class="form-control" id="name" formControlName="name" required />

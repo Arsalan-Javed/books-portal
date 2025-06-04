@@ -1,11 +1,10 @@
-<div style="background: linear-gradient(to bottom right,#e8eaec,#b7c3d1,#a8b8c9);min-height: 92.5vh;">
-<div *ngIf="!isLoading; else loading">
-  <div class="d-flex justify-content-center gap-5 pt-5" style="width: 100%;">
-    <div style="width: 40%;">
+<div *ngIf="!isLoading; else loading" class="main-content">
+  <div class="d-flex justify-content-center  gap-5 mt-5">
+    <div style="width: 50%;">
       <input type="text" [(ngModel)]="filters.name" placeholder="Search by Name" class="form-control"
         (input)="applyFilters()">
     </div>
-    <div>
+    <div style="width: 15%;">
       <select *ngIf="schools && schools.length > 0 " class="form-select w-100 text-capitalize"
         [(ngModel)]="filters.school" (change)="applyFilters()">
         <option selected value="">Select School</option>
@@ -14,7 +13,7 @@
         }
       </select>
     </div>
-    <div>
+    <div style="width: 15%;">
       <select *ngIf="types && types.length > 0 " class="form-select w-100 text-capitalize"
         [(ngModel)]="filters.category" (change)="applyFilters()">
         <option selected value="">Select Category</option>
@@ -23,7 +22,7 @@
         }
       </select>
     </div>
-    <div>
+    <div style="width: 15%;">
       <select *ngIf="grades && grades.length > 0 " class="form-select w-100 text-capitalize" [(ngModel)]="filters.grade"
         (change)="applyFilters()">
         <option selected value="">Select Grade</option>
@@ -34,12 +33,12 @@
     </div>
   </div>
 
-  <div class="d-flex flex-wrap justify-content-center gap-10 mt-5 mx-20 ">
+  <div class="d-flex flex-wrap justify-content-center cards gap-10 mt-5">
     <div class="mb-4 " *ngFor="let item of filteredItems">
       <div class="card h-100 position-relative">
-        <img src="assets/images/small-book.jpg" class="bundle-logo" *ngIf="item.type === 'bundle'">
+        <img src="assets/images/small-book.jpg" class="bundle-logo" *ngIf="item.type === 'bundle'" title="bundle">
         <img [src]="'data:image/png;base64,' + item.image" class="card-img-top" alt="Image" />
-        <div class="card-body">
+        <div class="ccard-body py-2 px-0">
           <h5 class="card-title">{{ item.name }}</h5>
           <ng-container *ngIf="item.type === 'book'">
             <h6 class="card-subtitle mb-2 text-muted">Grade: {{ item.grade }}</h6>
@@ -62,8 +61,8 @@
             [disabled]="item.type === 'book' && item.quantity === 0"
             (click)="item.type === 'book' ? addToCart(item) : addCart(item)">
             <span *ngIf="item.type === 'book' && item.quantity === 0">Out of Stock</span>
-            <span *ngIf="item.type !== 'book' || item.quantity > 0" class="d-flex align-items-center gap-2" >
-            <app-keenicon name="handcart" class="fs-3"></app-keenicon> <span>Cart</span> </span>
+            <span *ngIf="item.type !== 'book' || item.quantity > 0" class="d-flex align-items-center gap-2">
+              <app-keenicon name="handcart" class="fs-3"></app-keenicon> <span>Cart</span> </span>
           </button>
 
         </div>
@@ -75,10 +74,7 @@
 </div>
 
 <ng-template #loading>
-  <div
-    class="d-flex justify-content-center align-items-center flex-column"
-    style="height: 100vh;"
-  >
+  <div class="d-flex justify-content-center align-items-center flex-column" style="height: 100vh;">
     <div class="spinner-border text-primary" role="status"></div>
     <p class="mt-3 mb-0">Loading details...</p>
   </div>
@@ -95,4 +91,3 @@
       (cartBook)="addBundleBook($event,modalShow)"></app-books-list>
   </div>
 </ng-template>
-</div>

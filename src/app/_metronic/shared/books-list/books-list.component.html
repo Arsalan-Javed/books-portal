@@ -14,8 +14,8 @@
   </div>
   <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
     <!-- begin::Table head -->
-    <thead>
-      <tr class="fw-bolder text-muted">
+    <thead [class.isCart]="isAddToCart">
+      <tr class="fw-bolder text-muted" [class.border-0]="isAddToCart">
         <th class="w-25px">
           <div class="
               form-check form-check-sm form-check-custom form-check-solid
@@ -82,7 +82,7 @@
         </td>
         <td *ngIf="isAddToCart">
           <div class="d-flex justify-content-end flex-shrink-0">
-            <button class="btn btn-secondary d-flex align-items-center gap-2 p-3"
+            <button class="btn start-btn d-flex align-items-center gap-2 p-3"
             (click)="addBundleBook(book)"><app-keenicon name="plus-circle" class="fs-3"></app-keenicon> Cart</button>
           </div>
         </td>

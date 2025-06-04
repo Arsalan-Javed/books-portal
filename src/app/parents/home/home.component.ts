@@ -64,7 +64,13 @@ export class HomeComponent implements OnInit {
   }
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
-      this.allBooks = books
+      this.allBooks = books.map(book => ({
+        ...book,
+        grade: this.getGrade(book.grade),
+        category: this.getType(book.category),
+        name:book.bookName,
+        type: 'book'
+      }));
       this.books = books.filter(b => !b.isDeleted)
       .map(book => ({
         ...book,
@@ -158,10 +164,13 @@ export class HomeComponent implements OnInit {
         });
       },
       error: (err) => {
+        const errorMsg = err.message || 'Failed to add item to cart!';
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Failed to Book item to cart!',
+          text: errorMsg,
+          timer: 2000,
+          showConfirmButton: false,
         });
       }
     });
@@ -179,10 +188,13 @@ export class HomeComponent implements OnInit {
         });
       },
       error: (err) => {
+        const errorMsg = err.message || 'Failed to add item to cart!';
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Failed to Bundle item to cart!',
+          text: errorMsg,
+          timer: 2000,
+          showConfirmButton: false,
         });
       }
     });
@@ -200,11 +212,14 @@ export class HomeComponent implements OnInit {
         });
       },
       error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to Book item to cart!',
-        });
+          const errorMsg = err.message || 'Failed to add item to cart!';
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: errorMsg,
+            timer: 2000,
+            showConfirmButton: false,
+          });
         modal.close()
       }
     });

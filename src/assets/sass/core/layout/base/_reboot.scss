@@ -52,7 +52,7 @@ router-outlet {
 // Layouts
 body,
 .app-default {
-    background-color: var(--#{$prefix}app-bg-color);
+    // background-color: var(--#{$prefix}app-bg-color);
 }
 
 .app-blank {

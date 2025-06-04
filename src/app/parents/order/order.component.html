@@ -1,18 +1,17 @@
-<div style="background: linear-gradient(to bottom right,#e8eaec,#b7c3d1,#a8b8c9);min-height: 92.5vh;">
-<div class="card-body py-3 mx-20 my-5" *ngIf="!isLoading; else loading">
+<div class="card-body py-3 mx-20 pt-5" *ngIf="!isLoading; else loading">
   <!-- begin::Table container -->
   <div class="table-responsive">
     <!-- begin::Table -->
     <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
       <!-- begin::Table head -->
       <thead>
-        <tr class="fw-bolder text-muted">
-          <th class="min-w-150px">Order ID</th>
+        <tr class="fw-bolder text-muted border-0">
+          <th class="min-w-150px ps-2">Order ID</th>
           <th class="min-w-150px">Total Items </th>
           <th class="min-w-150px">Total Amount </th>
           <th class="min-w-150px">Date </th>
           <th class="min-w-150px">Payment Status</th>
-          <th class="min-w-100px text-end">Status</th>
+          <th class="min-w-100px text-end pe-2">Status</th>
         </tr>
       </thead>
       <!-- end::Table head -->
@@ -110,4 +109,3 @@
   </div>
 </ng-template>
 
-</div>
