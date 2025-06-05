@@ -1,8 +1,8 @@
 <div style="background: linear-gradient(to bottom right,#e8eaec,#b7c3d1,#a8b8c9);min-height: 92.5vh;">
-<div *ngIf="!isLoading; else loading">
+<div *ngIf="!isLoading; else loading" class="pt-5">
 
   <div
-    class="d-flex justify-content-center gap-5 mt-5"
+    class="d-flex justify-content-center gap-5"
     style="width: 100%"
     [style]="{
       'max-width': '1200px',
@@ -63,7 +63,7 @@
     </div>
   </div>
 
-  <div class="d-flex flex-wrap justify-content-center gap-10 my-5 mx-20">
+  <div class="d-flex flex-wrap justify-content-center gap-10 mt-5 mx-20">
     <div class="mb-4" *ngFor="let item of filteredItems">
 
       <div class="card h-100 position-relative">
@@ -107,7 +107,7 @@
         </div>
         <div
           class="d-flex justify-content-between align-items-center border-top p-2"
-          style="background-color: rgb(231, 173, 14)"
+          style="background-color: #e7ad0e"
         >
           <div>
             <div>
@@ -120,18 +120,10 @@
           </div>
 
           <button
-            class="btn btn-secondary d-flex align-items-center gap-2 p-3"
+            class="btn btn-primary d-flex align-items-center gap-2 p-3"style="background-color: darkblue"
             [disabled]="item.type === 'book' && item.quantity === 0"
             (click)="item.type === 'book' ? addToCart(item) : addCart(item)"
           >
-            <span *ngIf="item.type === 'book' && item.quantity === 0"
-              >Out of Stock</span
-            >
-            <span *ngIf="item.type !== 'book' || item.quantity > 0"
-              ><app-keenicon name="plus-circle" class="fs-3"></app-keenicon>
-              Cart</span
-            >
-            (click)="item.type === 'book' ? addToCart(item) : addCart(item)">
             <span *ngIf="item.type === 'book' && item.quantity === 0">Out of Stock</span>
             <span *ngIf="item.type !== 'book' || item.quantity > 0" class="d-flex align-items-center gap-2">
               <app-keenicon name="handcart" class="fs-3"></app-keenicon> <span>Cart</span> </span>

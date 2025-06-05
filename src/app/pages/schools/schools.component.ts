@@ -36,7 +36,6 @@ export class SchoolsComponent {
       representative: [''],
       phoneNumber: [''],
       address: [''],
-      image: [''],
     });
   }
   getSchool() {
@@ -164,22 +163,6 @@ export class SchoolsComponent {
     );
   }
 
-  onFileChange(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64String = reader.result as string;
-        // this.dummyImg = base64String
-        const strippedBase64 = base64String.replace(
-          /^data:image\/[a-z]+;base64,/,
-          ''
-        );
-        this.schoolForm.patchValue({ image: strippedBase64 });
-      };
-      reader.readAsDataURL(file);
-    }
-  }
   onFileChange(event: any) {
     const file = event.target.files[0];
     if (file) {

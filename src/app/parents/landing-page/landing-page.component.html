@@ -181,7 +181,7 @@
         <mat-form-field appearance="fill" class="full-width">
           <mat-select formControlName="subject">
             <mat-option *ngFor="let subj of grades" [value]="subj">{{
-              subj
+              subj.name
             }}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -189,7 +189,7 @@
         <mat-form-field appearance="fill" class="full-width">
           <mat-select formControlName="grade">
             <mat-option *ngFor="let g of grades" [value]="g">{{
-              g
+              g.name
             }}</mat-option>
           </mat-select>
         </mat-form-field>

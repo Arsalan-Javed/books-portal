@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit {
   getGrades() {
     this.bookService.getGrades().subscribe(
       (grades) => {
-        this.grades = grades;
+        this.grades = grades.filter((b) => !b.isDeleted);
         this.getTypes();
         this.getSchools();
         this.loadBooks();
@@ -103,12 +103,12 @@ export class HomeComponent implements OnInit {
   }
   getTypes() {
     this.bookService.getCategories().subscribe((types) => {
-      this.types = types;
+      this.types = types.filter((b) => !b.isDeleted);
     });
   }
   getSchools() {
     this.bundleService.getSchool().subscribe((schools) => {
-      this.schools = schools;
+      this.schools = schools.filter((b) => !b.isDeleted);
     });
   }
   getGrade(id: any): string {
