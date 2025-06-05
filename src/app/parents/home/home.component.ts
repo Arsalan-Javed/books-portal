@@ -5,9 +5,16 @@ import { SharedModule } from 'src/app/_metronic/shared/shared.module';
 import { BookService } from 'src/app/pages/books/book.service';
 import { BundleService } from 'src/app/pages/bundle/bundle.service';
 import { CartService } from '../services/cart.service';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
-import { Book, Bundle, BundleBook, Grade, School, Category } from '../services/modal';
+import {
+  Book,
+  Bundle,
+  BundleBook,
+  Grade,
+  School,
+  Category,
+} from '../services/modal';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -16,25 +23,25 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, SharedModule, FormsModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
   filters = {
-    name:'',
+    name: '',
     category: '',
     school: '',
-    grade: ''
+    grade: '',
   };
-  filteredItems:any = [];
-  allItems:any
+  filteredItems: any = [];
+  allItems: any;
   books: Book[] = [];
-  allBooks:Book[]=[]
-  grades: Grade[] = []
-  types: Category[] = []
+  allBooks: Book[] = [];
+  grades: Grade[] = [];
+  types: Category[] = [];
   bundles: Bundle[] = [];
   showBooks: Book[] = [];
   schools: School[] = [];
-  isLoading: boolean = false
+  isLoading: boolean = false;
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
@@ -43,21 +50,20 @@ export class HomeComponent implements OnInit {
     private cartService: CartService,
     private router: Router,
     private authService: AuthFirebaseService
-  ) {
-  }
+  ) {}
   ngOnInit() {
-    this.isLoading = true
+    this.isLoading = true;
     this.getGrades();
-    const filters = history.state.filters
+    const filters = history.state.filters;
     if (filters) {
-      this.filters = filters
+      this.filters = filters;
       this.applyFilters();
     } else {
       this.filters = {
         name: '',
         category: '',
         school: '',
-        grade: ''
+        grade: '',
       };
       this.applyFilters();
     }
@@ -83,65 +89,73 @@ export class HomeComponent implements OnInit {
     });
   }
   getGrades() {
-    this.bookService.getGrades().subscribe((grades) => {
-      this.grades = grades;
-      this.getTypes()
-      this.getSchools()
-      this.loadBooks();
-    }, () => {
-      this.loadBooks();
-    })
+    this.bookService.getGrades().subscribe(
+      (grades) => {
+        this.grades = grades;
+        this.getTypes();
+        this.getSchools();
+        this.loadBooks();
+      },
+      () => {
+        this.loadBooks();
+      }
+    );
   }
   getTypes() {
     this.bookService.getCategories().subscribe((types) => {
-      this.types = types
-    })
+      this.types = types;
+    });
   }
   getSchools() {
     this.bundleService.getSchool().subscribe((schools) => {
-      this.schools = schools
-    })
+      this.schools = schools;
+    });
   }
   getGrade(id: any): string {
-    const grade = this.grades.find(g => g.id === id);
+    const grade = this.grades.find((g) => g.id === id);
     return grade ? grade.name : 'Unknown Grade';
   }
   getType(id: any): string {
-    const type = this.types.find(g => g.id === id);
+    const type = this.types.find((g) => g.id === id);
     return type ? type.name : 'Unknown Type';
   }
   getSchool(id: any): string {
-    const school = this.schools.find(g => g.id === id);
+    const school = this.schools.find((g) => g.id === id);
     return school ? school.name : 'Unknown School';
   }
   getBundles() {
     this.bundleService.getBundles().subscribe((bundle) => {
-      this.bundles = bundle.filter(b => !b.isDeleted)
-      .map(bundle => ({
-        ...bundle,
-        grade: this.getGrade(bundle.grade),
-        school: this.getSchool(bundle.school),
-        name:bundle.bundleName,
-        type: 'bundle'
-      }))
-      this.isLoading = false
-      this.allItems = [...this.books, ...this.bundles];
-      this.applyFilters()
+      this.bundles = bundle
+        .filter((b) => !b.isDeleted)
+        .map((bundle) => ({
+          ...bundle,
+          grade: this.getGrade(bundle.grade),
+          school: this.getSchool(bundle.school),
+          name: bundle.bundleName,
+          type: 'bundle',
+        }));
+      this.isLoading = false;
+      // this.allItems = [...this.books, ...this.bundles];
+      this.allItems = [...this.bundles]; // sort by name to display all books and bundles
+      this.allItems = this.allItems.sort((a: any, b: any) =>
+        a.name.localeCompare(b.name)
+      );
+      this.applyFilters();
       this.cdr.detectChanges();
     });
   }
   getTotalPrice(books: BundleBook[] = []): number {
-    return books.reduce((sum, book) => sum + (book.price*book.quantity), 0);
+    return books.reduce((sum, book) => sum + book.price * book.quantity, 0);
   }
   openShowBook(content: any, books: any) {
     this.showBooks = books
       .map((sb: any) => {
-        const matchedBook = this.allBooks.find(book => book.id === sb.id);
+        const matchedBook = this.allBooks.find((book) => book.id === sb.id);
         if (matchedBook) {
           return {
             ...matchedBook,
             price: sb.price,
-            quantity:sb.quantity
+            quantity: sb.quantity,
           };
         }
         return null;
@@ -152,7 +166,7 @@ export class HomeComponent implements OnInit {
   }
 
   addToCart(book: any) {
-    const item = {...book, bookId: book.id};
+    const item = { ...book, bookId: book.id };
     this.cartService.addToCart(item).subscribe({
       next: (cartId) => {
         Swal.fire({
@@ -172,11 +186,11 @@ export class HomeComponent implements OnInit {
           timer: 2000,
           showConfirmButton: false,
         });
-      }
+      },
     });
   }
   addCart(bundle: any) {
-    const item = { ...bundle,bundleId: bundle.id, price: bundle.price};
+    const item = { ...bundle, bundleId: bundle.id, price: bundle.price };
     this.cartService.addToCart(item).subscribe({
       next: (cartId) => {
         Swal.fire({
@@ -196,11 +210,16 @@ export class HomeComponent implements OnInit {
           timer: 2000,
           showConfirmButton: false,
         });
-      }
+      },
     });
   }
   addBundleBook(book: any, modal: any) {
-    const item = {...book, bookId: book.id,quantity:book.quantity , isDiscount:true };
+    const item = {
+      ...book,
+      bookId: book.id,
+      quantity: book.quantity,
+      isDiscount: true,
+    };
     this.cartService.addToCart(item).subscribe({
       next: (cartId) => {
         Swal.fire({
@@ -220,23 +239,20 @@ export class HomeComponent implements OnInit {
             timer: 2000,
             showConfirmButton: false,
           });
-        modal.close()
+        modal.close();
       }
     });
-
   }
   applyFilters() {
     const { name, category, school, grade } = this.filters;
     const lowerName = name?.toLowerCase() || '';
 
-    this.filteredItems = this.allItems?.filter((item: any) =>
-    (!name || item.name?.toLowerCase().includes(lowerName)) &&
-    (!category || item.category === this.getType(category)) &&
-    (!school || item.school === this.getSchool(school)) &&
-    (!grade || item.grade === this.getGrade(grade))
-  );
+    this.filteredItems = this.allItems?.filter(
+      (item: any) =>
+        (!name || item.name?.toLowerCase().includes(lowerName)) &&
+        (!category || item.category === this.getType(category)) &&
+        (!school || item.school === this.getSchool(school)) &&
+        (!grade || item.grade === this.getGrade(grade))
+    );
   }
-
-
-
 }

@@ -13,6 +13,7 @@
 
   &:hover {
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+
   }
 
 }
@@ -27,20 +28,17 @@
   border-radius: 50%;
   background: #f1f1f4;
 }
-.actual-price{
+.actual-price {
   color: red;
   text-decoration: line-through;
   padding: 0 10px;
 }
 
+.card-body {
+  padding: 10px;
+  border: #e3e3ec 1px solid;
+  border-radius: 10px;
+}
 .main-content{
   margin:0 120px;
-}
-@media (max-width:500px) {
-  .main-content{
-    margin:0 20px;
-  }
-  .cards{
-    justify-content: center !important;
-  }
 }
