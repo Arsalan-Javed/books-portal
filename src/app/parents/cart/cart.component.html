@@ -1,4 +1,3 @@
-<div style="background: linear-gradient(to bottom right,#e8eaec,#b7c3d1,#a8b8c9);min-height: 92.5vh;">
 <div class="card-body py-3 mx-20 pt-5" *ngIf="!isLoading; else loading">
   <!-- begin::Table container -->
   <div class="table-responsive">
@@ -8,12 +7,12 @@
     >
       <!-- begin::Table head -->
       <thead>
-        <tr class="fw-bolder text-muted">
-          <th class="min-w-150px">Product Details</th>
+        <tr class="fw-bolder text-muted border-0">
+          <th class="min-w-150px ps-3">Product Details</th>
           <th class="min-w-140px">Quantity</th>
-          <th class="min-w-120px">Price</th>
-          <th class="min-w-120px">Total</th>
-          <th class="min-w-100px text-end">Actions</th>
+          <th class="min-w-120px">Price </th>
+          <th class="min-w-120px">Total </th>
+          <th class="min-w-100px text-end pe-2" >Actions</th>
         </tr>
       </thead>
       <!-- end::Table head -->
@@ -139,7 +138,7 @@
             </td>
           </ng-container>
         </tr>
-        <tr>
+        <tr class="border-0">
           <td colspan="5">
             <div class="text-end">
               <span class="text-gray-900 fw-bolder fs-6"
@@ -149,7 +148,7 @@
           </td>
         </tr>
 
-        <tr>
+        <tr class="border-0">
           <td colspan="5">
             <div class="d-flex justify-content-end gap-5">
               <div class="d-flex align-items-center w-25">
@@ -167,26 +166,18 @@
             </div>
           </td>
         </tr>
-        <tr *ngIf="delivered == 'home'">
+        <tr *ngIf="delivered == 'home'" class="border-0">
           <td colspan="5">
-            <div class="d-flex justify-content-end gap-5" *ngIf="address">
-              <input
-                type="text"
-                placeholder="Enter Street"
-                [(ngModel)]="address.street"
-                class="form-control form-control-lg form-control-solid w-25"
-              />
-              <input
-                type="text"
-                placeholder="Enter City"
-                [(ngModel)]="address.city"
-                class="form-control form-control-lg form-control-solid w-25"
-              />
+            <div class="d-flex justify-content-end gap-5 pe-1" *ngIf="address">
+              <input type="text" placeholder="Enter Street" [(ngModel)]="address.street"
+                class="form-control form-control-lg form-control-solid w-25">
+                <input type="text" placeholder="Enter City" [(ngModel)]="address.city"
+                class="form-control form-control-lg form-control-solid w-25">
             </div>
           </td>
         </tr>
 
-        <tr *ngIf="delivered == 'school'">
+        <tr *ngIf="delivered == 'school'"class="border-0">
           <td colspan="5">
             <div class="d-flex justify-content-end gap-5">
               <div class="d-flex align-items-center w-25">
@@ -204,7 +195,7 @@
             </div>
           </td>
         </tr>
-        <tr>
+        <tr class="border-0">
           <td colspan="5">
             <div class="d-flex justify-content-end gap-5">
               <div

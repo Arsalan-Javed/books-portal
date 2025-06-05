@@ -138,7 +138,7 @@ export class CartComponent {
           timer: 1500
         }).then(() => {
           this.cartService.clearCart(this.userId)
-          this.router.navigate(['/order']);
+          this.router.navigate(['/my-orders']);
         });
       },
       error: (err) => {

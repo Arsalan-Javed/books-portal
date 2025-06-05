@@ -3,6 +3,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { first } from 'rxjs/operators';
+import { AuthFirebaseService } from '../../services/auth.firebase.service';
+import Swal from 'sweetalert2';
 
 enum ErrorStates {
   NotSubmitted,
@@ -23,8 +25,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   // private fields
   private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
-  constructor(private fb: FormBuilder, private authService: AuthService) {
-    this.isLoading$ = this.authService.isLoading$;
+  constructor(private fb: FormBuilder, private authService: AuthFirebaseService) {
   }
 
   ngOnInit(): void {
@@ -50,14 +51,38 @@ export class ForgotPasswordComponent implements OnInit {
     });
   }
 
+  // this.errorState = ErrorStates.NotSubmitted;
+  // const forgotPasswordSubscr = this.authService
+  //   .forgotPassword(this.f.email.value)
+  //   .pipe(first())
+  //   .subscribe((result: boolean) => {
+  //     this.errorState = result ? ErrorStates.NoError : ErrorStates.HasError;
+  //   });
+  // this.unsubscribe.push(forgotPasswordSubscr);
+
   submit() {
-    this.errorState = ErrorStates.NotSubmitted;
-    const forgotPasswordSubscr = this.authService
-      .forgotPassword(this.f.email.value)
-      .pipe(first())
-      .subscribe((result: boolean) => {
-        this.errorState = result ? ErrorStates.NoError : ErrorStates.HasError;
+    const mail = this.f.email.value;
+
+    this.authService.resetPassword(mail)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Email Sent',
+          text: 'Password reset email has been sent. Please check your inbox.',
+          timer: 3000,
+          showConfirmButton: false,
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'Something went wrong. Please try again.',
+          timer: 2000,
+          showConfirmButton: false,
+        });
       });
-    this.unsubscribe.push(forgotPasswordSubscr);
   }
+
+
 }

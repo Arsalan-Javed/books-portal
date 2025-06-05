@@ -16,7 +16,7 @@ const Routing: Routes = [
     component:HomeComponent
   },
   {
-    path:'order',
+    path:'my-orders',
     canActivate: [AuthGuard],
     component:OrderComponent
   },

@@ -90,18 +90,20 @@ export class BooksComponent implements OnInit {
   submitBook(modal: any) {
     if (this.bookForm.invalid) return;
     const newBookName = this.bookForm.getRawValue().bookName.trim().toLowerCase();
-    const isDuplicate = this.books.some(book => book.bookName.trim().toLowerCase() === newBookName);
-
+    const isDuplicate = this.books.some(book =>
+      book.bookName.trim().toLowerCase() === newBookName &&
+      book.id !== this.currentBookId // exclude current book from duplicate check
+    );
     if (isDuplicate) {
       Swal.fire({
         icon: 'warning',
         title: 'Duplicate Book',
         text: 'A book with this name already exists!',
+        showConfirmButton: false,
+        timer: 2000
       });
       return;
     }
-
-
     if (this.currentBookId) {
       this.bookService.updateBook(this.currentBookId, this.bookForm.value).subscribe({
         next: () => {
@@ -122,6 +124,7 @@ export class BooksComponent implements OnInit {
         }
       });
     } else {
+
       this.bookService.addBook(this.bookForm.value).subscribe({
         next: () => {
           this.successAlert = {

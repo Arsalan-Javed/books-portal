@@ -10,7 +10,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { BehaviorSubject, from, Observable, throwError } from 'rxjs';
 import { AuthFirebaseService } from 'src/app/modules/auth/services/auth.firebase.service';
 import {  BookService, db } from 'src/app/pages/books/book.service';
 import { Book, Bundle, CartItem, Order, PopulatedCartItem } from './modal';
@@ -29,8 +29,10 @@ export class CartService {
   constructor(private authService: AuthFirebaseService,private bookService:BookService) {}
 
   addToCart(item: any): Observable<string> {
+    if (!this.authService.getCurrentUser()) {
+      return throwError(() => new Error('Please Login First'));
+    }
     const userId = this.authService.getCurrentUser().uid;
-
     const conditions = [
       where('userId', '==', userId),
       item.bookId ? where('bookId', '==', item.bookId) : where('bundleId', '==', item.bundleId),

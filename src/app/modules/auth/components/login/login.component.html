@@ -6,20 +6,6 @@
     <h1 class="text-gray-900 fw-bolder mb-3">
       Sign In
     </h1>
-    <!--begin::Subtitle-->
-    <div class="text-gray-500 fw-semibold fs-6">
-      Your Social Campaigns
-    </div>
-    <!--end::Subtitle--->
-    <!-- <div class="text-gray-500 fw-bold fs-4">
-      New Here?
-      <a
-        routerLink="/auth/registration"
-        id="kt_login_signup"
-        class="link-primary fw-bolder"
-        >{{ "AUTH.GENERAL.SIGNUP_BUTTON" | translate }}</a
-      >
-    </div> -->
   </div>
   <!--end::Heading-->
 
@@ -152,7 +138,7 @@
 
   <!--begin::Action-->
   <div class="d-grid mb-10">
-    <button type="submit" id="kt_sign_in_submit" class="btn btn-primary" [disabled]="loginForm.invalid">
+    <button type="submit" id="kt_sign_in_submit" class="btn start-btn" [disabled]="loginForm.invalid">
       <ng-container *ngIf="isLoading$ | async">
         <span class="indicator-progress" [style.display]="'block'">
           Please wait...
