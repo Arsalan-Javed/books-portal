@@ -29,6 +29,7 @@ export class OrderDetailComponent {
   shipmentCost: number = 0;
   user: any
   selectedSchool: any
+  fromPage: string = 'orders';
   constructor(private route: ActivatedRoute,
     private router: Router,
     private cartService: CartService,
@@ -39,6 +40,9 @@ export class OrderDetailComponent {
     private authService: AuthFirebaseService
   ) { }
   ngOnInit() {
+    if (history.state && history.state.from) {
+      this.fromPage = history.state.from;
+    }
     this.user = this.authService.getCurrentUser()
     this.orderId = this.route.snapshot.paramMap.get('id');
     if (this.orderId) {
@@ -179,8 +183,9 @@ export class OrderDetailComponent {
 
 
   backOrder() {
-    this.router.navigate(['orders'])
+    this.router.navigate([this.fromPage === 'dashboard' ? '/' : '/orders']);
   }
+
   getSchoolNameById(id: string): void {
     this.bundleService.getSchoolById(id).subscribe({
       next: (school: any) => {
