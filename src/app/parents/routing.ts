@@ -5,30 +5,40 @@ import { CartComponent } from './cart/cart.component';
 import { OrderDetailComponent } from './order-detail/order-detail.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { AuthGuard } from '../modules/auth/services/auth.guard';
+import { TutorsPageComponent } from './tutors-page/tutors-page.component';
+import { TutorDetailsComponent } from './tutors-page/tutor-details/tutor-details.component';
 
 const Routing: Routes = [
   {
     path: 'home',
-    component: LandingPageComponent
+    component: LandingPageComponent,
   },
   {
-    path:'browse',
-    component:HomeComponent
+    path: 'browse',
+    component: HomeComponent,
   },
   {
-    path:'my-orders',
+    path: 'my-orders',
     canActivate: [AuthGuard],
-    component:OrderComponent
+    component: OrderComponent,
   },
   {
     path: 'order/:id',
     canActivate: [AuthGuard],
-    component: OrderDetailComponent
+    component: OrderDetailComponent,
   },
   {
-    path:'cart',
+    path: 'cart',
     canActivate: [AuthGuard],
-    component:CartComponent
+    component: CartComponent,
+  },
+  {
+    path: 'tutors',
+    component: TutorsPageComponent,
+  },
+  {
+    path: 'tutors/:id',
+    component: TutorDetailsComponent,
   },
   {
     path: '',
@@ -39,7 +49,6 @@ const Routing: Routes = [
     path: '**',
     redirectTo: 'error/404',
   },
-
 ];
 
 export { Routing };
