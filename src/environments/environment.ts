@@ -4,15 +4,15 @@
 
 export const environment = {
   firebaseConfig: {
-    apiKey: "AIzaSyC8gPmHz88macCzWA3SsDbLCcLlp38bpwo",
-    authDomain: "books-9f978.firebaseapp.com",
-    projectId: "books-9f978",
-    storageBucket: "books-9f978.firebasestorage.app",
-    messagingSenderId: "640653864488",
-    appId: "1:640653864488:web:4ebfcff7ee6d2e812a4f1d",
-    measurementId: "G-59YEDMHKYS"
+    apiKey: 'AIzaSyC8gPmHz88macCzWA3SsDbLCcLlp38bpwo',
+    authDomain: 'books-9f978.firebaseapp.com',
+    projectId: 'books-9f978',
+    storageBucket: 'books-9f978.firebasestorage.app',
+    messagingSenderId: '640653864488',
+    appId: '1:640653864488:web:4ebfcff7ee6d2e812a4f1d',
+    measurementId: 'G-59YEDMHKYS',
   },
-  production: false,
+  production: true,
   appVersion: 'v8.2.4',
   USERDATA_KEY: 'authf649fc9a5f55',
   isMockEnabled: true,

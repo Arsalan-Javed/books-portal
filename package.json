@@ -1,14 +1,15 @@
 {
-  "name": "demo1",
+  "name": "mualimu",
   "version": "8.2.7",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build -c production",
     "watch": "ng build --watch --configuration development",
     "rtl": "webpack --config=rtl.config.js",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "postbuild": "mv public/browser/* public/ && rm -rf public/browser"
   },
   "private": true,
   "dependencies": {
