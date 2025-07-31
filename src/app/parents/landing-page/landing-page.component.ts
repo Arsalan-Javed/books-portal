@@ -152,4 +152,8 @@ export class LandingPageComponent {
       this.router.navigate(['/browse']);
     }
   }
+
+  findTutor() {
+    this.router.navigate(['/tutors']);
+  }
 }

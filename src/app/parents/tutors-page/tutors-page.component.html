@@ -1,0 +1,128 @@
+<div
+  class="welcome-banner"
+  style="background-image: url('../../../assets/images/tutor1.png')"
+>
+  <h2>MUALIMU TUTOTING CENTER</h2>
+  <!-- <h2>Welcome back, {{ username ? username : "" }}</h2> -->
+</div>
+
+<div class="info-cards">
+  <mat-card *ngFor="let card of infoCards" class="card">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+
+      <mat-card-title>{{ card.title }}</mat-card-title>
+      <mat-card-subtitle>{{ card.subtitle }}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+</div>
+<section>
+  <div class="welcome-banner card-grid">
+    <img
+      src="../../../assets/images/tutor4.svg"
+      alt="Tutoring Advertisement"
+      class="advertisement-image"
+      height="200px"
+    />
+    <div
+      style="
+        background-color: bisque;
+        padding: 20px;
+        height: 200px;
+        align-items: center;
+      "
+    >
+      <h3>Find the perfect tutor for your child</h3>
+      <p>
+        Connect with experienced tutors who can help your child excel in their
+        studies.
+      </p>
+      <button mat-raised-button color="primary">Learn More</button>
+    </div>
+  </div>
+</section>
+
+<section class="continue-section">
+  <div
+    class="d-flex flex-wrap justify-content-center gap-10 mt-5 mx-20 card-grid"
+  >
+    <mat-card
+      class="tutor-card"
+      style="background-color: #bdc4d8; height: 100px"
+    >
+      <mat-card-content>
+        <h3>Explore Subjects</h3>
+        <div
+          *ngFor="let subject of subjects"
+          class="d-flex flex-wrap justify-content-center gap-10 mt-5 mx-20 card-grid"
+        >
+          <button mat-raised-button color="primary" style="margin: 3px">
+            {{ subject.name }}
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="tutor-card" style="background-color: rgb(255, 217, 0)">
+      <mat-card-content>
+        <h3>Pick up where you left off</h3>
+        <div class="actions">
+          <button
+            mat-raised-button
+            color="primary"
+            style="width: 100%; margin-bottom: 10px"
+          >
+            Keep exploring
+          </button>
+          <button
+            mat-raised-button
+            color="accent"
+            style="width: 100%; margin-bottom: 10px"
+          >
+            Buy it again
+          </button>
+          <button
+            mat-raised-button
+            color="warn"
+            style="width: 100%; margin-bottom: 10px"
+          >
+            Saved services
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="tutor-card" *ngFor="let tutor of tutors">
+      <div (click)="openTutorDetail(tutor)" class="tutor-link">
+        <img
+          mat-card-image
+          src="../..//../assets/images/tutor1.png"
+          alt="Photo of a Shiba Inu"
+        />
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image"></div>
+
+          <mat-card-title>{{ tutor.name }}</mat-card-title>
+          <mat-card-subtitle
+            >⭐ {{ tutor.rating }} ({{ tutor.reviews }})</mat-card-subtitle
+          >
+        </mat-card-header>
+
+        <mat-card-content>
+          <p>
+            The Shiba Inu is the smallest of the six original and distinct spitz
+            ...
+          </p>
+        </mat-card-content>
+        <mat-card-footer>
+          <div class="card-footer" *ngIf="(tutor.subject ?? []).length > 0">
+            <p>Subjects:</p>
+            <!-- <ul> -->
+            <button *ngFor="let subject of tutor.subject">
+              {{ subject + "  " }}
+            </button>
+            <!-- </ul> -->
+          </div>
+        </mat-card-footer>
+      </div>
+    </mat-card>
+  </div>
+</section>

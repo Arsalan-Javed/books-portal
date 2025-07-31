@@ -1,0 +1,134 @@
+/* Welcome banner styling */
+.welcome-banner {
+  position: relative;
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  h2 {
+    margin: 0;
+    padding: 0 20px;
+    color: rgb(235, 232, 240);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: bolder;
+  }
+}
+
+/* Info cards floating over the welcome banner */
+.info-cards {
+  display: flex;
+  gap: 20px;
+  margin-top: -50px; /* Float over the welcome banner */
+  justify-content: center;
+}
+
+.info-cards .card {
+  background: rgb(243, 242, 242);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.continue-section {
+  margin: 20px;
+  h3 {
+    margin-bottom: 10px;
+  }
+
+  .actions {
+    margin-bottom: 20px;
+    button {
+      margin-right: 10px;
+    }
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+
+    .tutor-card {
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      width: 300px;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      img {
+        max-width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+      .tutor-link {
+        cursor: pointer;
+        text-decoration: none;
+        color: #1a2b49;
+        :hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  .example-header-image {
+    background-image: url("../../../assets/images/tutor1.png");
+    background-size: cover;
+  }
+}
+.example-header-image {
+  background-image: url("../../../assets/images/tutor1.png");
+  background-size: cover;
+}
+
+.card-footer {
+  margin: 0 12px;
+  // background-color: lightblue;
+  border-radius: 12px;
+
+  button {
+    border-radius: 24px;
+    font-weight: bold;
+    background-color: #022c9e;
+    // background-color: rgb(250, 186, 11);
+    text-align: center;
+    justify-content: center;
+    // color: #1a2b49;
+    color: white;
+    margin: 3px;
+  }
+  p {
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px;
+    font-weight: bold;
+    padding: 0 10px;
+  }
+}
+.subjects-banner {
+  margin: 0 12px;
+  // background-color: lightblue;
+  border-radius: 8px;
+
+  button {
+    border-radius: 24px;
+    background-color: #ececea;
+    // background-color: rgb(250, 186, 11);
+    text-align: center;
+    justify-content: center;
+    // color: #1a2b49;
+    color: #022c9e;
+    margin: 5px;
+  }
+}

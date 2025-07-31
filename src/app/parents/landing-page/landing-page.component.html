@@ -1,4 +1,3 @@
-
 <section class="hero">
   <h1 style="font-weight: bolder">
     Be <span style="color: red">Ready</span> from Day One
@@ -58,7 +57,7 @@
       >
     </mat-card-header>
     <mat-card-content>
-      <form [formGroup]="form1" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form1" (ngSubmit)="browseKits(form1.value)">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>School</mat-label>
           <mat-select formControlName="school">
@@ -86,7 +85,8 @@
           mat-raised-button
           class="full-width"
           style="background-color: rgb(255, 187, 0)"
-          (click)="browseKits(form1.value)"
+          type="submit"
+          [disabled]="!form1.valid"
         >
           Get Started
         </button>
@@ -169,7 +169,7 @@
       <mat-card-title>Tutoring</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <form [formGroup]="form2" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form2" (ngSubmit)="findTutor()">
         <mat-form-field appearance="fill" class="full-width">
           <input
             matInput
@@ -198,6 +198,8 @@
           mat-raised-button
           style="background-color: darkblue; color: white"
           class="full-width"
+          type="submit"
+          [disabled]="!form2.valid"
         >
           Find my Tutor
         </button>
@@ -210,23 +212,6 @@
 </div>
 
 <section class="how-it-works" style="background-color: rgb(201, 201, 181)">
-  <!-- <div *ngFor="let school of schools" class="how-it-works-card">
-    <img
-      src="../../../assets/images/standre_black.png"
-      alt="School Kit Steps"
-      class="steps-image"
-      height="300px"
-      width="50%"
-    />
-    <button
-      mat-raised-button
-      color="primary"
-      style="background-color: rgb(255, 187, 0); width: 100%"
-      (click)="browseKits({ school: school.name })"
-    >
-      View
-    </button>
-  </div> -->
   <div class="bundle-card" *ngFor="let school of schools">
     <div class="card-header">
       <h2>{{ school.name.toUpperCase() }}</h2>

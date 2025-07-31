@@ -1,162 +1,406 @@
-<div style="background: linear-gradient(to bottom right,#e8eaec,#b7c3d1,#a8b8c9);min-height: 92.5vh;">
-<div *ngIf="!isLoading; else loading" class="pt-5">
-
-  <div
-    class="d-flex justify-content-center gap-5"
-    style="width: 100%"
-    [style]="{
-      'max-width': '1200px',
-      margin: '0 auto',
-      'background-color': '#f8f9fa',
-      padding: '20px',
-      'border-radius': '10px'
-    }"
-  >
-    <div style="width: 40%">
-      <input
-        type="text"
-        [(ngModel)]="filters.name"
-        placeholder="Search by Name"
-        class="form-control"
-        (input)="applyFilters()"
-      />
-
-    </div>
-    <div>
-      <select
-        *ngIf="schools && schools.length > 0"
-        class="form-select w-100 text-capitalize"
-        [(ngModel)]="filters.school"
-        (change)="applyFilters()"
+<mat-sidenav-container class="main-sidenav-container">
+  <mat-sidenav mode="side" opened class="main-sidenav">
+    <h6 class="sidenav-title">Bundles by School</h6>
+    <mat-nav-list>
+      <mat-list-item
+        *ngFor="let school of schools"
+        (click)="filters.school = school.id ? school.id : ''; applyFilters()"
+        [class.active]="filters.school === school.id"
+        style="cursor: pointer"
       >
-        <option selected value="">Select School</option>
-        @for (item of schools; track $index) {
-        <option [value]="item.id">{{ item.name }}</option>
-        }
-      </select>
-    </div>
-    <div>
-      <select
-        *ngIf="types && types.length > 0"
-        class="form-select w-100 text-capitalize"
-        [(ngModel)]="filters.category"
-        (change)="applyFilters()"
+        <span>{{ school.name }}</span>
+      </mat-list-item>
+      <mat-list-item
+        (click)="filters.school = ''; applyFilters()"
+        [class.active]="!filters.school"
+        style="cursor: pointer"
       >
-        <option selected value="">Select Category</option>
-        @for (item of types; track $index) {
-        <option [value]="item.id">{{ item.name }}</option>
-        }
-      </select>
-    </div>
-    <div>
-      <select
-        *ngIf="grades && grades.length > 0"
-        class="form-select w-100 text-capitalize"
-        [(ngModel)]="filters.grade"
-        (change)="applyFilters()"
+        <span>All Schools</span>
+      </mat-list-item>
+    </mat-nav-list>
+
+    <h6 class="sidenav-title mt-4">Filter by Category</h6>
+    <mat-nav-list>
+      <mat-list-item
+        *ngFor="let type of types"
+        (click)="applyFilters()"
+        [class.active]="filters.category === type.id"
+        style="cursor: pointer"
       >
-        <option selected value="">Select Grade</option>
-        @for (item of grades; track $index) {
-        <option [value]="item.id">{{ item.name }}</option>
-        }
-      </select>
-    </div>
-  </div>
+        <span>{{ type.name }}</span>
+      </mat-list-item>
+      <mat-list-item
+        (click)="filters.category = ''; applyFilters()"
+        [class.active]="!filters.category"
+        style="cursor: pointer"
+      >
+        <span>All Categories</span>
+      </mat-list-item>
+    </mat-nav-list>
 
-  <div class="d-flex flex-wrap justify-content-center gap-10 mt-5 mx-20">
-    <div class="mb-4" *ngFor="let item of filteredItems">
+    <h6 class="sidenav-title mt-4">Filter by Subject</h6>
+    <mat-nav-list>
+      <mat-list-item
+        *ngFor="let subject of subjects"
+        (click)="filters.subject = subject.name; applyFilters()"
+        [class.active]="filters.subject === subject.name"
+        style="cursor: pointer"
+      >
+        <span>{{ subject.name }}</span>
+      </mat-list-item>
+      <mat-list-item
+        (click)="filters.subject = ''; applyFilters()"
+        [class.active]="!filters.subject"
+        style="cursor: pointer"
+      >
+        <span>All Subjects</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
 
-      <div class="card h-100 position-relative">
+  <mat-sidenav-content>
+    <div
+      style="
+        background: linear-gradient(to bottom right, #e8eaec, #f4f5f7, #eceef0);
+        min-height: 92.5vh;
+      "
+    >
+      <div *ngIf="!isLoading; else loading" class="pt-5">
         <div
-          style="padding: 10px; margin-bottom: 5px"
-          style="background-color: darkblue"
+          class="d-flex justify-content-center gap-5"
+          style="width: 100%"
+          [style]="{
+            'max-width': '1200px',
+            margin: '0 auto',
+            'background-color': '#f8f9fa',
+            padding: '20px',
+            'border-radius': '10px'
+          }"
         >
-          <img
-            src="assets/images/small-book.jpg"
-            class="bundle-logo"
-            *ngIf="item.type === 'bundle'"
-          />
-          <!-- <img [src]="'data:image/png;base64,' + item.image" class="card-img-top" alt="Image" /> -->
-          <img src="assets/images/epma.png" class="card-img-top" alt="Image" />
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">{{ item.name }}</h5>
-          <ng-container *ngIf="item.type === 'book'">
-            <h6 class="card-subtitle mb-2 text-muted">
-              Grade: {{ item.grade }}
-            </h6>
-            <h6 class="card-subtitle mb-2 text-muted">
-              Academic Year: {{ item.academicYear }}
-            </h6>
-            <p class="card-text">{{ item.description }}</p>
-          </ng-container>
-          <ng-container *ngIf="item.type === 'bundle'">
-            <h6 class="card-subtitle mb-2 text-muted">
-              School: {{ item.school }}
-            </h6>
-            <h6 class="card-subtitle mb-2 text-muted">
-              Grade: {{ item.grade }}
-            </h6>
-            <h6
-              class="card-subtitle text-decoration-underline text-primary cursor-pointer fw-bolder fs-6"
-              (click)="openShowBook(modalBookShow, item?.books)"
-            >
-              Books: {{ item.books.length }}
-            </h6>
-          </ng-container>
-        </div>
-        <div
-          class="d-flex justify-content-between align-items-center border-top p-2"
-          style="background-color: #e7ad0e"
-        >
+          <div style="width: 40%">
+            <input
+              type="text"
+              [(ngModel)]="filters.name"
+              placeholder="Search by Name"
+              class="form-control"
+              (input)="applyFilters()"
+            />
+          </div>
           <div>
-            <div>
-              Price:
-              <span class="actual-price" *ngIf="item.type === 'bundle'"
-                >${{ getTotalPrice(item.books) }}</span
+            <select
+              *ngIf="schools && schools.length > 0"
+              class="form-select w-100 text-capitalize"
+              [(ngModel)]="filters.school"
+              (change)="applyFilters()"
+            >
+              <option selected value="">Select School</option>
+              @for (item of schools; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <select
+              *ngIf="types && types.length > 0"
+              class="form-select w-100 text-capitalize"
+              [(ngModel)]="filters.category"
+              (change)="applyFilters()"
+            >
+              <option selected value="">Select Category</option>
+              @for (item of types; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <select
+              *ngIf="grades && grades.length > 0"
+              class="form-select w-100 text-capitalize"
+              [(ngModel)]="filters.grade"
+              (change)="applyFilters()"
+            >
+              <option selected value="">Select Grade</option>
+              @for (item of grades; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-right gap-10 mt-5 mx-20">
+          <div class="bundle-card" *ngFor="let item of filteredItems">
+            <div class="card-header">
+              <div class="card-image">
+                <img
+                  src="assets/images/small-book.jpg"
+                  class="bundle-logo"
+                  *ngIf="item.type === 'bundle'"
+                />
+                <img
+                  [src]="'data:image/png;base64,' + item.image"
+                  class="card-img-top"
+                  alt="Image"
+                />
+                <!-- <img src="assets/images/epma.png" class="card-image" alt="Image" /> -->
+              </div>
+            </div>
+
+            <div class="card-body">
+              <ng-container *ngIf="item.type === 'book'">
+                <h6 class="card-subtitle mb-2 text-muted">
+                  Grade: {{ item.grade }}
+                </h6>
+                <h6 class="card-subtitle mb-2 text-muted">
+                  Academic Year: {{ item.academicYear }}
+                </h6>
+                <p class="card-text">{{ item.description }}</p>
+              </ng-container>
+              <ng-container *ngIf="item.type === 'bundle'">
+                <h6 class="card-subtitle mb-2 text-muted">
+                  Grade: {{ item.grade }}
+                </h6>
+                <h6
+                  class="card-subtitle text-decoration-underline text-primary cursor-pointer fw-bolder fs-6"
+                  (click)="openShowBook(modalBookShow, item?.books)"
+                >
+                  Books: {{ item.books.length }}
+                </h6>
+              </ng-container>
+            </div>
+            <div class="card-footer">
+              <div>
+                <div>
+                  Price:
+                  <span class="actual-price" *ngIf="item.type === 'bundle'"
+                    >${{ getTotalPrice(item.books) }}</span
+                  >
+                  ${{ item.price }}
+                </div>
+              </div>
+
+              <button
+                class="btn btn-primary d-flex align-items-center gap-2 p-3"
+                [disabled]="item.type === 'book' && item.quantity === 0"
+                (click)="item.type === 'book' ? addToCart(item) : addCart(item)"
               >
-              ${{ item.price }}
+                <span *ngIf="item.type === 'book' && item.quantity === 0"
+                  >Out of Stock</span
+                >
+                <span
+                  *ngIf="item.type !== 'book' || item.quantity > 0"
+                  class="d-flex align-items-center gap-2"
+                >
+                  <app-keenicon name="handcart" class="fs-3"></app-keenicon>
+                  <span>Add to Cart</span>
+                </span>
+              </button>
             </div>
           </div>
-
-          <button
-            class="btn btn-primary d-flex align-items-center gap-2 p-3"style="background-color: darkblue"
-            [disabled]="item.type === 'book' && item.quantity === 0"
-            (click)="item.type === 'book' ? addToCart(item) : addCart(item)"
-          >
-            <span *ngIf="item.type === 'book' && item.quantity === 0">Out of Stock</span>
-            <span *ngIf="item.type !== 'book' || item.quantity > 0" class="d-flex align-items-center gap-2">
-              <app-keenicon name="handcart" class="fs-3"></app-keenicon> <span>Cart</span> </span>
-          </button>
         </div>
+
+        <!-- Books Advertisement -->
+        <section>
+          <div class="ad-banner card-grid">
+            <img
+              src="../../../assets/images/lib-banner2.svg"
+              alt="Tutoring Advertisement"
+              class="advertisement-image"
+              height="200px"
+            />
+            <div
+              style="
+                background-color: bisque;
+                padding: 20px;
+                height: 200px;
+                align-items: center;
+              "
+            >
+              <h3>Navigate Addidtional Support Materials</h3>
+              <p>Books and other school supplies by Librarie Chrétienne.</p>
+              <button mat-raised-button color="primary">
+                Check Below aand add to your cart
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Books carousel -->
+        <section class="book-carousel-wrapper">
+          <div
+            [style]="{
+              margin: '0 auto',
+              'background-color': '#f8f9fa',
+              padding: '20px',
+              'border-radius': '10px'
+            }"
+          >
+            <h2>Books</h2>
+            <div class="carousel-container">
+              <button
+                mat-icon-button
+                (click)="scrollLeft('books')"
+                class="nav-btn left"
+              >
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+
+              <div #scrollBooksContainer class="books-scroll-container">
+                <mat-card class="book-card" *ngFor="let book of books">
+                  <img
+                    mat-card-image
+                    [src]="'data:image/png;base64,' + book.image"
+                    [alt]="book.bookName"
+                    style="height: 200px; object-fit: cover"
+                  />
+                  <mat-card-content>
+                    <h4>{{ book.bookName }}</h4>
+                    <p class="author">
+                      {{ book.description ? book.description : "" }}
+                    </p>
+                  </mat-card-content>
+                  <div class="card-footer">
+                    <div>
+                      <div>
+                        Price:
+                        <span>${{ book.price }}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      class="btn btn-primary d-flex align-items-center gap-2 p-3"
+                      [disabled]="book.quantity === 0"
+                      (click)="addToCart(book)"
+                    >
+                      <span *ngIf="book.quantity === 0">Out of Stock</span>
+                      <span
+                        *ngIf="book.quantity > 0"
+                        class="d-flex align-items-center gap-2"
+                      >
+                        <app-keenicon
+                          name="handcart"
+                          class="fs-3"
+                        ></app-keenicon>
+                        <span>Add to Cart</span>
+                      </span>
+                    </button>
+                  </div>
+                </mat-card>
+              </div>
+
+              <button
+                mat-icon-button
+                (click)="scrollRight('books')"
+                class="nav-btn right"
+              >
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Supplies carousel -->
+        <section class="book-carousel-wrapper">
+          <div
+            [style]="{
+              margin: '0 auto',
+              'background-color': '#f8f9fa',
+              padding: '20px',
+              'border-radius': '10px'
+            }"
+          >
+            <h2>Supplies</h2>
+            <div class="carousel-container">
+              <button
+                mat-icon-button
+                (click)="scrollLeft('supplies')"
+                class="nav-btn left"
+              >
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+
+              <div #scrollSuppliesContainer class="books-scroll-container">
+                <mat-card class="book-card" *ngFor="let book of allSupplies">
+                  <img
+                    mat-card-image
+                    [src]="'data:image/png;base64,' + book.image"
+                    [alt]="book.bookName"
+                    style="height: 200px; object-fit: cover"
+                  />
+                  <mat-card-content>
+                    <h4>{{ book.bookName }}</h4>
+                    <p class="author">
+                      {{ book.description ? book.description : "" }}
+                    </p>
+                  </mat-card-content>
+                  <div class="card-footer">
+                    <div>
+                      <div>
+                        Price:
+                        <span>${{ book.price }}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      class="btn btn-primary d-flex align-items-center gap-2 p-3"
+                      [disabled]="book.quantity === 0"
+                      (click)="addToCart(book)"
+                    >
+                      <span *ngIf="book.quantity === 0">Out of Stock</span>
+                      <span
+                        *ngIf="book.quantity > 0"
+                        class="d-flex align-items-center gap-2"
+                      >
+                        <app-keenicon
+                          name="handcart"
+                          class="fs-3"
+                        ></app-keenicon>
+                        <span>Add to Cart</span>
+                      </span>
+                    </button>
+                  </div>
+                </mat-card>
+              </div>
+
+              <button
+                mat-icon-button
+                (click)="scrollRight('supplies')"
+                class="nav-btn right"
+              >
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
+
+      <ng-template #loading>
+        <div
+          class="d-flex justify-content-center align-items-center flex-column"
+          style="height: 100vh"
+        >
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-3 mb-0">Loading details...</p>
+        </div>
+      </ng-template>
+
+      <ng-template #modalBookShow let-modalShow>
+        <div class="modal-header">
+          <h5 class="modal-title">Books</h5>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="modalShow.dismiss()"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <app-books-list
+            [books]="showBooks"
+            [isAddToCart]="true"
+            (cartBook)="addBundleBook($event, modalShow)"
+          ></app-books-list>
+        </div>
+      </ng-template>
     </div>
-  </div>
-</div>
-
-<ng-template #loading>
-  <div class="d-flex justify-content-center align-items-center flex-column" style="height: 100vh;">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-3 mb-0">Loading details...</p>
-  </div>
-</ng-template>
-
-
-<ng-template #modalBookShow let-modalShow>
-  <div class="modal-header">
-    <h5 class="modal-title">Books</h5>
-    <button
-      type="button"
-      class="btn-close"
-      aria-label="Close"
-      (click)="modalShow.dismiss()"
-    ></button>
-  </div>
-  <div class="modal-body">
-    <app-books-list
-      [books]="showBooks"
-      [isAddToCart]="true"
-      (cartBook)="addBundleBook($event, modalShow)"
-    ></app-books-list>
-  </div>
-</ng-template>
+  </mat-sidenav-content>
+</mat-sidenav-container>

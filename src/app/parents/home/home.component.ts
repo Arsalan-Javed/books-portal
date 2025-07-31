@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/_metronic/shared/shared.module';
 import { BookService } from 'src/app/pages/books/book.service';
@@ -17,20 +23,45 @@ import {
 } from '../services/modal';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, SharedModule, FormsModule],
+  imports: [
+    CommonModule,
+    SharedModule,
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatGridListModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatListModule,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
+  @ViewChild('scrollBooksContainer', { static: false })
+  scrollBooksContainer!: ElementRef;
+  @ViewChild('scrollSuppliesContainer', { static: false })
+  scrollSuppliesContainer!: ElementRef;
+
   filters = {
     name: '',
     category: '',
     school: '',
     grade: '',
+    subject: '',
+    priceRange: [0, 1000], // Example price range
   };
   filteredItems: any = [];
   allItems: any;
@@ -40,8 +71,21 @@ export class HomeComponent implements OnInit {
   types: Category[] = [];
   bundles: Bundle[] = [];
   showBooks: Book[] = [];
+  allSupplies: Book[] = [];
   schools: School[] = [];
   isLoading: boolean = false;
+
+  subjects = [
+    { name: 'Spanish', icon: 'assets/icons/spanish.svg' },
+    { name: 'English', icon: 'assets/icons/english.svg' },
+    { name: 'Math', icon: 'assets/icons/math.svg' },
+    { name: 'Science', icon: 'assets/icons/science.svg' },
+    { name: 'History', icon: 'assets/icons/history.svg' },
+    { name: 'Art', icon: 'assets/icons/art.svg' },
+    { name: 'Music', icon: 'assets/icons/music.svg' },
+    { name: 'Programming', icon: 'assets/icons/programming.svg' },
+  ];
+
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
@@ -64,28 +108,38 @@ export class HomeComponent implements OnInit {
         category: '',
         school: '',
         grade: '',
+        subject: '',
+        priceRange: [0, 1000], // Example price range
       };
       this.applyFilters();
     }
   }
   loadBooks() {
     this.bookService.getBooks().subscribe((books) => {
-      this.allBooks = books.map(book => ({
+      this.allBooks = books.map((book) => ({
         ...book,
         grade: this.getGrade(book.grade),
         category: this.getType(book.category),
-        name:book.bookName,
-        type: 'book'
+        name: book.bookName,
+        type: 'book',
       }));
-      this.books = books.filter(b => !b.isDeleted)
-      .map(book => ({
-        ...book,
-        grade: this.getGrade(book.grade),
-        category: this.getType(book.category),
-        name:book.bookName,
-        type: 'book'
-      }));
-      this.getBundles()
+      this.books = this.allBooks
+        .filter((b) => !b.isDeleted && b.category.toLowerCase() !== 'supplies')
+        .map((book) => ({
+          ...book,
+          grade: this.getGrade(book.grade),
+          category: this.getType(book.category),
+          name: book.bookName,
+          type: 'book',
+        }));
+      this.allSupplies = this.allBooks.filter(
+        (b) => !b.isDeleted && b.category.toLowerCase().includes('supplies')
+      );
+
+      console.log('All Books:', this.allBooks);
+      console.log('Filtered Books:', this.books);
+      console.log('All Supplies:', this.allSupplies);
+      this.getBundles();
     });
   }
   getGrades() {
@@ -119,9 +173,19 @@ export class HomeComponent implements OnInit {
     const type = this.types.find((g) => g.id === id);
     return type ? type.name : 'Unknown Type';
   }
-  getSchool(id: any): string {
+  getSchool(id: any): School {
     const school = this.schools.find((g) => g.id === id);
-    return school ? school.name : 'Unknown School';
+    return school
+      ? school
+      : {
+          id: '',
+          name: 'Unknown School',
+          image: '',
+          isDeleted: false,
+          address: '',
+          representative: '',
+          phoneNumber: '',
+        };
   }
   getBundles() {
     this.bundleService.getBundles().subscribe((bundle) => {
@@ -130,9 +194,12 @@ export class HomeComponent implements OnInit {
         .map((bundle) => ({
           ...bundle,
           grade: this.getGrade(bundle.grade),
-          school: this.getSchool(bundle.school),
+          school: this.getSchool(bundle.school).name,
           name: bundle.bundleName,
           type: 'bundle',
+          image:
+            this.getSchool(bundle.school).image ||
+            'assets/images/bundle-default.png',
         }));
       this.isLoading = false;
       // this.allItems = [...this.books, ...this.bundles];
@@ -231,16 +298,16 @@ export class HomeComponent implements OnInit {
         });
       },
       error: (err) => {
-          const errorMsg = err.message || 'Failed to add item to cart!';
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: errorMsg,
-            timer: 2000,
-            showConfirmButton: false,
-          });
+        const errorMsg = err.message || 'Failed to add item to cart!';
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorMsg,
+          timer: 2000,
+          showConfirmButton: false,
+        });
         modal.close();
-      }
+      },
     });
   }
   applyFilters() {
@@ -251,8 +318,60 @@ export class HomeComponent implements OnInit {
       (item: any) =>
         (!name || item.name?.toLowerCase().includes(lowerName)) &&
         (!category || item.category === this.getType(category)) &&
-        (!school || item.school === this.getSchool(school)) &&
+        (!school || item.school === this.getSchool(school).name) &&
         (!grade || item.grade === this.getGrade(grade))
     );
+    console.log('Filtered Items:', this.filteredItems);
+    console.log('Filter:', this.filters);
+    this.cdr.detectChanges();
+  }
+
+  // scrolling
+
+  scrollLeft(container: string) {
+    if (container === 'books') {
+      this.scrollBooksContainer.nativeElement.scrollBy({
+        left: -300,
+        behavior: 'smooth',
+      });
+    } else {
+      this.scrollSuppliesContainer.nativeElement.scrollBy({
+        left: -300,
+        behavior: 'smooth',
+      });
+    }
+    // this.scrollContainer.nativeElement.scrollBy({
+    //   left: -300,
+    //   behavior: 'smooth',
+    // });
+  }
+
+  scrollRight(container: string) {
+    if (container === 'books') {
+      this.scrollBooksContainer.nativeElement.scrollBy({
+        left: 300,
+        behavior: 'smooth',
+      });
+    } else {
+      this.scrollSuppliesContainer.nativeElement.scrollBy({
+        left: 300,
+        behavior: 'smooth',
+      });
+    }
+  }
+
+  navFilter(item: any) {
+    this.filters = {
+      name: item?.name || '',
+      category: item?.category || '',
+      school: item.school || '',
+      grade: item?.grade || '',
+      subject: item?.subject || '',
+      priceRange: [0, 1000], // Example price range
+    };
+    this.applyFilters();
+    this.router.navigate(['/parents/browse'], {
+      state: { filters: this.filters },
+    });
   }
 }

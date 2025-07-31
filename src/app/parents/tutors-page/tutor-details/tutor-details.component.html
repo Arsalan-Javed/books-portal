@@ -1,0 +1,78 @@
+<section>
+  <div class="welcome-banner card-grid">
+    <img
+      src="../../../../assets/images/tutor4.svg"
+      alt="Tutoring Advertisement"
+      class="advertisement-image"
+      height="200px"
+    />
+    <div
+      style="
+        background-color: bisque;
+        padding: 20px;
+        height: 200px;
+        align-items: center;
+      "
+    >
+      <h3>Find the perfect tutor for your child</h3>
+      <p>
+        Connect with experienced tutors who can help your child excel in their
+        studies.
+      </p>
+      <button mat-raised-button color="primary">Learn More</button>
+    </div>
+  </div>
+</section>
+
+<div class="tutor-details-container">
+  <div class="tutor-main">
+    <img [src]="selectedTutor.image" alt="Tutor photo" class="tutor-photo" />
+    <div class="tutor-info">
+      <h2>{{ selectedTutor.name }}</h2>
+      <p class="tutor-summary">{{ selectedTutor.summary }}</p>
+      <a [href]="selectedTutor.resumeUrl" target="_blank" class="resume-link"
+        >View Full Resume</a
+      >
+      <div class="tutor-skills">
+        <span style="font-weight: bold">Expertise:</span>
+        <span class="skills-list">
+          <button *ngFor="let skill of selectedTutor.subject">
+            {{ skill }}
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <section class="order-section">
+    <h3>Order Service</h3>
+    <form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+      <div class="form-row">
+        <input type="text" formControlName="name" placeholder="Your Name" />
+        <input type="email" formControlName="email" placeholder="Your Email" />
+      </div>
+      <textarea
+        formControlName="details"
+        rows="3"
+        placeholder="Describe what you need..."
+      ></textarea>
+      <button type="submit" [disabled]="orderForm.invalid">
+        Submit Request
+      </button>
+    </form>
+    <div class="order-success" *ngIf="orderSuccess">
+      Your request has been sent!
+    </div>
+  </section>
+
+  <section class="past-work-section">
+    <h3>Past Work</h3>
+    <div class="past-work-scroll">
+      <div class="past-work-card" *ngFor="let work of pastWorks">
+        <img [src]="work.image" alt="{{ work.title }}" class="past-work-img" />
+        <div class="past-work-title">{{ work.title }}</div>
+        <div class="past-work-summary">{{ work.summary }}</div>
+      </div>
+    </div>
+  </section>
+</div>
