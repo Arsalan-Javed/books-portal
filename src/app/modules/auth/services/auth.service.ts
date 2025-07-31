@@ -62,14 +62,14 @@ export class AuthService implements OnDestroy {
           return of(undefined);
         }
       }),
-      catchError((err:any) => {
+      catchError((err: any) => {
         console.error('err', err);
         return of(undefined);
       }),
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
-  loginWithGoogle(){
+  loginWithGoogle() {
     this.isLoadingSubject.next(true);
     return from(this.authServiceFire.loginWithGoogle()).pipe(
       map((auth: any) => {
@@ -85,7 +85,7 @@ export class AuthService implements OnDestroy {
           return of(undefined);
         }
       }),
-      catchError((err:any) => {
+      catchError((err: any) => {
         console.error('err', err);
         return of(undefined);
       }),
@@ -191,5 +191,6 @@ export class AuthService implements OnDestroy {
 
   ngOnDestroy() {
     this.unsubscribe.forEach((sb) => sb.unsubscribe());
+    console.log('AuthService destroyed');
   }
 }
